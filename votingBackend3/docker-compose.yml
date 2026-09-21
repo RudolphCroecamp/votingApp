@@ -1,0 +1,184 @@
+services:
+
+  # ============================================================
+  # MAIN BACKEND
+  # ============================================================
+
+  votingbackend3:
+    build:
+      context: .
+      dockerfile: votingBackend3/Dockerfile
+    container_name: votingbackend3
+    ports:
+      - "5000:8080"
+    environment:
+      NODE_ROLE: main
+      ConnectionStrings__MainDatabase: "Host=db_main;Port=5432;Database=main_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+    depends_on:
+      - db_main
+      - node1
+      - node2
+      - node3
+      - node4
+
+
+  # ============================================================
+  # BLOCKCHAIN NODES
+  # ============================================================
+
+  node1:
+    build:
+      context: .
+      dockerfile: votingBackend3/Dockerfile
+    container_name: node1
+    environment:
+      NODE_ROLE: node
+      NODE_ID: 1
+      ConnectionStrings__MainDatabase: "Host=db_main;Port=5432;Database=main_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+      ConnectionStrings__BlockchainDatabase: "Host=db_node1;Port=5432;Database=node1_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+    depends_on:
+      - db_main
+      - db_node1
+
+
+  node2:
+    build:
+      context: .
+      dockerfile: votingBackend3/Dockerfile
+    container_name: node2
+    environment:
+      NODE_ROLE: node
+      NODE_ID: 2
+      ConnectionStrings__MainDatabase: "Host=db_main;Port=5432;Database=main_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+      ConnectionStrings__BlockchainDatabase: "Host=db_node2;Port=5432;Database=node2_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+    depends_on:
+      - db_main
+      - db_node2
+
+
+  node3:
+    build:
+      context: .
+      dockerfile: votingBackend3/Dockerfile
+    container_name: node3
+    environment:
+      NODE_ROLE: node
+      NODE_ID: 3
+      ConnectionStrings__MainDatabase: "Host=db_main;Port=5432;Database=main_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+      ConnectionStrings__BlockchainDatabase: "Host=db_node3;Port=5432;Database=node3_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+    depends_on:
+      - db_main
+      - db_node3
+
+
+  node4:
+    build:
+      context: .
+      dockerfile: votingBackend3/Dockerfile
+    container_name: node4
+    environment:
+      NODE_ROLE: node
+      NODE_ID: 4
+      ConnectionStrings__MainDatabase: "Host=db_main;Port=5432;Database=main_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+      ConnectionStrings__BlockchainDatabase: "Host=db_node4;Port=5432;Database=node4_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+    depends_on:
+      - db_main
+      - db_node4
+
+
+  # ============================================================
+  # MAIN DATABASE
+  # ============================================================
+
+  db_main:
+    image: postgres:18
+    container_name: db_main
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365
+      POSTGRES_DB: main_db
+    ports:
+      - "7045:5432"
+    volumes:
+      - main_db_data:/var/lib/postgresql
+
+
+  # ============================================================
+  # NODE 1 DATABASE
+  # ============================================================
+
+  db_node1:
+    image: postgres:18
+    container_name: db_node1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365
+      POSTGRES_DB: node1_db
+    ports:
+    - "7051:5432"
+    volumes:
+      - node1_db_data:/var/lib/postgresql
+
+
+  # ============================================================
+  # NODE 2 DATABASE
+  # ============================================================
+
+  db_node2:
+    image: postgres:18
+    container_name: db_node2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365
+      POSTGRES_DB: node2_db
+    ports:
+    - "7052:5432"
+    volumes:
+      - node2_db_data:/var/lib/postgresql
+
+
+  # ============================================================
+  # NODE 3 DATABASE
+  # ============================================================
+
+  db_node3:
+    image: postgres:18
+    container_name: db_node3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365
+      POSTGRES_DB: node3_db
+    ports:
+    - "7053:5432"
+    volumes:
+      - node3_db_data:/var/lib/postgresql
+
+
+  # ============================================================
+  # NODE 4 DATABASE
+  # ============================================================
+
+  db_node4:
+    image: postgres:18
+    container_name: db_node4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365
+      POSTGRES_DB: node4_db
+    ports:
+    - "7054:5432"
+    volumes:
+      - node4_db_data:/var/lib/postgresql
+
+
+# ==============================================================
+# VOLUMES
+# ==============================================================
+
+volumes:
+
+  main_db_data:
+  node1_db_data:
+  node2_db_data:
+  node3_db_data:
+  node4_db_data:
