@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
@@ -6,6 +7,7 @@ using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
+    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
