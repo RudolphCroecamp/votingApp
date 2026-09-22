@@ -61,7 +61,6 @@ namespace votingBackend3.Controllers
             if (broadcastResult == null) return BadRequest(new { error = "Failed to broadcast vote" });//fix later
 
             
-
             return Ok(new {
                 message = "Vote broadcasted successfully",
                 data = broadcastResult,

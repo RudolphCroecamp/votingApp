@@ -54,6 +54,7 @@ namespace votingBackend3.Services
                     isActive = request.start_date <= DateOnly.FromDateTime(DateTime.Now) && request.end_date >= DateOnly.FromDateTime(DateTime.Now)
                 };
 
+                //add and save changes
                 await _votingDbContext.election.AddAsync(new_election);
                 await _votingDbContext.SaveChangesAsync();
 
@@ -84,7 +85,7 @@ namespace votingBackend3.Services
                     status = false
                 };
 
-
+                //add and save changes
                 await _votingDbContext.party.AddAsync(new_party);
                 await _votingDbContext.SaveChangesAsync();
 
@@ -96,6 +97,63 @@ namespace votingBackend3.Services
             }
 
             
+        }
+
+
+        public async Task<bool> updateElectionStatus(updateStatus data) {//true if updated fasle if failed
+            try {
+                if (data.ID == Guid.Empty || data.status.GetType() != typeof(bool)) {
+                    return false;
+                }
+
+                var election = await _votingDbContext.election.FindAsync(data.ID);
+
+                if (election == null)
+                {
+                    return false;
+                }
+
+                //update
+                election.isActive = data.status;
+
+                //save changes
+                await _votingDbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> updatePartyStatus(updateStatus data)
+        {
+            try
+            {
+                if (data.ID == Guid.Empty || data.status.GetType() != typeof(bool))
+                {
+                    return false;
+                }
+
+                var party = await _votingDbContext.party.FindAsync(data.ID);
+
+                if (party == null)
+                {
+                    return false;
+                }
+
+                //update
+                party.status = data.status;
+
+                //save changes
+                await _votingDbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch {
+                return false;
+            }
         }
 
 

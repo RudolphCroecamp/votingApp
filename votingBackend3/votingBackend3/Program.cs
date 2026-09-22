@@ -75,13 +75,13 @@ var app = builder.Build();
 
 var nodeRole = builder.Configuration["NODE_ROLE"];
 if (nodeRole == "node")
-{
+{//create the blockchain node DB
     using var scope = app.Services.CreateScope();
 
     var blockchainDb = scope.ServiceProvider
         .GetRequiredService<BlocksDbContext>();
 
-    blockchainDb.Database.Migrate();
+    blockchainDb.Database.Migrate();//create and add migrations to db
 
     // Initialize blockchain
     var blockchainService = scope.ServiceProvider
@@ -89,13 +89,13 @@ if (nodeRole == "node")
 
     await blockchainService.AddgenesisBlock();
 }
-else {
+else {//create the mainDB
     using var scope = app.Services.CreateScope();
 
     var MainDb = scope.ServiceProvider
         .GetRequiredService<VotingDbContext>();
 
-    MainDb.Database.Migrate();
+    MainDb.Database.Migrate();//create and add migrations to db
 }
 
 

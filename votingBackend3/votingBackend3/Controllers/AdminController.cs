@@ -77,5 +77,52 @@ namespace votingBackend3.Controllers
             return Ok(new { message = "Party created successfully" });
         }
 
+
+
+
+        [HttpPut]
+        [Route("update_election_status")]
+        public async Task<IActionResult> updateElectionStatus([FromBody] updateStatus request) {
+            bool updated = await _adminService.updateElectionStatus(request);
+
+            if (!updated) {
+                return BadRequest(new {
+                    message = "Failed to update election status.",
+                    updated_status = request.status
+                });
+            }
+
+            return Ok(new
+            {
+                message = "Successfully updated election status.",
+                updated_status = request.status
+            });
+            
+        }
+
+
+        [HttpPut]
+        [Route("update_party_status")]
+        public async Task<IActionResult> updatePartyStatus([FromBody] updateStatus request)
+        {
+            bool updated = await _adminService.updatePartyStatus(request);
+
+            if (!updated)
+            {
+                return BadRequest(new
+                {
+                    message = "Failed to update party status.",
+                    updated_status = request.status
+                });
+            }
+
+            return Ok(new
+            {
+                message = "Successfully updated party status.",
+                updated_status = request.status
+            });
+
+        }
+
     }
 }

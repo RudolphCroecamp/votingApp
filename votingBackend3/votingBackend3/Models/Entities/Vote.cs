@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using votingBackend3.Models.DTOs;
 
 namespace votingBackend3.Models.Entities
 {

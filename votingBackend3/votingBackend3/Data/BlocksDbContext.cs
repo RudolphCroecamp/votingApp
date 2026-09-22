@@ -14,7 +14,6 @@ namespace votingBackend3.Data
         public DbSet<Block> blocks { get; set; }
 
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Block>()
