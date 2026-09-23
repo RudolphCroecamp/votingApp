@@ -37,12 +37,12 @@ namespace votingBackend3.Services
         }
 
 
-        public async Task<bool> CreateElection(new_election request) {
+        public async Task<Election> CreateElection(new_election request) {
             try
             {
-                if (request == null) return false;
+                if (request == null) throw new Exception("Invalid request data");
 
-                if (request.GetType() != typeof(new_election)) return false;
+                if (request.GetType() != typeof(new_election)) throw new Exception("Invalid request format");
 
                 Election new_election = new Election
                 {
@@ -58,23 +58,23 @@ namespace votingBackend3.Services
                 await _votingDbContext.election.AddAsync(new_election);
                 await _votingDbContext.SaveChangesAsync();
 
-                return true;
+                return new_election;
             }
-            catch {
-
-                return false;
+            catch(Exception ex) 
+            {
+                throw new Exception($"Could not create the Election. error: {ex.Message}");
             } 
         }
 
 
 
-        public async Task<bool> CreateParty(new_party request)
+        public async Task<Party> CreateParty(new_party request)
         {
             try
             {
-                if (request == null) return false;
+                if (request == null) throw new Exception("Invalid request data");
 
-                if (request.GetType() != typeof(new_party)) return false;
+                if (request.GetType() != typeof(new_party)) throw new Exception("Invalid request format");
 
 
                 Party new_party = new Party
@@ -89,29 +89,26 @@ namespace votingBackend3.Services
                 await _votingDbContext.party.AddAsync(new_party);
                 await _votingDbContext.SaveChangesAsync();
 
-                return true;
+                return new_party;
 
             }
-            catch {
-                return false;
+            catch (Exception ex)
+            {
+                throw new Exception($"Could not create the Party. error: {ex.Message}");
             }
 
             
         }
 
 
-        public async Task<bool> updateElectionStatus(updateStatus data) {//true if updated fasle if failed
+        public async Task<Election> updateElectionStatus(updateStatus data) {//true if updated fasle if failed
             try {
-                if (data.ID == Guid.Empty || data.status.GetType() != typeof(bool)) {
-                    return false;
-                }
+                if (data.ID.GetType() != typeof(Guid) || data.ID == Guid.Empty) throw new Exception("Invalid ID");
+                if (data.status.GetType() != typeof(bool)) throw new Exception("Invalid status");
 
                 var election = await _votingDbContext.election.FindAsync(data.ID);
 
-                if (election == null)
-                {
-                    return false;
-                }
+                if (election == null) throw new Exception("Election not found");
 
                 //update
                 election.isActive = data.status;
@@ -119,29 +116,25 @@ namespace votingBackend3.Services
                 //save changes
                 await _votingDbContext.SaveChangesAsync();
 
-                return true;
+                return election;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                throw new Exception($"Could not update the Election. error: {ex.Message}");
             }
         }
 
-        public async Task<bool> updatePartyStatus(updateStatus data)
+        public async Task<Party> updatePartyStatus(updateStatus data)
         {
             try
-            {
-                if (data.ID == Guid.Empty || data.status.GetType() != typeof(bool))
-                {
-                    return false;
-                }
+            { 
+                if(data.ID.GetType() != typeof(Guid) || data.ID == Guid.Empty) throw new Exception("Invalid ID");
+                if(data.status.GetType() != typeof(bool)) throw new Exception("Invalid status");
+
 
                 var party = await _votingDbContext.party.FindAsync(data.ID);
 
-                if (party == null)
-                {
-                    return false;
-                }
+                if (party == null) throw new Exception("Party not found");
 
                 //update
                 party.status = data.status;
@@ -149,22 +142,13 @@ namespace votingBackend3.Services
                 //save changes
                 await _votingDbContext.SaveChangesAsync();
 
-                return true;
+                return party;
             }
-            catch {
-                return false;
+            catch (Exception ex)
+            {
+                throw new Exception($"Could not update the Party. error: {ex.Message}");
             }
         }
-
-
-
-
-
-
-
-
-
-
 
     }
 }

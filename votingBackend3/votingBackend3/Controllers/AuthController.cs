@@ -23,24 +23,38 @@ namespace votingBackend3.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] login_request request) {
 
-            var token = await _authService.Login(request);
+            try
+            {
+                var token = await _authService.Login(request);
 
-            Console.WriteLine(token);
+                if (token == null || token.ToString().Length <= 0)
+                {
 
-            if (token == null || token.ToString().Length <= 0) {
+                    return Unauthorized(new
+                    {
+                        message = "Invalid credentials",
+                        status = false
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "Login success",
+                    status = true,
+                    token = token
+                });
+
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
 
                 return BadRequest(new {
-                    message = "Invalid credentials",
+                    message = $"Login Error: {ex.Message}",
                     status = false
                 });
+            
             }
-
-            return Ok(new
-            {
-                message = "Login success",
-                status = true,
-                token = token
-            });
+            
 
         }
 
