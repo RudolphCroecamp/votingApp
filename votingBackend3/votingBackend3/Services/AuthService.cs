@@ -1,21 +1,75 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using votingBackend3.Data;
+using votingBackend3.Models.DTOs;
 
 namespace votingBackend3.Services
 {
     public class AuthService
     {
         private readonly IConfiguration _configuration;
+        private readonly VotingDbContext _votingDbContext;
 
-        public AuthService(IConfiguration configuration)
+        private readonly double SIMULARITYSCORE = 0.90;
+
+        public AuthService(IConfiguration configuration, VotingDbContext votingDbContext)
         {
             _configuration = configuration;
+            _votingDbContext = votingDbContext;
         }
 
 
-        public string GenerateToken(string voter_id, string role)
+
+        public async Task<string> Login(login_request creds) {
+            try
+            {
+                //get user by id number
+                var user = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.id_number == creds.id_number);
+
+                Console.WriteLine("not found");
+                
+                //check if user was found or not
+                if(user == null) return null;
+
+                //check if face embedding matches
+                double similarity = CosineSimilarity(
+                    user.face_embedding,
+                    creds.face_embedding
+                );
+
+                if (similarity < SIMULARITYSCORE) return null;
+
+                string token = await GenerateToken(user.voter_id, user.role);
+
+
+                //TODO: update login status in db
+
+                return token;
+
+
+            }
+            catch {
+                return null;
+            }
+        
+        
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        public async Task<string> GenerateToken(Guid voter_id, string role)
         {
             var claims = new[]
             {
@@ -39,5 +93,34 @@ namespace votingBackend3.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+
+
+        private double CosineSimilarity(double[] a, double[] b)
+        {
+            if (a.Length != b.Length)
+                throw new ArgumentException("Embedding sizes do not match.");
+
+            double dotProduct = 0;
+            double magnitudeA = 0;
+            double magnitudeB = 0;
+
+            for (int i = 0; i < a.Length; i++)
+            {
+                dotProduct += a[i] * b[i];
+                magnitudeA += a[i] * a[i];
+                magnitudeB += b[i] * b[i];
+            }
+
+            if (magnitudeA == 0 || magnitudeB == 0)
+                return 0;
+
+            return dotProduct / (Math.Sqrt(magnitudeA) * Math.Sqrt(magnitudeB));
+        }
+
+
+
+
+
     }
 }
