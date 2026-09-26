@@ -47,7 +47,7 @@ builder.Services.AddDbContext<BlocksDbContext>(options =>
 
 
 //configure auth settings
-var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtKey = builder.Configuration["JWTKey"];
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -60,10 +60,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ),
 
             ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidIssuer = builder.Configuration["Issuer"],
 
             ValidateAudience = true,
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidAudience = builder.Configuration["Audience"],
 
             ValidateLifetime = true,
 

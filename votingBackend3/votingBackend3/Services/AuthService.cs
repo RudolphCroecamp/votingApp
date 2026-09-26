@@ -77,15 +77,15 @@ namespace votingBackend3.Services
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),//add unique identifier to the token -> revoke/block it later
                 };
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTKey"]!));
 
                 var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],
-                    audience: _configuration["Jwt:Audience"],
+                    issuer: _configuration["Issuer"],
+                    audience: _configuration["Audience"],
                     claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:ExpirationMinutes"]!)),
+                    expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["ExpirationMinutes"]!)),
                     signingCredentials: credentials
                 );
 

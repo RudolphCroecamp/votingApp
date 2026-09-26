@@ -24,8 +24,9 @@ namespace votingBackend3.Controllers
             _blockchainService = blockchainService;
         }
 
-
-
+        //FIX block the add to blockchain request if vote token was already used
+        //FIX block the token after it was used
+        //TODO add authentication and authorisation to broad_cast_vote -> pass user's jwt
 
         [HttpPost]
         [Route("get_vote_token")]
@@ -59,7 +60,6 @@ namespace votingBackend3.Controllers
             try {
                 //verify vote
                 if (request == null) throw new Exception("Invalid request data");
-
                 if (request.GetType() != typeof(vote_request)) throw new Exception("Invalid request format");
 
                 //check vote_request parameters

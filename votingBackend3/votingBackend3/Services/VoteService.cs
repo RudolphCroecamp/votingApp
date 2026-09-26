@@ -33,13 +33,13 @@ namespace votingBackend3.Services
                 //FIX: add the condition -> || !election.isActive
                 if (election == null)
                 {
-                    return null;
+                    throw new Exception("This Election is currently not live");
                 }
 
                 //create the token
                 var token = RandomNumberGenerator.GetBytes(32);
 
-                //refers to token used toi vote with
+                //refers to token used to vote with
                 VoteToken voteToken = new VoteToken
                 {
                     token_id = Guid.NewGuid(),
@@ -138,7 +138,7 @@ namespace votingBackend3.Services
             
         }
 
-
+        //TODO what is this even for?
         public async Task<Vote> VerifyVote(vote_request request) {
             try {
                 Vote vote = _votingDbContext.vote.FirstOrDefault(v => v.token_id == request.voteToken.token_id);
