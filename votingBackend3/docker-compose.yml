@@ -18,6 +18,8 @@ services:
       Issuer: ${Issuer}
       Audience: ${Audience}
       ExpirationMinutes: ${ExpirationMinutes}
+    volumes:
+      - VotingDocuments:/app/VotingDocuments
 
     depends_on:
       - db_main
@@ -181,9 +183,9 @@ services:
 # ==============================================================
 
 volumes:
-
   main_db_data:
   node1_db_data:
   node2_db_data:
   node3_db_data:
   node4_db_data:
+  VotingDocuments:

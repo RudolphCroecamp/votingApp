@@ -19,6 +19,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<VoteService>();
+builder.Services.AddScoped<DocumentService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<BlockchainService>(provider =>
 {

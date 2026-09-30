@@ -178,7 +178,7 @@ namespace votingBackend3.Services
                 };
 
                 //add to database
-                _votingDbContext.vote.Add(vote);
+                await _votingDbContext.vote.AddAsync(vote);
 
                 //save changes
                 await _votingDbContext.SaveChangesAsync();

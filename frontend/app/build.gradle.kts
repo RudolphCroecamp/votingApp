@@ -5,7 +5,9 @@ plugins {
 
 android {
     namespace = "com.example.frontend"
-    compileSdk = 37
+    compileSdk {
+        version = release(37)
+    }
 
     buildFeatures {
         compose = true
@@ -23,13 +25,14 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            optimization {
+                enable = false
+            }
         }
     }
-
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
