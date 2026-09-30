@@ -41,6 +41,7 @@ kotlin {
 
 dependencies {
     implementation(libs.activity.ktx)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.lifecycle.runtime.ktx)
 
     implementation(platform(libs.compose.bom))
@@ -48,6 +49,7 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.core)
     implementation(libs.activity.compose)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.navigation.compose)
