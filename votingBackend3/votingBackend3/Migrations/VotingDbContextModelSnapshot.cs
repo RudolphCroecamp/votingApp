@@ -51,6 +51,33 @@ namespace votingBackend3.Migrations
                     b.ToTable("auth");
                 });
 
+            modelBuilder.Entity("votingBackend3.Models.Entities.DocumentInfo", b =>
+                {
+                    b.Property<Guid>("fileId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("fileType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("uploadDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("voter_id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("fileId");
+
+                    b.HasIndex("voter_id");
+
+                    b.ToTable("DocumentInfo");
+                });
+
             modelBuilder.Entity("votingBackend3.Models.Entities.Election", b =>
                 {
                     b.Property<Guid>("election_id")
@@ -231,6 +258,17 @@ namespace votingBackend3.Migrations
                     b.ToTable("voting_token");
                 });
 
+            modelBuilder.Entity("votingBackend3.Models.Entities.DocumentInfo", b =>
+                {
+                    b.HasOne("votingBackend3.Models.Entities.Voter", "Voter")
+                        .WithMany("Documents")
+                        .HasForeignKey("voter_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Voter");
+                });
+
             modelBuilder.Entity("votingBackend3.Models.Entities.ElectionParty", b =>
                 {
                     b.HasOne("votingBackend3.Models.Entities.Election", "Election")
@@ -329,6 +367,8 @@ namespace votingBackend3.Migrations
 
             modelBuilder.Entity("votingBackend3.Models.Entities.Voter", b =>
                 {
+                    b.Navigation("Documents");
+
                     b.Navigation("ElectionVoters");
                 });
 

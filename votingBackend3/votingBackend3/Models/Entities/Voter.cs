@@ -21,7 +21,8 @@ namespace votingBackend3.Models.Entities
         public int postal { get; set; } = 0;
 
 
-
+        
         public ICollection<ElectionVoter> ElectionVoters { get; set; } = new List<ElectionVoter>();
+        public ICollection<DocumentInfo> Documents { get; set; } = new List<DocumentInfo>();
     }
 }

@@ -18,6 +18,7 @@ namespace votingBackend3.Data
         public DbSet<Vote> vote { get; set; }
         public DbSet<Voter> voter { get; set; }
         public DbSet<VotingToken> voting_token { get; set; }
+        public DbSet<DocumentInfo> DocumentInfo { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -86,6 +87,17 @@ namespace votingBackend3.Data
                 .HasOne(v => v.Party)
                 .WithMany()
                 .HasForeignKey(v => v.party_id);
+
+            //documentInfo
+            modelBuilder.Entity<DocumentInfo>()
+                .HasKey(d => d.fileId);
+
+            //documentInfo -> Voter
+            modelBuilder.Entity<DocumentInfo>()
+                .HasOne(d => d.Voter)
+                .WithMany(v => v.Documents)
+                .HasForeignKey(d => d.voter_id);
+
         }
     }
 }
