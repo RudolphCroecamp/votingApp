@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.ui.theme.BrandGreen
 
 @Composable
 fun SimpleIconButton(
@@ -25,7 +26,7 @@ fun SimpleIconButton(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = Color(0xFF32734E),
+    containerColor: Color = BrandGreen,
     contentColor: Color = Color.White,
     enabled: Boolean = true,
     border: BorderStroke? = null

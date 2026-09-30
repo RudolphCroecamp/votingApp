@@ -1,6 +1,5 @@
 package com.example.frontend.ui.Components
 
-import android.R.attr.contentDescription
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,13 +16,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.R
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.ui.theme.BrandNavy
+import com.example.frontend.ui.theme.SurfaceGrey
 
 @Composable
 fun PartyCard(
@@ -31,8 +31,7 @@ fun PartyCard(
     slogan: String,
     imageResId: Int,
     modifier: Modifier = Modifier,
-    border: BorderStroke? = null
-
+    border: BorderStroke? = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
 ) {
     Card(
         modifier = modifier
@@ -41,9 +40,9 @@ fun PartyCard(
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF5F5F5)
+            containerColor = SurfaceGrey
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+        border = border
     ) {
         Row(modifier = Modifier
             .fillMaxWidth()
@@ -63,12 +62,12 @@ fun PartyCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
-                    color = Color(0xFF113056)
+                    color = BrandNavy
                 )
                 Text(
                     text = slogan,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF113056)
+                    color = BrandNavy
                 )
             }
         }

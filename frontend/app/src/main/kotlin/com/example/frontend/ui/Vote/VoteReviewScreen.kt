@@ -21,11 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.Components.HeadingLabel
 import com.example.frontend.ui.Components.PartyCard
 import com.example.frontend.ui.Components.SimpleButton
@@ -33,6 +31,10 @@ import com.example.frontend.ui.Components.SimpleIconButton
 import com.example.frontend.ui.Components.StatusLabel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.R
+import com.example.frontend.ui.theme.BrandNavy
+import com.example.frontend.ui.theme.WarningBorder
+import com.example.frontend.ui.theme.WarningContainer
+import com.example.frontend.ui.theme.WarningContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +43,7 @@ fun VoteReviewScreen(
     onChangeSelection: () -> Unit,
     onConfirmVote: () -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color(0xFFFFFFFF)
+    backgroundColor: Color = Color.White
 ) {
     Scaffold(
         modifier = modifier,
@@ -59,7 +61,7 @@ fun VoteReviewScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF113056),
+                    containerColor = BrandNavy,
                     titleContentColor = Color.White
                 )
             )
@@ -80,7 +82,7 @@ fun VoteReviewScreen(
                 HeadingLabel(
                     text = ballotTitle,
                     modifier = Modifier.fillMaxWidth(),
-                    color = Color(0xFF113056),
+                    color = BrandNavy,
                     style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Start
                 )
@@ -88,7 +90,7 @@ fun VoteReviewScreen(
                 HeadingLabel(
                     text = "Your selection:",
                     modifier = Modifier.fillMaxWidth(),
-                    color = Color(0xFF113056),
+                    color = BrandNavy,
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Start
                 )
@@ -103,9 +105,9 @@ fun VoteReviewScreen(
             StatusLabel(
                 message = "Your vote cannot be changed after confirmation.",
                 icon = Icons.Default.Warning,
-                containerColor = Color(0xFFFBF3DE),
-                contentColor = Color(0xFFD97706),
-                borderColor = Color(0xFFF59E0B)
+                containerColor = WarningContainer,
+                contentColor = WarningContent,
+                borderColor = WarningBorder
             )
 
             SimpleIconButton(
@@ -113,9 +115,9 @@ fun VoteReviewScreen(
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
                 onClick = onChangeSelection,
                 modifier = Modifier.fillMaxWidth(),
-                containerColor = Color(0xFFFFFFFF),
-                contentColor = Color(0xFF113056),
-                border = BorderStroke(1.5.dp, Color(0xFF113056))
+                containerColor = Color.White,
+                contentColor = BrandNavy,
+                border = BorderStroke(1.5.dp, BrandNavy)
             )
 
             SimpleButton(
