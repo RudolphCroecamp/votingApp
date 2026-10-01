@@ -16,25 +16,41 @@ namespace votingBackend3.Models.Entities
         [Required]
         public string previousHash { get; set; } = string.Empty;
 
-        public Block(int index, DateTime timestamp, string data, string previousHash)
+        public Block(int index, DateTime timestamp, string Data, string previousHash)
         {
             this.index = index;
-            this.timestamp = timestamp;
-            this.Data = data;
+            this.timestamp = NormalizeTimestamp(timestamp);
+            this.Data = Data;
             this.previousHash = previousHash;
             this.hash = CalculateHash();
         }
 
+
         public string CalculateHash()
         {
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
-            {
-                var rawData = $"{index}-{timestamp.ToString()}-{Data}-{previousHash}";
-                var bytes = System.Text.Encoding.UTF8.GetBytes(rawData);
-                var hashBytes = sha256.ComputeHash(bytes);
-                //return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-                return Convert.ToBase64String(hashBytes);
-            }
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+
+            var rawData = $"{index}-{timestamp:O}-{Data}-{previousHash}";
+            Console.WriteLine("===============================================================CALCULATING BLOCK==================================================================");
+            Console.WriteLine($"Raw data : {rawData}");
+
+            var bytes = System.Text.Encoding.UTF8.GetBytes(rawData);
+
+            var hashBytes = sha256.ComputeHash(bytes);
+
+            Console.WriteLine(Convert.ToBase64String(hashBytes));
+
+            return Convert.ToBase64String(hashBytes);
+        }
+
+
+        private static DateTime NormalizeTimestamp(DateTime timestamp)
+        {
+            timestamp = timestamp.ToUniversalTime();
+
+            return timestamp.AddTicks(
+                -(timestamp.Ticks % 10)
+            );
         }
     }
 }
