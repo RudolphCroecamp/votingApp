@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.theme.FrontendTheme
 
-enum class ButtonVariant { Primary, Secondary }
+enum class ButtonVariant { Primary, Secondary, Tertiary }
 
 @Composable
 fun SimpleButton(
@@ -69,6 +69,18 @@ fun SimpleButton(
                 content = content
             )
         }
+
+        ButtonVariant.Tertiary -> Button(
+            onClick = onClick,
+            modifier = modifier,
+            enabled = enabled,
+            shape = MaterialTheme.shapes.small,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ),
+            content = content
+        )
     }
 }
 
@@ -107,6 +119,19 @@ private fun SimpleButtonDisabledPreview() {
             onClick = {},
             modifier = Modifier.fillMaxWidth(),
             enabled = false
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SimpleButtonTertiaryPreview() {
+    FrontendTheme {
+        SimpleButton(
+            label = "Confirm Vote",
+            onClick = {},
+            modifier = Modifier.fillMaxWidth(),
+            variant = ButtonVariant.Tertiary
         )
     }
 }
