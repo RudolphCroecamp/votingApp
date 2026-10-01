@@ -18,6 +18,10 @@ namespace votingBackend3.Data
         {
             modelBuilder.Entity<Block>()
                 .HasKey(b => b.index);
+
+            modelBuilder.Entity<Block>()
+                .Property(b => b.index)
+                .ValueGeneratedNever();
         }
 
 

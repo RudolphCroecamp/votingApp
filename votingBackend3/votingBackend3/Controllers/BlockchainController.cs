@@ -10,13 +10,14 @@ using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
-    //[Authorize(Roles = "Voter")]
     [Route("api/[controller]")]
     [ApiController]
     public class BlockchainController : ControllerBase
     {
         private readonly VoteService _voteService;
         private readonly BlockchainService _blockchainService;
+
+        private readonly int NODECOUNT = 4;
 
         public BlockchainController(VoteService voteService, BlockchainService blockchainService)
         {
@@ -27,7 +28,8 @@ namespace votingBackend3.Controllers
 
         [HttpPost]
         [Route("handle_vote_request")]
-        public async Task<IActionResult> HandleVoteRequest(vote_request request) {
+        public async Task<IActionResult> HandleVoteRequest(vote_request request)
+        {
             try
             {
                 //verify vote
@@ -38,7 +40,7 @@ namespace votingBackend3.Controllers
                 //check valid voting token 
                 VotingToken votingToken = await _voteService.VerifyVoteRequest(request);//should return voting token if valid, else return null
 
-                if (votingToken == null) throw new Exception("Invalid voting token" );
+                if (votingToken == null) throw new Exception("Invalid voting token");
 
                 //check if vote was submitted for this token
                 Vote vote = await _voteService.VerifyVote(request);
@@ -60,7 +62,7 @@ namespace votingBackend3.Controllers
 
                 Block newBlock = new Block(
                     previousBlock.index + 1,
-                    DateTime.UtcNow,
+                    DateTime.UtcNow.ToUniversalTime(),
                     blockdataJson,
                     previousBlock.hash
                 );
@@ -76,13 +78,57 @@ namespace votingBackend3.Controllers
 
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
                 return BadRequest($"Blockchain Error: {ex.Message}");
             }
-            
+
 
         }
+
+
+        [HttpGet]
+        [Route("isBlockchainValid")]
+        public async Task<IActionResult> isBlockchainValid()
+        {
+            var blockchain = await _blockchainService.IsBlockchainValid(NODECOUNT);
+
+            if (blockchain == null) return NotFound("No blockchain data found");
+
+            return Ok(new
+            {
+                message = "Blockchain data",
+                blockchain = blockchain
+            });
+
+        }
+
+
+        [HttpGet]
+        [Route("IsNodeChainValid")]
+        public async Task<IActionResult> IsNodeChainValid()
+        {
+            var IsNodeChainValid = await _blockchainService.IsNodeChainValid();
+            return Ok(IsNodeChainValid);
+        }
+
+
+        //[HttpGet]
+        //[Route("GetNodeChain_id/{nodeId}")]
+        //public async Task<IActionResult> GetNodeChain_id(int nodeId)
+        //{
+        //    var chain = await _blockchainService.GetNodeChain_id(nodeId);
+        //    return Ok(chain);
+        //}
+
+        //[HttpGet]
+        //[Route("GetNodeChain")]
+        //public async Task<IActionResult> GetNodeChain()
+        //{
+        //    var chain = await _blockchainService.GetNodeChain();
+        //    return Ok(chain);
+        //}
 
     }
 }

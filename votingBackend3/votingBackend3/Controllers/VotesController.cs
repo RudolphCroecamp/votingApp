@@ -8,7 +8,7 @@ using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
-    [Authorize(Roles = "Voter")]
+    //[Authorize(Roles = "Voter")]
     [Route("api/[controller]")]
     [ApiController]
     public class VotesController : ControllerBase
