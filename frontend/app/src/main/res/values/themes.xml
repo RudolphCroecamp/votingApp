@@ -1,9 +1,8 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Frontend" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
-
-    <style name="Theme.Frontend" parent="Base.Theme.Frontend" />
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Compose owns the app's Material 3 theming (see ui/theme/Theme.kt).
+      This platform theme only covers the window before Compose draws.
+    -->
+    <style name="Theme.Frontend" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
