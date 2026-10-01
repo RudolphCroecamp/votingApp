@@ -2,10 +2,16 @@ package com.example.frontend.ui.Components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -14,23 +20,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.Icon
+import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.ui.theme.ErrorBorder
+import com.example.frontend.ui.theme.ErrorContainer
+import com.example.frontend.ui.theme.ErrorContent
+import com.example.frontend.ui.theme.InfoBorder
+import com.example.frontend.ui.theme.InfoContainer
+import com.example.frontend.ui.theme.InfoContent
+import com.example.frontend.ui.theme.SuccessBorder
+import com.example.frontend.ui.theme.SuccessContainer
+import com.example.frontend.ui.theme.SuccessContent
+import com.example.frontend.ui.theme.WarningBorder
+import com.example.frontend.ui.theme.WarningContainer
+import com.example.frontend.ui.theme.WarningContent
+
+enum class StatusType(
+    val icon: ImageVector,
+    val containerColor: Color,
+    val contentColor: Color,
+    val borderColor: Color
+) {
+    Info(Icons.Default.Info, InfoContainer, InfoContent, InfoBorder),
+    Success(Icons.Default.CheckCircle, SuccessContainer, SuccessContent, SuccessBorder),
+    Warning(Icons.Default.Warning, WarningContainer, WarningContent, WarningBorder),
+    Error(Icons.Default.Close, ErrorContainer, ErrorContent, ErrorBorder)
+}
 
 @Composable
 fun StatusLabel(
     message: String,
-    icon: ImageVector,
-    containerColor: Color,
-    contentColor: Color,
-    borderColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    type: StatusType = StatusType.Info,
+    icon: ImageVector = type.icon
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(5.dp),
-        color = containerColor,
-        border = BorderStroke(1.dp, borderColor)
+        shape = MaterialTheme.shapes.small,
+        color = type.containerColor,
+        border = BorderStroke(1.dp, type.borderColor)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -40,14 +69,25 @@ fun StatusLabel(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = contentColor,
+                tint = type.contentColor,
                 modifier = Modifier.size(20.dp)
             )
             Text(
                 text = message,
+                modifier = Modifier.weight(1f, fill = false),
                 style = MaterialTheme.typography.bodyLarge,
-                color = contentColor
+                color = type.contentColor
             )
+        }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360)
+@Composable
+private fun StatusLabelPreview() {
+    FrontendTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(8.dp)) {
+            StatusType.entries.forEach { StatusLabel(message = "${it.name} message", type = it) }
         }
     }
 }

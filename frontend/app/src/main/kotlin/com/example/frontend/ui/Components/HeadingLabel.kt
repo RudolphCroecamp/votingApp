@@ -6,10 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
+import com.example.frontend.ui.theme.FrontendTheme
 
 @Composable
 fun HeadingLabel(
@@ -17,25 +16,21 @@ fun HeadingLabel(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
     style: TextStyle = MaterialTheme.typography.headlineSmall,
-    textAlign: TextAlign = TextAlign.Start,
-    fontSize: TextUnit = TextUnit.Unspecified,
-    fontWeight: FontWeight? = null,
-    lineHeight: TextUnit = TextUnit.Unspecified
+    textAlign: TextAlign = TextAlign.Start
 ) {
     Text(
         text = text,
         modifier = modifier,
         color = color,
         style = style,
-        fontSize = fontSize,
-        lineHeight = lineHeight,
-        textAlign = textAlign,
-        fontWeight = fontWeight
+        textAlign = textAlign
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun HeadingLabelPreview() {
-    HeadingLabel(text = "Heading Label")
+    FrontendTheme {
+        HeadingLabel(text = "Heading Label")
+    }
 }

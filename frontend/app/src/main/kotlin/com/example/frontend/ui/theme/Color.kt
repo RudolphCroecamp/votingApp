@@ -17,3 +17,15 @@ val SurfaceGrey = Color(0xFFF5F5F5)
 val WarningContainer = Color(0xFFFBF3DE)
 val WarningContent = Color(0xFFD97706)
 val WarningBorder = Color(0xFFF59E0B)
+
+val InfoContainer = Color(0xFFE8F0FA)
+val InfoContent = Color(0xFF113056)
+val InfoBorder = Color(0xFF5B84B1)
+
+val SuccessContainer = Color(0xFFE6F4EA)
+val SuccessContent = Color(0xFF1E5E3A)
+val SuccessBorder = Color(0xFF32734E)
+
+val ErrorContainer = Color(0xFFFDECEA)
+val ErrorContent = Color(0xFFB3261E)
+val ErrorBorder = Color(0xFFD93025)
