@@ -105,7 +105,7 @@ namespace votingBackend3.Services
         }
 
 
-        //verify the vote token to the database -> did we create the toekn and has it been used
+        //verify the vote token to the database -> did we create the token and has it been used
         public async Task<VotingToken> VerifyToken(VoteToken request)
         {
             try {
@@ -144,7 +144,7 @@ namespace votingBackend3.Services
                 Vote vote = _votingDbContext.vote.FirstOrDefault(v => v.token_id == request.voteToken.token_id);
 
                 if (vote == null) throw new Exception("Vote not found");
-                if(vote.votingToken.isUsed == false) throw new Exception("Vote was not submitted yet");
+                //if(vote.votingToken.isUsed == false) throw new Exception("Vote was not submitted yet");
 
                 return vote;
             }
@@ -181,15 +181,15 @@ namespace votingBackend3.Services
                 //add to database
                 await _votingDbContext.vote.AddAsync(vote);
 
-                int rowsUpdated = await _votingDbContext.voting_token
-                    .Where(t => t.token_id == token.token_id)
-                    .ExecuteUpdateAsync(t => t.SetProperty(t => t.isUsed, true));
+                //int rowsUpdated = await _votingDbContext.voting_token
+                //    .Where(t => t.token_id == token.token_id)
+                //    .ExecuteUpdateAsync(t => t.SetProperty(t => t.isUsed, true));
 
-                // Token wasn't found, or something unexpected happened
-                if (rowsUpdated < 1) throw new Exception("Failed to mark token as used");
+                //// Token wasn't found, or something unexpected happened
+                //if (rowsUpdated < 1) throw new Exception("Failed to mark token as used");
                 
-                //more than one token was found with the same token_id, this should never happen
-                if (rowsUpdated > 1) throw new Exception("Duplicate voting tokens found, rejected request");
+                ////more than one token was found with the same token_id, this should never happen
+                //if (rowsUpdated > 1) throw new Exception("Duplicate voting tokens found, rejected request");
                 
 
                 //save changes
@@ -200,7 +200,7 @@ namespace votingBackend3.Services
 
                 vote_response response = new vote_response
                 {
-                    token_receipt = token.token_id,
+                    token_receipt = token.token_id,//Fix this should probably not be the voting token id, but rather a unique receipt for the vote
                     message = "Vote saved successfully"
                 };
 

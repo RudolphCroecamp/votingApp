@@ -27,7 +27,7 @@ namespace votingBackend3.Controllers
         //verifies and adds the vote to te current node's blockchain
         [HttpPost]
         [Route("handle_vote_request")]
-        public async Task<IActionResult> HandleVoteRequest(vote_request request)
+        public async Task<IActionResult> HandleVoteRequest(vote_request request)//Fix check if this need [frombody]
         {
             try
             {
@@ -42,7 +42,7 @@ namespace votingBackend3.Controllers
                 if (votingToken == null) throw new Exception("Invalid voting token");
 
                 //check if vote was submitted for this token <- if no vote was subitted it means the user did not vot yet
-                //FIX we want to check if the user's vote is added to the database and if the token was used. Else we should throw an error that the user did not vote yet. If the user voted, we should add the vote to the blockchain
+                //FIX we want to check if the user's vote is added to the database and if the token was used.
                 Vote vote = await _voteService.VerifyVote(request);
 
                 if (vote == null) throw new Exception("No vote was found for this token");
@@ -62,7 +62,7 @@ namespace votingBackend3.Controllers
 
                 Block newBlock = new Block(
                     previousBlock.index + 1,
-                    DateTime.UtcNow.ToUniversalTime(),
+                    request.timestamp, //DateTime.UtcNow.ToUniversalTime(),//should be the timestamp of the vote
                     blockdataJson,
                     previousBlock.hash
                 );
@@ -81,7 +81,7 @@ namespace votingBackend3.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return BadRequest($"Blockchain Error: {ex.Message}");
+                return BadRequest($"handle_vote_request Error: {ex.Message}");
             }
 
 
@@ -89,19 +89,25 @@ namespace votingBackend3.Controllers
 
         //check each node's blockchain and see if they are valid
         [HttpGet]
-        [Route("isBlockchainValid")]
-        public async Task<IActionResult> isBlockchainValid()
+        [Route("IsBlockchainValid")]
+        public async Task<IActionResult> IsBlockchainValid()
         {
-            var blockchain = await _blockchainService.IsBlockchainValid(NODECOUNT);
-
-            if (blockchain == null) return NotFound("No blockchain data found");
-
-            return Ok(new
+            try
             {
-                message = "Blockchain data",
-                blockchain = blockchain
-            });
+                var isBlockChainValid = await _blockchainService.IsBlockchainValid(NODECOUNT);
 
+                if (isBlockChainValid == null) return NotFound("No blockchain data found");
+
+                return Ok(new
+                {
+                    message = "Blockchain data",
+                    isBlockChainValid = isBlockChainValid ? "All nodes' blockchains are valid" : "Some nodes' blockchains are invalid"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"IsBlockchainValid Error: {ex.Message}");
+            }
         }
 
         //check the individual node's blockchain and see if it is valid
@@ -109,27 +115,54 @@ namespace votingBackend3.Controllers
         [Route("IsNodeChainValid")]
         public async Task<IActionResult> IsNodeChainValid()
         {
-            var IsNodeChainValid = await _blockchainService.IsNodeChainValid();
-            return Ok(IsNodeChainValid);
+            try {
+                var IsNodeChainValid = await _blockchainService.IsNodeChainValid();
+                return Ok(IsNodeChainValid);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"IsNodeChainValid Error: {ex.Message}");
+            }
+            
         }
 
-        //testing purposes only, not used in production
 
-        //[HttpGet]
-        //[Route("GetNodeChain_id/{nodeId}")]
-        //public async Task<IActionResult> GetNodeChain_id(int nodeId)
-        //{
-        //    var chain = await _blockchainService.GetNodeChain_id(nodeId);
-        //    return Ok(chain);
-        //}
+        //get current nodes blockchain chain
+        [HttpGet]
+        [Route("GetNodeChain")]
+        public async Task<IActionResult> GetNodeChain()
+        {
+            try
+            {
+                var chain = await _blockchainService.GetNodeChain();
+                return Ok(chain);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"GetNodeChain Error: {ex.Message}");
+            }
+        }
 
-        //[HttpGet]
-        //[Route("GetNodeChain")]
-        //public async Task<IActionResult> GetNodeChain()
-        //{
-        //    var chain = await _blockchainService.GetNodeChain();
-        //    return Ok(chain);
-        //}
 
+        //make a request to get the blockchain chain of a specific node by its id
+        [HttpGet]
+        [Route("GetNodeChain_id/{node_id}")]
+        public async Task<IActionResult> GetNodeChain_id([FromRoute] int node_id)
+        {
+            try {
+                if(node_id > NODECOUNT || node_id < 1)
+                {
+                    return BadRequest("Invalid node ID");
+                }
+
+                var chain = await _blockchainService.GetNodeChain_id(node_id);
+                return Ok(chain);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"GetNodeChain_id Error: {ex.Message}");
+            }
+            
+        }
     }
 }

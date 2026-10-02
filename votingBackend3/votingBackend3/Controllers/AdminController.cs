@@ -32,15 +32,18 @@ namespace votingBackend3.Controllers
         [Route("get_elections")]
         public async Task<IActionResult> GetElections()
         {
-            try { 
+            try
+            {
                 List<Election> elecions = await _adminService.GetElections();
 
-                return Ok(new { 
+                return Ok(new
+                {
                     message = "Elections Information",
                     elections = elecions
                 });
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
                 return BadRequest(new
                 {
@@ -48,7 +51,7 @@ namespace votingBackend3.Controllers
                 });
             }
 
-}
+        }
 
 
         [HttpGet]
@@ -65,14 +68,15 @@ namespace votingBackend3.Controllers
                     parties = parties
                 });
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
                 return BadRequest(new
                 {
                     message = $"Error: {ex.Message}"
                 });
             }
-            
+
         }
 
 
@@ -90,21 +94,23 @@ namespace votingBackend3.Controllers
                     throw new Exception("Could not add new Election");
                 }
 
-                return Ok(new { 
+                return Ok(new
+                {
                     message = "Election created successfully",
                     new_election = new_election
                 });
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
                 return BadRequest(new
                 {
                     message = $"Error: {ex.Message}"
                 });
-            
+
             }
-            
+
         }
 
 
@@ -112,7 +118,8 @@ namespace votingBackend3.Controllers
         [Route("new_party")]
         public async Task<IActionResult> CreateParty([FromBody] new_party request)
         {
-            try {
+            try
+            {
                 Party new_party = await _adminService.CreateParty(request);
 
                 if (new_party == null)
@@ -120,16 +127,21 @@ namespace votingBackend3.Controllers
                     throw new Exception("Could not add new Party");
                 }
 
-                return Ok(new { message = "Party created successfully" });
+                return Ok(new { 
+                    message = "Party created successfully",
+                    party = new_party
+
+                });
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
                 return BadRequest(new
                 {
                     message = $"Error: {ex.Message}"
                 });
             }
-            
+
         }
 
 
@@ -137,7 +149,8 @@ namespace votingBackend3.Controllers
 
         [HttpPut]
         [Route("update_election_status")]
-        public async Task<IActionResult> updateElectionStatus([FromBody] updateStatus request) {
+        public async Task<IActionResult> updateElectionStatus([FromBody] updateStatus request)
+        {
             try
             {
                 Election election = await _adminService.updateElectionStatus(request);
@@ -150,15 +163,16 @@ namespace votingBackend3.Controllers
                     election = election
                 });
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
                 return BadRequest(new
                 {
                     message = $"Error: {ex.Message}"
                 });
             }
-            
-            
+
+
         }
 
 
@@ -166,7 +180,8 @@ namespace votingBackend3.Controllers
         [Route("update_party_status")]
         public async Task<IActionResult> updatePartyStatus([FromBody] updateStatus request)
         {
-            try {
+            try
+            {
                 Party party = await _adminService.updatePartyStatus(request);
 
                 if (party == null) throw new Exception("Failed to update party status.");
@@ -210,5 +225,56 @@ namespace votingBackend3.Controllers
         }
 
 
+
+        [HttpGet]
+        [Route("GetElectionResults/{election_id}")]
+        public async Task<IActionResult> GetElectionResults([FromRoute] Guid election_id)
+        {
+            try
+            {
+                var results = await _adminService.GetElectionResults(election_id);
+                return Ok(new
+                {
+                    message = "Election Results",
+                    results = results
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new
+                {
+                    message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("GetElectionWinner/{election_id}")]
+        public async Task<IActionResult> GetElectionWinner([FromRoute] Guid election_id)
+        {
+            try
+            {
+                var winner = await _adminService.GetElectionWinner(election_id);
+
+                return Ok(new
+                {
+                    message = "Election Winner",
+                    election_id = election_id,
+                    party_name = winner.party_name,
+                    winnerVotes = winner.votes
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new
+                {
+                    message = $"Error: {ex.Message}"
+                });
+            }
+
+
+        }
     }
 }

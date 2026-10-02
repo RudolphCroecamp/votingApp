@@ -23,7 +23,8 @@ namespace votingBackend3.Services
 
 
 
-        public async Task<List<Election>> GetElections() {
+        public async Task<List<Election>> GetElections()
+        {
             //get all elections from db
             List<Election> elections = await _votingDbContext.election.ToListAsync();
             return elections;
@@ -37,7 +38,8 @@ namespace votingBackend3.Services
         }
 
 
-        public async Task<Election> CreateElection(new_election request) {
+        public async Task<Election> CreateElection(new_election request)
+        {
             try
             {
                 if (request == null) throw new Exception("Invalid request data");
@@ -60,10 +62,10 @@ namespace votingBackend3.Services
 
                 return new_election;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 throw new Exception($"Could not create the Election. error: {ex.Message}");
-            } 
+            }
         }
 
 
@@ -97,12 +99,14 @@ namespace votingBackend3.Services
                 throw new Exception($"Could not create the Party. error: {ex.Message}");
             }
 
-            
+
         }
 
 
-        public async Task<Election> updateElectionStatus(updateStatus data) {//true if updated fasle if failed
-            try {
+        public async Task<Election> updateElectionStatus(updateStatus data)
+        {//true if updated fasle if failed
+            try
+            {
                 if (data.ID.GetType() != typeof(Guid) || data.ID == Guid.Empty) throw new Exception("Invalid ID");
                 if (data.status.GetType() != typeof(bool)) throw new Exception("Invalid status");
 
@@ -127,9 +131,9 @@ namespace votingBackend3.Services
         public async Task<Party> updatePartyStatus(updateStatus data)
         {
             try
-            { 
-                if(data.ID.GetType() != typeof(Guid) || data.ID == Guid.Empty) throw new Exception("Invalid ID");
-                if(data.status.GetType() != typeof(bool)) throw new Exception("Invalid status");
+            {
+                if (data.ID.GetType() != typeof(Guid) || data.ID == Guid.Empty) throw new Exception("Invalid ID");
+                if (data.status.GetType() != typeof(bool)) throw new Exception("Invalid status");
 
 
                 var party = await _votingDbContext.party.FindAsync(data.ID);
@@ -148,6 +152,69 @@ namespace votingBackend3.Services
             {
                 throw new Exception($"Could not update the Party. error: {ex.Message}");
             }
+        }
+
+
+        public async Task<List<ElectionResultsDTO>> GetElectionResults(Guid election_id)
+        {
+            var totalVotes = await _votingDbContext.vote.CountAsync(v => v.election_id == election_id);
+
+            var electionResults = await _votingDbContext.vote
+                .Where(v => v.election_id == election_id)
+                .GroupBy(v => new { v.party_id, v.Party.party_name })
+                .Select(g => new ElectionResultsDTO
+                {
+                    party_id = g.Key.party_id,
+                    party_name = g.Key.party_name,
+                    votes = g.Count(),
+                    percentage = totalVotes == 0 ? 0 : (double)g.Count() / totalVotes * 100
+                })
+                .ToListAsync();
+
+            if (electionResults == null) throw new Exception("Election results not found");
+
+            return electionResults;
+
+        }
+
+        //public async Task<List<ElectionResultsDTO>> GetAllElectionResults()
+        //{
+        //    var totalVotes = await _votingDbContext.vote.CountAsync();
+        //    var electionResults = await _votingDbContext.vote
+        //        .GroupBy(v => new { v.election_id, v.Party.party_name })
+        //        .Select(g => new ElectionResultsDTO
+        //        {
+        //            party_id = g.Key.election_id,
+        //            party_name = g.Key.party_name,
+        //            votes = g.Count(),
+        //            percentage = totalVotes == 0 ? 0 : (double)g.Count() / totalVotes * 100
+        //        })
+        //        .ToListAsync();
+        //    if (electionResults == null) throw new Exception("Election results not found");
+        //    return electionResults;
+
+        //}
+
+
+        public async Task<ElectionResultsDTO> GetElectionWinner(Guid election_id)
+        {
+            var totalVotes = await _votingDbContext.vote.CountAsync(v => v.election_id == election_id);
+            var electionResults = await _votingDbContext.vote
+                .Where(v => v.election_id == election_id)
+                .GroupBy(v => new { v.party_id, v.Party.party_name })
+                .Select(g => new ElectionResultsDTO
+                {
+                    party_id = g.Key.party_id,
+                    party_name = g.Key.party_name,
+                    votes = g.Count(),
+                    percentage = totalVotes == 0 ? 0 : (double)g.Count() / totalVotes * 100
+                })
+                .OrderByDescending(r => r.votes)
+                .ToListAsync();
+
+            if (electionResults == null || electionResults.Count == 0) throw new Exception("Election results not found");
+
+            return electionResults.First();
         }
 
     }
