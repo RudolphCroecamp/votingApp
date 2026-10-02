@@ -33,3 +33,11 @@ fun SuccessCheckmarkBadge (){
        )
    }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun SuccessCheckmarkBadgePreview() {
+    FrontendTheme {
+        SuccessCheckmarkBadge()
+    }
+}
