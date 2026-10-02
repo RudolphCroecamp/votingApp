@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Net.NetworkInformation;
+﻿using Microsoft.AspNetCore.Mvc;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
 using votingBackend3.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
 
 namespace votingBackend3.Controllers
 {
@@ -16,11 +13,18 @@ namespace votingBackend3.Controllers
     {
 
         private readonly AdminService _adminService;
+        private readonly BlockchainService _blockchainService;
+        private readonly IConfiguration _configuration;
+        private readonly int NODECOUNT = 0;
 
 
-        public AdminController(AdminService adminService)
+        public AdminController(AdminService adminService, BlockchainService blockchainService, IConfiguration configuration)
         {
             _adminService = adminService;
+            _blockchainService = blockchainService;
+            _configuration = configuration;
+            NODECOUNT = _configuration.GetValue<int>("NODECOUNT"!);
+
         }
 
 
@@ -184,6 +188,27 @@ namespace votingBackend3.Controllers
             }
 
         }
+
+
+
+
+        //check each node's blockchain and see if they are valid
+        [HttpGet]
+        [Route("isBlockchainValid")]
+        public async Task<IActionResult> isBlockchainValid()
+        {
+            var blockchain = await _blockchainService.IsBlockchainValid(NODECOUNT);
+
+            if (blockchain == null) return NotFound("No blockchain data found");
+
+            return Ok(new
+            {
+                message = "Blockchain data",
+                blockchain = blockchain
+            });
+
+        }
+
 
     }
 }

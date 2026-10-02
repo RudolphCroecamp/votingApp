@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Transactions;
-using votingBackend3.Data;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
 using votingBackend3.Services;
@@ -16,16 +12,19 @@ namespace votingBackend3.Controllers
     {
         private readonly VoteService _voteService;
         private readonly BlockchainService _blockchainService;
+        private readonly IConfiguration _configuration;
 
-        private readonly int NODECOUNT = 4;
+        private readonly int NODECOUNT = 0;
 
-        public BlockchainController(VoteService voteService, BlockchainService blockchainService)
+        public BlockchainController(VoteService voteService, BlockchainService blockchainService, IConfiguration configuration)
         {
             _voteService = voteService;
             _blockchainService = blockchainService;
+            _configuration = configuration;
+            NODECOUNT = _configuration.GetValue<int>("NODECOUNT"!);
         }
 
-
+        //verifies and adds the vote to te current node's blockchain
         [HttpPost]
         [Route("handle_vote_request")]
         public async Task<IActionResult> HandleVoteRequest(vote_request request)
@@ -42,7 +41,8 @@ namespace votingBackend3.Controllers
 
                 if (votingToken == null) throw new Exception("Invalid voting token");
 
-                //check if vote was submitted for this token
+                //check if vote was submitted for this token <- if no vote was subitted it means the user did not vot yet
+                //FIX we want to check if the user's vote is added to the database and if the token was used. Else we should throw an error that the user did not vote yet. If the user voted, we should add the vote to the blockchain
                 Vote vote = await _voteService.VerifyVote(request);
 
                 if (vote == null) throw new Exception("No vote was found for this token");
@@ -87,7 +87,7 @@ namespace votingBackend3.Controllers
 
         }
 
-
+        //check each node's blockchain and see if they are valid
         [HttpGet]
         [Route("isBlockchainValid")]
         public async Task<IActionResult> isBlockchainValid()
@@ -104,7 +104,7 @@ namespace votingBackend3.Controllers
 
         }
 
-
+        //check the individual node's blockchain and see if it is valid
         [HttpGet]
         [Route("IsNodeChainValid")]
         public async Task<IActionResult> IsNodeChainValid()
@@ -113,6 +113,7 @@ namespace votingBackend3.Controllers
             return Ok(IsNodeChainValid);
         }
 
+        //testing purposes only, not used in production
 
         //[HttpGet]
         //[Route("GetNodeChain_id/{nodeId}")]

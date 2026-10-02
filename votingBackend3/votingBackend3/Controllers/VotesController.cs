@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
+﻿using Microsoft.AspNetCore.Mvc;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
 using votingBackend3.Services;
@@ -15,13 +12,16 @@ namespace votingBackend3.Controllers
     {
         private readonly VoteService _voteService;
         private readonly BlockchainService _blockchainService;
+        private readonly IConfiguration _configuration;
 
-        private readonly int NODECOUNT = 4;
+        private readonly int NODECOUNT = 0;
 
-        public VotesController(VoteService voteService, BlockchainService blockchainService)
+        public VotesController(VoteService voteService, BlockchainService blockchainService, IConfiguration configuration)
         {
             _voteService = voteService;
             _blockchainService = blockchainService;
+            _configuration = configuration;
+            NODECOUNT = _configuration.GetValue<int>("NODECOUNT"!);
         }
 
         //FIX block the add to blockchain request if vote token was already used

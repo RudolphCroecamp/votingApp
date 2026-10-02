@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Services;
 
@@ -18,7 +17,7 @@ namespace votingBackend3.Controllers
 
 
 
-
+        //use users credentials to log them in
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] login_request request) {

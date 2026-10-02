@@ -1,12 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Net.Http.Headers;
-using System.Xml.Linq;
 using votingBackend3.Data;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
 
 
 namespace votingBackend3.Services
@@ -32,7 +27,6 @@ namespace votingBackend3.Services
                 if (hasBlocks) return;
 
                 //create genesis block
-                Console.WriteLine("========GENESIS BLOCK============");
                 Block genesisBlock = new Block(0, DateTime.UtcNow, "genesis block", "");
 
                 //add to database
@@ -101,7 +95,8 @@ namespace votingBackend3.Services
                 try
                 {
                     using HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"http://node{i}:8080/api/Blockchain/handle_vote_request", request);//node{i} represents the internal docker node
-                    //response.EnsureSuccessStatusCode();
+                    //FIX we should check if the node responded successfully on each broadcast
+                    //response.EnsureSuccessStatusCode();<- adding this breaks the code
                     string responseBody = await response.Content.ReadAsStringAsync();
 
                     transaction_response.messages.Add(responseBody);
@@ -117,7 +112,7 @@ namespace votingBackend3.Services
             return transaction_response;
         }
 
-
+        //makes a request toall the nodes to check if their chains are valid
         public async Task<transaction_response> IsBlockchainValid(int numNodes)
         {
             var transactionResponse = new transaction_response
@@ -157,7 +152,9 @@ namespace votingBackend3.Services
 
             return transactionResponse;
         }
-        
+
+        //testing purposes only, not used in production
+
         //public async Task<string> GetNodeChain_id(int node) {
         //    try
         //    {
@@ -188,23 +185,12 @@ namespace votingBackend3.Services
         //}
 
 
-
+        //checks the current node's blockchain and see if it is valid
         public async Task<bool> IsNodeChainValid()
         {
             var blockchain = await _blocksDbContext.blocks
                 .OrderBy(b => b.index)
                 .ToArrayAsync();
-
-            try {
-                Console.WriteLine(blockchain[1]);
-                Console.WriteLine(blockchain[2]);
-                Console.WriteLine(blockchain[3]);
-                Console.WriteLine(blockchain[4]);
-            }
-            catch{ 
-           
-            }
-
 
             for (int i = 0; i < blockchain.Length; i++)
             {
@@ -213,10 +199,7 @@ namespace votingBackend3.Services
                 // Recalculate the hash
                 var calculatedHash = current.CalculateHash();
 
-                Console.WriteLine("==============VERIFYING BLOCK===============");
                 var rawData = $"{current.index}-{current.timestamp.ToUniversalTime():O}-{current.Data}-{current.previousHash}";
-                Console.WriteLine($"hash: {current.hash}");
-                Console.WriteLine($"caclulated hash: {calculatedHash}");
 
                 if (current.hash != calculatedHash) return false;
 
