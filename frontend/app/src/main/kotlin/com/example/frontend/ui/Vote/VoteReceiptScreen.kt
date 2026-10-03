@@ -35,6 +35,7 @@ import com.example.frontend.ui.Components.IconLabel
 import com.example.frontend.ui.Components.QrCodeImage
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.ui.theme.Spacing
 
 @Composable
 fun VoteReceiptScreen(
@@ -45,7 +46,7 @@ fun VoteReceiptScreen(
     castAt: String = "2026-05-27 09:42",
     electionName: String = "2026 National Election",
     status: String = "Valid",
-    backgroundColor: Color = Color.White
+    backgroundColor: Color = Color(0xFFEEF1F6)
 ) {
     Scaffold(
         modifier = modifier,
@@ -57,8 +58,8 @@ fun VoteReceiptScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(15.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+                .padding(Spacing.screen),
+            verticalArrangement = Arrangement.spacedBy(Spacing.item),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ReceiptDetailsCard(
@@ -85,23 +86,23 @@ private fun ReceiptDetailsCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(Color(0xFFF7FAFD))
-            .border(width = 2.dp, color = Color(0xFFD9D9D9), shape = shape)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+            .background(Color.White)
+            .border(width = 1.dp, color = Color(0xFFE1E5EC), shape = shape)
+            .padding(Spacing.card),
+        verticalArrangement = Arrangement.spacedBy(Spacing.item),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         QrCodeImage(content = receiptCode)
         HeadingLabel(
             text = "Voting Receipt",
             modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
         HeadingLabel(
             text = receiptCode,
             modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.labelLarge,
             textAlign = TextAlign.Center
         )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -144,7 +145,7 @@ private fun ReceiptDetailRow(
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.item)
     ) {
         Icon(
             imageVector = icon,
@@ -160,7 +161,7 @@ private fun ReceiptDetailRow(
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold),
             color = valueColor
         )
     }

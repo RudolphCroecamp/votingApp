@@ -30,6 +30,7 @@ fun SimpleButton(
     modifier: Modifier = Modifier,
     variant: ButtonVariant = ButtonVariant.Primary,
     leadingIcon: ImageVector? = null,
+    trailingIcon: ImageVector? = null,
     enabled: Boolean = true
 ) {
     val content: @Composable RowScope.() -> Unit = {
@@ -42,6 +43,14 @@ fun SimpleButton(
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
         }
         Text(label)
+        if (trailingIcon != null) {
+            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+            Icon(
+                imageVector = trailingIcon,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize)
+            )
+        }
     }
 
     when (variant) {

@@ -20,6 +20,7 @@ private val LightColorScheme = lightColorScheme(
     primary = BrandNavy,
     secondary = BrandGreen,
     tertiary = Pink40,
+    surface = androidx.compose.ui.graphics.Color.White,
     surfaceVariant = SurfaceGrey
 )
 

@@ -1,6 +1,6 @@
 package com.example.frontend.ui.Components
 
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,6 +12,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.frontend.ui.theme.FrontendTheme
 
@@ -24,10 +25,18 @@ fun AppTopBar(
     backContentDescription: String = "Back",
     actions: @Composable RowScope.() -> Unit = {}
 ) {
-    TopAppBar(
-        title = { Text(title) },
+    androidx.compose.material3.Surface(
         modifier = modifier,
-        navigationIcon = {
+        color = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary
+    ) {
+        androidx.compose.foundation.layout.Row(
+            modifier = Modifier
+                .statusBarsPadding()
+                .fillMaxWidth()
+                .height(56.dp),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        ) {
             if (onBackClick != null) {
                 IconButton(onClick = onBackClick) {
                     Icon(
@@ -35,16 +44,17 @@ fun AppTopBar(
                         contentDescription = backContentDescription
                     )
                 }
+            } else {
+                androidx.compose.foundation.layout.Spacer(Modifier.width(20.dp))
             }
-        },
-        actions = actions,
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-        )
-    )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f)
+            )
+            actions()
+        }
+    }
 }
 
 @Preview(showBackground = true)

@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.ErrorBorder
 import com.example.frontend.ui.theme.ErrorContainer
@@ -75,8 +76,8 @@ fun StatusLabel(
             Text(
                 text = message,
                 modifier = Modifier.weight(1f, fill = false),
-                style = MaterialTheme.typography.bodyLarge,
-                color = type.contentColor
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, lineHeight = 18.sp),
+                color = if (type == StatusType.Warning) androidx.compose.ui.graphics.Color(0xFF5C4A1A) else type.contentColor
             )
         }
     }

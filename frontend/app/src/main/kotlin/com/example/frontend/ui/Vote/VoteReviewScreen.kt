@@ -3,6 +3,8 @@ package com.example.frontend.ui.Vote
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -16,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.data.Party
+import com.example.frontend.data.SampleParties
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.HeadingLabel
@@ -24,15 +28,17 @@ import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusLabel
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.R
+import com.example.frontend.ui.theme.Spacing
+import com.example.frontend.ui.theme.PageBackground
 
 @Composable
 fun VoteReviewScreen(
-    ballotTitle: String,
+    party: Party,
     onChangeSelection: () -> Unit,
     onConfirmVote: () -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color.White
+    ballotTitle: String = "National Assembly",
+    backgroundColor: Color = PageBackground
 ) {
     Scaffold(
         modifier = modifier,
@@ -43,13 +49,13 @@ fun VoteReviewScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(15.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+                .padding(Spacing.screen),
+            verticalArrangement = Arrangement.spacedBy(Spacing.item),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+                verticalArrangement = Arrangement.spacedBy(Spacing.tight)
             ) {
                 HeadingLabel(text = ballotTitle, modifier = Modifier.fillMaxWidth())
                 HeadingLabel(
@@ -60,9 +66,9 @@ fun VoteReviewScreen(
             }
 
             PartyCard(
-                title = "African National Congress",
-                slogan = "A better life for all",
-                logo = painterResource(R.drawable.party_logo_placeholder),
+                title = party.name,
+                slogan = party.slogan,
+                logo = painterResource(party.logo),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -70,6 +76,8 @@ fun VoteReviewScreen(
                 message = "Your vote cannot be changed after confirmation.",
                 type = StatusType.Warning
             )
+
+            Spacer(modifier = Modifier.height(Spacing.small))
 
             SimpleButton(
                 label = "Change Selection",
@@ -93,7 +101,7 @@ fun VoteReviewScreen(
 private fun VoteReviewScreenPreview() {
     FrontendTheme {
         VoteReviewScreen(
-            ballotTitle = "National Assembly",
+            party = SampleParties.first(),
             onChangeSelection = {},
             onConfirmVote = {}
         )

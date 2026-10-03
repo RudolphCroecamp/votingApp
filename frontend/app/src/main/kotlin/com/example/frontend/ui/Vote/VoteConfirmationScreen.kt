@@ -1,121 +1,118 @@
 package com.example.frontend.ui.Vote
 
-import android.R.id.message
-import android.icu.text.IDNA
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import com.example.frontend.R
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.Components.AppTopBar
+import com.example.frontend.ui.Components.ButtonVariant
+import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.HeadingLabel
 import com.example.frontend.ui.Components.IconLabel
-import com.example.frontend.ui.Components.ButtonVariant
+import com.example.frontend.ui.Components.ReceiptCodeBox
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.Components.SuccessCheckmarkBadge
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.ui.theme.Spacing
+import com.example.frontend.ui.theme.PageBackground
 
 @Composable
 fun VoteConfirmationScreen(
-    onChangeSelection: () -> Unit,
+    onDone: () -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color.White
+    receiptCode: String = "AB7F-92K4-6ZP1-3QX8",
+    topBarTitle: String = "Vote Confirmation",
+    onViewReceipt: () -> Unit = {},
+    backgroundColor: Color = PageBackground
 ) {
+    val clipboard = LocalClipboardManager.current
+
     Scaffold(
         modifier = modifier,
-        containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Review Your Vote", onBackClick = onChangeSelection) }
+        containerColor = backgroundColor
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(15.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+                .statusBarsPadding()
+                .padding(Spacing.screen),
+            verticalArrangement = Arrangement.spacedBy(Spacing.item),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.weight(1f))
+
             SuccessCheckmarkBadge()
+
+            Spacer(modifier = Modifier.height(Spacing.tight))
+
             HeadingLabel(
                 text = "Vote Recorded",
                 modifier = Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.titleLarge
+                textAlign = TextAlign.Center
             )
-            HeadingLabel(
-                text = "Your vote has been successfully recorded.",
+            DescriptionLabel(
+                text = "Your vote has been successfully\nrecorded.",
                 modifier = Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.titleMedium
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
             )
-            VotingReceiptBox()
-            IconLabel(
-                message = "Keep this receipt for verification. Your receipt does NOT reveal who you voted for.",
-                type = StatusType.Info,
-                icon = Icons.Default.Lock,
-                modifier = Modifier.fillMaxWidth()
+
+            Spacer(modifier = Modifier.height(Spacing.tight))
+
+            ReceiptCodeBox(
+                receiptCode = receiptCode,
+                onCopyClick = { clipboard.setText(AnnotatedString(receiptCode)) }
             )
+
+            androidx.compose.foundation.layout.Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                androidx.compose.material3.Icon(
+                    Icons.Default.Lock, null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(start = 4.dp).height(18.dp)
+                )
+                DescriptionLabel(
+                    text = "Keep this receipt for verification.\nYour receipt does NOT reveal\nwho you voted for.",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp, lineHeight = 18.sp)
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            androidx.compose.material3.TextButton(onClick = onViewReceipt) {
+                androidx.compose.material3.Text("View Receipt")
+            }
             SimpleButton(
                 label = "Done",
-                onClick = onChangeSelection,
+                onClick = onDone,
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary
             )
-
-        }
-    }
-
-}
-
-@Composable
-fun VotingReceiptBox(
-    receiptCode: String = "AB7F-92K4-6ZP1-3QX8"
-) {
-    val shape = RoundedCornerShape(12.dp)
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(Color(0xFFF7FAFD))
-            .border(width = 2.dp, color = Color(0xFFD9D9D9), shape = shape)
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                HeadingLabel(
-                    text = "Your voting receipt:",
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                HeadingLabel(
-                    text = receiptCode,
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
         }
     }
 }
@@ -123,9 +120,7 @@ fun VotingReceiptBox(
 @Preview(showBackground = true)
 @Composable
 private fun VoteConfirmationScreenPreview() {
-    FrontendTheme() {
-        VoteConfirmationScreen(
-            onChangeSelection = { },
-        )
+    FrontendTheme {
+        VoteConfirmationScreen(onDone = {})
     }
 }
