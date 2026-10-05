@@ -58,10 +58,110 @@ namespace votingBackend3.Controllers
 
         }
 
+        [HttpPost]
+        [Route("register")]
+        public async Task<IActionResult> Register([FromBody] register_request request)
+        {
+            try
+            {
+                var success = await _authService.Register(request);
 
+                if (!success)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Registration failed",
+                        status = false
+                    });
+                }
 
+                return Ok(new
+                {
+                    message = "Registration success",
+                    status = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
 
+                return BadRequest(new
+                {
+                    message = $"Registration Error: {ex.Message}",
+                    status = false
+                });
+            }
+        }
 
+        [HttpPost]
+        [Route("validate")]
+        public async Task<IActionResult> ValidateToken([FromBody] token_request request)
+        {
+            try
+            {
+                var isValid = await _authService.ValidateToken(request.token);
+
+                if (!isValid)
+                {
+                    return Unauthorized(new
+                    {
+                        message = "Token is invalid or expired",
+                        status = false
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "Token valid",
+                    status = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return BadRequest(new
+                {
+                    message = $"Validation Error: {ex.Message}",
+                    status = false
+                });
+            }
+        }
+
+        [HttpPost]
+        [Route("logout")]
+        public async Task<IActionResult> Logout([FromBody] logout_request request)
+        {
+            try
+            {
+                var success = await _authService.Logout(request.voter_id, request.token);
+
+                if (!success)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Logout failed",
+                        status = false
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "Logout success",
+                    status = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return BadRequest(new
+                {
+                    message = $"Logout Error: {ex.Message}",
+                    status = false
+                });
+            }
+        }
 
     }
 }
