@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
 using votingBackend3.Services;
@@ -16,15 +17,17 @@ namespace votingBackend3.Controllers
         private readonly BlockchainService _blockchainService;
         private readonly IConfiguration _configuration;
         private readonly int NODECOUNT = 0;
+        private readonly ApplicationDbContext _context;
 
 
-        public AdminController(AdminService adminService, BlockchainService blockchainService, IConfiguration configuration)
+
+        public AdminController(AdminService adminService, BlockchainService blockchainService, IConfiguration configuration, ApplicationDbContext context)
         {
             _adminService = adminService;
             _blockchainService = blockchainService;
             _configuration = configuration;
             NODECOUNT = _configuration.GetValue<int>("NODECOUNT"!);
-
+            _context = context;
         }
 
 
@@ -276,5 +279,84 @@ namespace votingBackend3.Controllers
 
 
         }
+        //Edit election
+        public async Task<IActionResult> EditElection(int id)
+        {
+            var election = await _context.Elections.FindAsync(int id);
+            if (election == null)
+            {
+                return NotFound()
+            }
+            return ViewResult(election);
+        }
+        //Post edited election
+        [HttpPost]
+        public async Task<IActionResult> EditElection(int id, new_election election)
+        {
+            if (id != election.ElectionId)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(election);
+                    await _context.SaveChangesAsync();
+                    TempData["Success"] = "Election updated successfully.";
+
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if(!_context.Elections.Any(e => e.ElectionId == id))
+                    {
+                        return NotFound();
+                    }
+
+                    throw;
+                }
+                //ElectionList is a placeholder
+                return RedirectToAction("ElectionList");
+            }
+            return ViewResult(election);
+        }
+        //Edit election Party
+        public async Task<IActionResult> EditParty(int id)
+        {
+            var party = await _context.Party.FindAsync(id);
+            if (party == null)
+            {
+                return NotFound();
+            }
+            returnView(party);
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditParty(int id, new_party party)
+        {
+            //Check what the party ID fields name is
+            if (id != party.PartyID)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid) 
+            {
+                try
+                {
+                    _context.Update(party);
+                    await _context.SaveChangesAsync();
+                    TempData["Success"] = "Party updated successfully.";
+                }
+                catch (DbUpdateConcurrencyException) 
+                {
+                    if (!_context.Party.Any(p =>p.PartyId == id))
+                    {
+                        return NotFound();
+                    }
+
+                    throw;
+                }
+                return RedirectToAction("PartyList");
+            }
+            return View(party);
     }
 }
