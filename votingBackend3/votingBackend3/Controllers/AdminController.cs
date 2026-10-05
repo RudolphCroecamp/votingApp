@@ -280,22 +280,25 @@ namespace votingBackend3.Controllers
 
         }
         //Edit election
-        public async Task<IActionResult> EditElection(int id)
+        [HttpGet]
+        [Route("get_elections/{election_id}")]
+        public async Task<IActionResult> EditElection(Guid election_id)
         {
-            var election = await _context.Elections.FindAsync(int id);
+            var election = await _context.Elections.FindAsync( election_id);
             if (election == null)
             {
-                return NotFound()
+                return NotFound();
             }
-            return ViewResult(election);
+            return Ok(election);
         }
         //Post edited election
         [HttpPost]
-        public async Task<IActionResult> EditElection(int id, new_election election)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditElection(Guid election_id, Election election)
         {
-            if (id != election.ElectionId)
+            if (election_id != election.election_id)
             {
-                return NotFound();
+                return BadRequest();
             }
             if (ModelState.IsValid)
             {
@@ -308,35 +311,38 @@ namespace votingBackend3.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if(!_context.Elections.Any(e => e.ElectionId == id))
+                    if(!_context.Elections.Any(e => e.election_id == election_id))
                     {
-                        return NotFound();
+                        return BadRequest();
                     }
 
                     throw;
                 }
-                //ElectionList is a placeholder
+                
                 return RedirectToAction("ElectionList");
             }
-            return ViewResult(election);
+            return BadRequest(ModelState);
         }
         //Edit election Party
-        public async Task<IActionResult> EditParty(int id)
+        [HttpGet]
+        [Route("get_parties/{party_id}")]
+        public async Task<IActionResult> EditParty(Guid party_id)
         {
-            var party = await _context.Party.FindAsync(id);
+            var party = await _context.Party.FindAsync(party_id);
             if (party == null)
             {
                 return NotFound();
             }
-            returnView(party);
+            return Ok(party);
         }
         [HttpPost]
-        public async Task<IActionResult> EditParty(int id, new_party party)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditParty(Guid party_id, Party party)
         {
-            //Check what the party ID fields name is
-            if (id != party.PartyID)
+         
+            if (party_id != party.party_id)
             {
-                return NotFound();
+                return BadRequest();
             }
             if (ModelState.IsValid) 
             {
@@ -348,9 +354,9 @@ namespace votingBackend3.Controllers
                 }
                 catch (DbUpdateConcurrencyException) 
                 {
-                    if (!_context.Party.Any(p =>p.PartyId == id))
+                    if (!_context.Party.Any(p =>p.party_id == party_id))
                     {
-                        return NotFound();
+                        return BadRequest();
                     }
 
                     throw;
