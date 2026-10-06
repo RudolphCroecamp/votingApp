@@ -27,7 +27,6 @@ import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Spacing
 import com.example.frontend.ui.theme.MutedText
 
-/** Square shortcut tile used in the home screen grid. */
 @Composable
 fun InfoTile(
     icon: ImageVector,

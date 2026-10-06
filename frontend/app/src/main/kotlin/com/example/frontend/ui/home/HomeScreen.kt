@@ -14,10 +14,21 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.HowToVote
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,8 +56,11 @@ fun HomeScreen(
     onPrivacy: () -> Unit = {},
     onHelp: () -> Unit = {},
     onSettings: () -> Unit = {},
+    onVerifyVote: () -> Unit = {},
+    onLogout: () -> Unit = {},
     backgroundColor: Color = PageBackground
 ) {
+    var menuOpen by remember { mutableStateOf(false) }
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
@@ -54,7 +68,41 @@ fun HomeScreen(
             WelcomeHeader(
                 title = "Welcome, $voterName",
                 status = "You are verified and eligible to vote.",
-                onMenuClick = onMenuClick
+                onMenuClick = {
+                    menuOpen = true
+                    onMenuClick()
+                },
+                menuContent = {
+                    DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                        DropdownMenuItem(
+                            text = { Text("Settings") },
+                            onClick = {
+                                menuOpen = false
+                                onSettings()
+                            },
+                            leadingIcon = { Icon(Icons.Default.Settings, contentDescription = null) }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Verify Your Vote") },
+                            onClick = {
+                                menuOpen = false
+                                onVerifyVote()
+                            },
+                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
+                        )
+                        HorizontalDivider()
+                        DropdownMenuItem(
+                            text = { Text("Log Out") },
+                            onClick = {
+                                menuOpen = false
+                                onLogout()
+                            },
+                            leadingIcon = {
+                                Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null)
+                            }
+                        )
+                    }
+                }
             )
         },
         bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
@@ -106,11 +154,11 @@ fun HomeScreen(
                     onClick = onHelp
                 )
                 InfoTile(
-                    icon = Icons.Default.Settings,
-                    title = "Settings",
-                    description = "Manage your account and preferences.",
+                    icon = Icons.Default.Search,
+                    title = "Verify\nYour Vote",
+                    description = "Check your receipt code to confirm your vote was recorded.",
                     modifier = Modifier.weight(1f).fillMaxHeight(),
-                    onClick = onSettings
+                    onClick = onVerifyVote
                 )
             }
         }

@@ -19,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,14 +36,16 @@ fun AppTextField(
     modifier: Modifier = Modifier,
     leadingIcon: ImageVector? = null,
     isPassword: Boolean = false,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    maxLength: Int = Int.MAX_VALUE,
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
     var revealed by remember { mutableStateOf(false) }
     val hideText = isPassword && !revealed
 
     OutlinedTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = { if (it.length <= maxLength) onValueChange(it) },
         modifier = modifier,
         enabled = enabled,
         singleLine = true,
@@ -68,6 +72,7 @@ fun AppTextField(
             }
         },
         visualTransformation = if (hideText) PasswordVisualTransformation() else VisualTransformation.None,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = CardBorder,

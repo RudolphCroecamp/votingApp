@@ -13,8 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.CenterFocusStrong
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,8 +33,9 @@ import com.example.frontend.ui.Components.BrandHeader
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.HeadingLabel
+import com.example.frontend.ui.Components.IconLabel
 import com.example.frontend.ui.Components.SimpleButton
-import com.example.frontend.ui.theme.CardBorder
+import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Spacing
 import com.example.frontend.ui.theme.MutedText
@@ -44,14 +43,12 @@ import com.example.frontend.ui.theme.PageBackground
 
 @Composable
 fun LoginScreen(
-    onSignIn: (idNumber: String, password: String) -> Unit,
-    onFaceVerification: () -> Unit,
+    onFaceVerification: (idNumber: String) -> Unit,
     onRegister: () -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = PageBackground
 ) {
     var idNumber by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
 
     Scaffold(
         modifier = modifier,
@@ -80,7 +77,7 @@ fun LoginScreen(
             ) {
                 HeadingLabel(text = "Sign In", modifier = Modifier.fillMaxWidth())
                 DescriptionLabel(
-                    text = "Use your South African ID or passport to access your account.",
+                    text = "Enter your South African ID or passport number, then verify your face to sign in.",
                     modifier = Modifier.fillMaxWidth(),
                     color = MutedText
                 )
@@ -91,41 +88,23 @@ fun LoginScreen(
                 onValueChange = { idNumber = it },
                 placeholder = "ID Number / Passport Number",
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = Icons.Default.AccountBox
+                leadingIcon = Icons.Default.AccountBox,
+                maxLength = ID_NUMBER_MAX_LENGTH
             )
-
-            AppTextField(
-                value = password,
-                onValueChange = { password = it },
-                placeholder = "Password",
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = Icons.Default.Lock,
-                isPassword = true
-            )
-
-            SimpleButton(
-                label = "Sign In",
-                onClick = { onSignIn(idNumber, password) },
-                modifier = Modifier.fillMaxWidth(),
-                variant = ButtonVariant.Tertiary
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.tight),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Spacing.item)
-            ) {
-                HorizontalDivider(modifier = Modifier.weight(1f), color = CardBorder)
-                DescriptionLabel(text = "or", color = MutedText)
-                HorizontalDivider(modifier = Modifier.weight(1f), color = CardBorder)
-            }
 
             SimpleButton(
                 label = "Sign in with Face Verification",
-                onClick = onFaceVerification,
+                onClick = { onFaceVerification(idNumber) },
                 modifier = Modifier.fillMaxWidth(),
-                variant = ButtonVariant.Secondary,
-                leadingIcon = Icons.Default.CenterFocusStrong
+                variant = ButtonVariant.Tertiary,
+                leadingIcon = Icons.Default.CenterFocusStrong,
+                enabled = idNumber.isNotBlank()
+            )
+
+            IconLabel(
+                message = "Your face is matched against your registration scan. No password is needed.",
+                type = StatusType.Info,
+                modifier = Modifier.fillMaxWidth()
             )
 
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -151,7 +130,6 @@ fun LoginScreen(
 private fun LoginScreenPreview() {
     FrontendTheme {
         LoginScreen(
-            onSignIn = { _, _ -> },
             onFaceVerification = {},
             onRegister = {}
         )

@@ -1,6 +1,7 @@
 package com.example.frontend.ui.Components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,13 +25,13 @@ import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Spacing
 import com.example.frontend.ui.theme.SuccessBorder
 
-/** Navy home header: greeting, menu action and the voter's verification status. */
 @Composable
 fun WelcomeHeader(
     title: String,
     status: String,
     modifier: Modifier = Modifier,
-    onMenuClick: (() -> Unit)? = null
+    onMenuClick: (() -> Unit)? = null,
+    menuContent: @Composable () -> Unit = {}
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -57,12 +58,15 @@ fun WelcomeHeader(
                     style = MaterialTheme.typography.titleLarge
                 )
                 if (onMenuClick != null) {
-                    IconButton(onClick = onMenuClick) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu",
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
+                    Box {
+                        IconButton(onClick = onMenuClick) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Menu",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        menuContent()
                     }
                 }
             }
