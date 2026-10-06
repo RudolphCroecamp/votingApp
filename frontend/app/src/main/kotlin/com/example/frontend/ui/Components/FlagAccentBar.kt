@@ -20,7 +20,6 @@ import com.example.frontend.ui.theme.FrontendTheme
 
 private val FlagColors = listOf(FlagBlack, FlagGold, FlagGreen, FlagWhite, FlagRed, FlagBlue)
 
-/** Thin national-flag stripe used as a decorative accent on the welcome screen. */
 @Composable
 fun FlagAccentBar(
     modifier: Modifier = Modifier,

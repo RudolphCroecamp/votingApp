@@ -24,7 +24,6 @@ import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Spacing
 import com.example.frontend.ui.theme.MutedText
 
-/** Boxed receipt code with an optional copy action. */
 @Composable
 fun ReceiptCodeBox(
     receiptCode: String,

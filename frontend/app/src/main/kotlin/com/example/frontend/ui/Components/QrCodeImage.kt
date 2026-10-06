@@ -19,7 +19,6 @@ import kotlin.random.Random
 private const val QR_MODULES = 25
 private const val FINDER_SIZE = 7
 
-// Visual placeholder only: the pattern is derived from content but is not a scannable QR code.
 @Composable
 fun QrCodeImage(
     content: String,

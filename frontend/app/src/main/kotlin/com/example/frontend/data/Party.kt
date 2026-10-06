@@ -3,7 +3,6 @@ package com.example.frontend.data
 import androidx.annotation.DrawableRes
 import com.example.frontend.R
 
-/** A party that can appear on a ballot. */
 data class Party(
     val id: String,
     val name: String,
@@ -11,7 +10,6 @@ data class Party(
     @DrawableRes val logo: Int
 )
 
-/** Placeholder ballot used until the backend supplies the real party list. */
 val SampleParties = listOf(
     Party("anc", "African National Congress (ANC)", "A better life for all", R.drawable.party_anc),
     Party("da", "Democratic Alliance (DA)", "One South Africa. For All.", R.drawable.party_da),

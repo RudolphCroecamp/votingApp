@@ -29,6 +29,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.ui.Components.AppBottomBar
+import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.HeadingLabel
 import com.example.frontend.ui.Components.IconLabel
@@ -46,12 +48,15 @@ fun VoteReceiptScreen(
     castAt: String = "2026-05-27 09:42",
     electionName: String = "2026 National Election",
     status: String = "Valid",
+    selectedTab: BottomTab = BottomTab.Vote,
+    onTabSelected: (BottomTab) -> Unit = {},
     backgroundColor: Color = Color(0xFFEEF1F6)
 ) {
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Voting Receipt", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = "Voting Receipt", onBackClick = onBackClick) },
+        bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
