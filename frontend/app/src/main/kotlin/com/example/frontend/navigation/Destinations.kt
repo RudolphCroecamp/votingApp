@@ -1,6 +1,7 @@
 package com.example.frontend.navigation
 
 object Destinations {
+    const val SPLASH = "splash"
     const val WELCOME = "welcome"
     const val LOGIN = "login"
     const val REGISTER = "register"

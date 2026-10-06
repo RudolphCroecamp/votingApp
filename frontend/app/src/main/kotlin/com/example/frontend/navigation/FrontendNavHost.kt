@@ -24,6 +24,7 @@ import com.example.frontend.ui.screens.Registration.screens.RegisterDoneScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterFaceScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterIdentityScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterScreen
+import com.example.frontend.ui.screens.Splash.SplashScreen
 import com.example.frontend.ui.screens.Vote.VoteConfirmationScreen
 import com.example.frontend.ui.screens.Vote.VotePartySelectionScreen
 import com.example.frontend.ui.screens.Vote.VoteReceiptScreen
@@ -82,9 +83,21 @@ fun FrontendNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = Destinations.WELCOME,
+        startDestination = Destinations.SPLASH,
         modifier = modifier
     ) {
+        composable(Destinations.SPLASH) {
+            SplashScreen(
+                onFinished = {
+                    navController.navigate(Destinations.WELCOME) {
+                        // Drop the splash so Back never returns to it.
+                        popUpTo(Destinations.SPLASH) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
         composable(Destinations.WELCOME) {
             WelcomeScreen(onGetStarted = { navController.navigate(Destinations.LOGIN) })
         }

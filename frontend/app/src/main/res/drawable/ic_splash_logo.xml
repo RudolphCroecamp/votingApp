@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  System splash icon. The platform masks the icon into a circle and only the inner
+  two-thirds stays visible, so the brand logo is inset to survive that crop.
+-->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_ballot_logo"
+    android:inset="22%" />
