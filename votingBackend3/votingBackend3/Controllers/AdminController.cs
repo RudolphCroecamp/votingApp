@@ -285,9 +285,9 @@ namespace votingBackend3.Controllers
             var election = await _context.Elections.FindAsync(int id);
             if (election == null)
             {
-                return NotFound()
+                return NotFound();
             }
-            return ViewResult(election);
+            return Ok(election);
         }
         //Post edited election
         [HttpPost]

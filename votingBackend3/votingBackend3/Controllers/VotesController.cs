@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography.X509Certificates;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
 using votingBackend3.Services;
@@ -91,8 +92,18 @@ namespace votingBackend3.Controllers
                     message = $"Error: {ex.Message}"
                 });
             }
-
             
+        }
+
+
+        [HttpGet]
+        [Route("verify_vote/{vote_id}")]
+        public async Task<IActionResult> VerifyVote_Receipt(Guid vote_id) { 
+            var vote_receipt = await _voteService.VerifyVote_Receipt(vote_id);
+
+            if (vote_receipt == null) return NotFound(new { message = "Vote receipt not found" });
+
+            return Ok(vote_receipt);
         }
 
     }

@@ -217,6 +217,32 @@ namespace votingBackend3.Services
 
 
 
+
+        public async Task<vote_receipt> VerifyVote_Receipt(Guid vote_id) {
+            var vote_data = await _votingDbContext.vote
+                .Include(v=> v.Election)
+                .FirstOrDefaultAsync(v => v.vote_id == vote_id);
+
+            if (vote_data == null) throw new Exception("Vote not found");
+
+
+            //create a vote receipt
+            vote_receipt vote_receipt = new vote_receipt
+            {
+                election_id = vote_data.election_id,
+                election_name = vote_data.Election.election_name,
+                election_type = vote_data.election_type,
+                hasVoted = true,
+                voted_at = vote_data.created_at
+            };
+
+            return vote_receipt;
+
+        }
+
+
+
+
     }
 }
 

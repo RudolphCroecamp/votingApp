@@ -14,6 +14,7 @@ namespace votingBackend3.Models.Entities
         public Party Party { get; set; } = null!;
         public string election_type { get; set; } = string.Empty;
         public DateTime created_at { get; set; } = DateTime.UtcNow;
+
     }
 }
 
