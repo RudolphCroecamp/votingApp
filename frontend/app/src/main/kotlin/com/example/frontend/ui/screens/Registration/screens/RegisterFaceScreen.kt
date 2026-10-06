@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Auth
+package com.example.frontend.ui.screens.Registration.screens
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -27,9 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,20 +42,26 @@ import com.example.frontend.ui.Components.IconLabel
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.Components.SuccessCheckmarkBadge
+import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
+import com.example.frontend.ui.screens.Registration.RegistrationUiState
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
 import com.example.frontend.ui.theme.SuccessBorder
+/** Simulated capture path until CameraX is wired up. */
+private const val CAPTURED_FACE_PATH = "path/to/captured_face.jpg"
 
 @Composable
 fun RegisterFaceScreen(
+    uiState: RegistrationUiState,
+    onEvent: (RegistrationUiEvent) -> Unit,
     onBackClick: () -> Unit,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = PageBackground
 ) {
-    var captured by remember { mutableStateOf(false) }
+    val captured = uiState.capturedFaceImagePath != null
 
     Scaffold(
         modifier = modifier,
@@ -75,7 +78,7 @@ fun RegisterFaceScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RegisterStepHeader(
-                step = 2,
+                step = 3,
                 heading = "Scan Your Face",
                 description = "Hold your phone at eye level and keep your face inside the frame."
             )
@@ -96,22 +99,27 @@ fun RegisterFaceScreen(
 
             if (captured) {
                 SimpleButton(
-                    label = "Continue",
-                    onClick = onContinue,
+                    label = if (uiState.isLoading) "Verifying…" else "Verify & Continue",
+                    onClick = {
+                        onEvent(RegistrationUiEvent.OnVerifyFaceSubmitted)
+                        onContinue()
+                    },
                     modifier = Modifier.fillMaxWidth(),
-                    variant = ButtonVariant.Tertiary
+                    variant = ButtonVariant.Tertiary,
+                    enabled = uiState.canSubmitFace
                 )
                 SimpleButton(
                     label = "Retake Scan",
-                    onClick = { captured = false },
+                    onClick = { onEvent(RegistrationUiEvent.OnFaceRetake) },
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Secondary,
-                    leadingIcon = Icons.Default.Refresh
+                    leadingIcon = Icons.Default.Refresh,
+                    enabled = !uiState.isLoading
                 )
             } else {
                 SimpleButton(
                     label = "Capture Face",
-                    onClick = { captured = true },
+                    onClick = { onEvent(RegistrationUiEvent.OnFaceCaptured(CAPTURED_FACE_PATH)) },
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Tertiary,
                     leadingIcon = Icons.Default.CenterFocusStrong
@@ -178,8 +186,26 @@ private fun FaceCaptureFrame(captured: Boolean, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-private fun RegisterFaceScreenPreview() {
+private fun RegisterFaceScreenEmptyPreview() {
     FrontendTheme {
-        RegisterFaceScreen(onBackClick = {}, onContinue = {})
+        RegisterFaceScreen(
+            uiState = RegistrationUiState(),
+            onEvent = {},
+            onBackClick = {},
+            onContinue = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun RegisterFaceScreenCapturedPreview() {
+    FrontendTheme {
+        RegisterFaceScreen(
+            uiState = RegistrationUiState(capturedFaceImagePath = CAPTURED_FACE_PATH),
+            onEvent = {},
+            onBackClick = {},
+            onContinue = {}
+        )
     }
 }

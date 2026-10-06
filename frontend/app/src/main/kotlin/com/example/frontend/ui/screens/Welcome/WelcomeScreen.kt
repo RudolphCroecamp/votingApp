@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Welcome
+package com.example.frontend.ui.screens.Welcome
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode

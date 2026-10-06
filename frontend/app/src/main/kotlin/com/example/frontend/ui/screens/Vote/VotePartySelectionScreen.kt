@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Vote
+package com.example.frontend.ui.screens.Vote
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -44,6 +44,7 @@ kotlin {
 
 dependencies {
     implementation(libs.activity.ktx)
+    implementation(libs.core.splashscreen)
     implementation(libs.androidx.compose.material3)
     implementation(libs.lifecycle.runtime.ktx)
 

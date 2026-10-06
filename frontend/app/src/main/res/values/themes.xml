@@ -5,4 +5,14 @@
       This platform theme only covers the window before Compose draws.
     -->
     <style name="Theme.Frontend" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!--
+      Cold-start theme: replaces the stock Android icon with the ballot logo, then
+      hands over to Theme.Frontend once MainActivity calls installSplashScreen().
+    -->
+    <style name="Theme.Frontend.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.Frontend</item>
+    </style>
 </resources>
