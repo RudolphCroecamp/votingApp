@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Registration.components
+package com.example.frontend.ui.screens.Registration.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +18,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.frontend.ui.Registration.REGISTRATION_STEPS
+import com.example.frontend.ui.screens.Registration.REGISTRATION_STEPS
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText

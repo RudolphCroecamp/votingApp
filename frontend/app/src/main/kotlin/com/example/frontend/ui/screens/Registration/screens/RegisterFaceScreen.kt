@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Registration.screens
+package com.example.frontend.ui.screens.Registration.screens
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -42,8 +42,8 @@ import com.example.frontend.ui.Components.IconLabel
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.Components.SuccessCheckmarkBadge
-import com.example.frontend.ui.Registration.RegistrationUiEvent
-import com.example.frontend.ui.Registration.RegistrationUiState
+import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
+import com.example.frontend.ui.screens.Registration.RegistrationUiState
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.PageBackground

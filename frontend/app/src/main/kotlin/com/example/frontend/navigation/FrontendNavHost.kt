@@ -15,22 +15,22 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
-import com.example.frontend.ui.Auth.LoginScreen
+import com.example.frontend.ui.screens.Auth.LoginScreen
 import com.example.frontend.ui.Components.BottomTab
-import com.example.frontend.ui.Info.InfoScreen
-import com.example.frontend.ui.Registration.RegistrationUiEvent
-import com.example.frontend.ui.Registration.RegistrationViewModel
-import com.example.frontend.ui.Registration.screens.RegisterDoneScreen
-import com.example.frontend.ui.Registration.screens.RegisterFaceScreen
-import com.example.frontend.ui.Registration.screens.RegisterIdentityScreen
-import com.example.frontend.ui.Registration.screens.RegisterScreen
-import com.example.frontend.ui.Vote.VoteConfirmationScreen
-import com.example.frontend.ui.Vote.VotePartySelectionScreen
-import com.example.frontend.ui.Vote.VoteReceiptScreen
-import com.example.frontend.ui.Vote.VoteReviewScreen
-import com.example.frontend.ui.Vote.VoteVerifyReceiptScreen
-import com.example.frontend.ui.Welcome.WelcomeScreen
-import com.example.frontend.ui.home.HomeScreen
+import com.example.frontend.ui.screens.Info.InfoScreen
+import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
+import com.example.frontend.ui.screens.Registration.RegistrationViewModel
+import com.example.frontend.ui.screens.Registration.screens.RegisterDoneScreen
+import com.example.frontend.ui.screens.Registration.screens.RegisterFaceScreen
+import com.example.frontend.ui.screens.Registration.screens.RegisterIdentityScreen
+import com.example.frontend.ui.screens.Registration.screens.RegisterScreen
+import com.example.frontend.ui.screens.Vote.VoteConfirmationScreen
+import com.example.frontend.ui.screens.Vote.VotePartySelectionScreen
+import com.example.frontend.ui.screens.Vote.VoteReceiptScreen
+import com.example.frontend.ui.screens.Vote.VoteReviewScreen
+import com.example.frontend.ui.screens.Vote.VoteVerifyReceiptScreen
+import com.example.frontend.ui.screens.Welcome.WelcomeScreen
+import com.example.frontend.ui.screens.home.HomeScreen
 
 private fun routeFor(tab: BottomTab): String = when (tab) {
     BottomTab.Home -> Destinations.HOME

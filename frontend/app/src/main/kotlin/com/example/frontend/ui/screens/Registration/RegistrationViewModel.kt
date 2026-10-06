@@ -1,8 +1,8 @@
-package com.example.frontend.ui.Registration
+package com.example.frontend.ui.screens.Registration
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.frontend.ui.Auth.ID_NUMBER_MAX_LENGTH
+import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Registration
+package com.example.frontend.ui.screens.Registration
 
 const val REGISTRATION_STEPS = 4
 

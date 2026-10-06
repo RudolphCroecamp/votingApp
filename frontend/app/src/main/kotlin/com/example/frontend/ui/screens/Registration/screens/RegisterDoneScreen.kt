@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Registration.screens
+package com.example.frontend.ui.screens.Registration.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

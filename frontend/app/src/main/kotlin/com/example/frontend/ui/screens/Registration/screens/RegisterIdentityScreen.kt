@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Registration.screens
+package com.example.frontend.ui.screens.Registration.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -30,8 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.frontend.ui.Auth.ID_NUMBER_MAX_LENGTH
-import com.example.frontend.ui.Auth.PASSPORT_NUMBER_MAX_LENGTH
+import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
+import com.example.frontend.ui.screens.Auth.PASSPORT_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.Components.AppTextField
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
@@ -40,9 +40,9 @@ import com.example.frontend.ui.Components.IconLabel
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.Components.SuccessCheckmarkBadge
-import com.example.frontend.ui.Registration.IdentityDocumentType
-import com.example.frontend.ui.Registration.RegistrationUiEvent
-import com.example.frontend.ui.Registration.RegistrationUiState
+import com.example.frontend.ui.screens.Registration.IdentityDocumentType
+import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
+import com.example.frontend.ui.screens.Registration.RegistrationUiState
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
