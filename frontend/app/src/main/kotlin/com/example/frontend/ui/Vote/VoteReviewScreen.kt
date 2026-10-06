@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
+import com.example.frontend.ui.Components.AppBottomBar
+import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.HeadingLabel
@@ -38,12 +40,15 @@ fun VoteReviewScreen(
     onConfirmVote: () -> Unit,
     modifier: Modifier = Modifier,
     ballotTitle: String = "National Assembly",
+    selectedTab: BottomTab = BottomTab.Vote,
+    onTabSelected: (BottomTab) -> Unit = {},
     backgroundColor: Color = PageBackground
 ) {
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Review Your Vote", onBackClick = onChangeSelection) }
+        topBar = { AppTopBar(title = "Review Your Vote", onBackClick = onChangeSelection) },
+        bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

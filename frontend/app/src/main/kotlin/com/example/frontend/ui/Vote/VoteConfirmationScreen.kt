@@ -22,6 +22,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.ui.Components.AppBottomBar
+import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
@@ -42,13 +44,16 @@ fun VoteConfirmationScreen(
     receiptCode: String = "AB7F-92K4-6ZP1-3QX8",
     topBarTitle: String = "Vote Confirmation",
     onViewReceipt: () -> Unit = {},
+    selectedTab: BottomTab = BottomTab.Vote,
+    onTabSelected: (BottomTab) -> Unit = {},
     backgroundColor: Color = PageBackground
 ) {
     val clipboard = LocalClipboardManager.current
 
     Scaffold(
         modifier = modifier,
-        containerColor = backgroundColor
+        containerColor = backgroundColor,
+        bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

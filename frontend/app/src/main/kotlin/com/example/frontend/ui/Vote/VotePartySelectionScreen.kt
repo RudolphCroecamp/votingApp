@@ -23,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
+import com.example.frontend.ui.Components.AppBottomBar
+import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
@@ -41,6 +43,8 @@ fun VotePartySelectionScreen(
     modifier: Modifier = Modifier,
     ballotTitle: String = "National Assembly",
     parties: List<Party> = SampleParties,
+    selectedTab: BottomTab = BottomTab.Vote,
+    onTabSelected: (BottomTab) -> Unit = {},
     backgroundColor: Color = PageBackground
 ) {
     var selectedId by remember { mutableStateOf<String?>(null) }
@@ -49,7 +53,8 @@ fun VotePartySelectionScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "National Election", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = "National Election", onBackClick = onBackClick) },
+        bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.theme.FrontendTheme
 import androidx.compose.material.icons.filled.Info
 
-
 @Composable
 fun IconLabel(
     message: String,
@@ -55,7 +54,6 @@ fun IconLabel(
         }
     }
 }
-
 
 @Preview(showBackground = true, widthDp = 360)
 @Composable

@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.ui.Components.AppBottomBar
+import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.InfoTile
 import com.example.frontend.ui.theme.FrontendTheme
@@ -30,12 +32,15 @@ fun InfoScreen(
     onVotingInformation: () -> Unit = {},
     onPrivacy: () -> Unit = {},
     onHelp: () -> Unit = {},
+    selectedTab: BottomTab = BottomTab.Info,
+    onTabSelected: (BottomTab) -> Unit = {},
     backgroundColor: Color = PageBackground
 ) {
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Information", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = "Information", onBackClick = onBackClick) },
+        bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

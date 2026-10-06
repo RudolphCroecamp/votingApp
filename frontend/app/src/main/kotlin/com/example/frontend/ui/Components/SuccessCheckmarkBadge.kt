@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.SuccessBorder
 
-/** Filled circle with a drawn check mark, so it stays sharp at any size. */
 @Composable
 fun SuccessCheckmarkBadge(
     modifier: Modifier = Modifier,

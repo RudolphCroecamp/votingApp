@@ -28,7 +28,6 @@ import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Spacing
 import com.example.frontend.ui.theme.MutedText
 
-/** Selectable ballot row: radio, party logo, name and slogan. */
 @Composable
 fun PartyOption(
     party: Party,
