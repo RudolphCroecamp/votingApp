@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Auth
+package com.example.frontend.ui.Registration.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.ui.Auth.ID_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.Components.AppTextField
 import com.example.frontend.ui.Components.BrandHeader
 import com.example.frontend.ui.Components.ButtonVariant
@@ -44,7 +45,6 @@ import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
-
 @Composable
 fun RegisterScreen(
     uiState: RegistrationUiState,

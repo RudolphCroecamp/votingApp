@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Auth
+package com.example.frontend.ui.Registration.screens
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -49,7 +49,6 @@ import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
 import com.example.frontend.ui.theme.SuccessBorder
-
 /** Simulated capture path until CameraX is wired up. */
 private const val CAPTURED_FACE_PATH = "path/to/captured_face.jpg"
 

@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Auth
+package com.example.frontend.ui.Registration.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,7 +37,6 @@ import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
-
 @Composable
 fun RegisterDoneScreen(
     onContinue: () -> Unit,

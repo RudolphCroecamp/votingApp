@@ -1,4 +1,4 @@
-package com.example.frontend.ui.Auth
+package com.example.frontend.ui.Registration.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -30,6 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.ui.Auth.ID_NUMBER_MAX_LENGTH
+import com.example.frontend.ui.Auth.PASSPORT_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.Components.AppTextField
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
@@ -46,7 +48,6 @@ import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
-
 /** Simulated capture path until CameraX is wired up. */
 private const val CAPTURED_DOCUMENT_PATH = "path/to/captured_document.jpg"
 
