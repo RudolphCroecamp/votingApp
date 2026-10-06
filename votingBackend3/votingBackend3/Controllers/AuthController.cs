@@ -20,7 +20,7 @@ namespace votingBackend3.Controllers
         //use users credentials to log them in
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] login_request request) {
+        public async Task<IActionResult> Login([FromBody] login_requestDto request) {
 
             try
             {

@@ -38,13 +38,13 @@ namespace votingBackend3.Services
         }
 
 
-        public async Task<Election> CreateElection(new_election request)
+        public async Task<Election> CreateElection(new_electionDto request)
         {
             try
             {
                 if (request == null) throw new Exception("Invalid request data");
 
-                if (request.GetType() != typeof(new_election)) throw new Exception("Invalid request format");
+                if (request.GetType() != typeof(new_electionDto)) throw new Exception("Invalid request format");
 
                 Election new_election = new Election
                 {
@@ -70,13 +70,13 @@ namespace votingBackend3.Services
 
 
 
-        public async Task<Party> CreateParty(new_party request)
+        public async Task<Party> CreateParty(new_partyDto request)
         {
             try
             {
                 if (request == null) throw new Exception("Invalid request data");
 
-                if (request.GetType() != typeof(new_party)) throw new Exception("Invalid request format");
+                if (request.GetType() != typeof(new_partyDto)) throw new Exception("Invalid request format");
 
 
                 Party new_party = new Party
@@ -102,8 +102,8 @@ namespace votingBackend3.Services
 
         }
 
-
-        public async Task<Election> updateElectionStatus(updateStatus data)
+        //update election status and party status
+        public async Task<Election> updateElectionStatus(updateStatusDto data)
         {//true if updated fasle if failed
             try
             {
@@ -128,7 +128,7 @@ namespace votingBackend3.Services
             }
         }
 
-        public async Task<Party> updatePartyStatus(updateStatus data)
+        public async Task<Party> updatePartyStatus(updateStatusDto data)
         {
             try
             {
@@ -154,6 +154,61 @@ namespace votingBackend3.Services
             }
         }
 
+
+
+        //update election information
+        public async Task<Election> updateElectionInformation(Guid election_id, updateElectionDto request)
+        {
+            try
+            {
+                var election = await _votingDbContext.election.FindAsync(election_id);
+
+                if (election == null) throw new Exception("Election not found");
+
+                //update
+                election.election_name = request.election_name;
+                election.election_type = request.election_type;
+                election.start_date = request.start_date;
+                election.end_date = request.end_date;
+                election.isActive = request.isActive;
+
+                //save changes
+                await _votingDbContext.SaveChangesAsync();
+                return election;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Could not update the Election: {ex.Message}");
+            }
+        }
+
+        //update party information
+        public async Task<Party> updatePartyInformation(Guid party_id, updatePartyDto request)
+        {
+            try
+            {
+                var party = await _votingDbContext.party.FindAsync(party_id);
+
+                if (party == null) throw new Exception("Party not found");
+
+                //update
+                party.party_name = request.party_name;
+                party.party_description = request.party_description;
+                party.status = request.status;
+
+                //save changes
+                await _votingDbContext.SaveChangesAsync();
+                return party;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Could not update the Party: {ex.Message}");
+            }
+        }
+
+
+
+        //calculate winners and results of the election
 
         public async Task<List<ElectionResultsDTO>> GetElectionResults(Guid election_id)
         {
@@ -216,6 +271,12 @@ namespace votingBackend3.Services
 
             return electionResults.First();
         }
+
+
+
+
+
+
 
     }
 }

@@ -2,7 +2,7 @@
 
 namespace votingBackend3.Models.DTOs
 {
-    public class updateStatus
+    public class updateStatusDto
     {
         [Required]
         public Guid ID { get; set; }

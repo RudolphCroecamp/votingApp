@@ -17,17 +17,13 @@ namespace votingBackend3.Controllers
         private readonly BlockchainService _blockchainService;
         private readonly IConfiguration _configuration;
         private readonly int NODECOUNT = 0;
-        private readonly ApplicationDbContext _context;
 
-
-
-        public AdminController(AdminService adminService, BlockchainService blockchainService, IConfiguration configuration, ApplicationDbContext context)
+        public AdminController(AdminService adminService, BlockchainService blockchainService, IConfiguration configuration)
         {
             _adminService = adminService;
             _blockchainService = blockchainService;
             _configuration = configuration;
             NODECOUNT = _configuration.GetValue<int>("NODECOUNT"!);
-            _context = context;
         }
 
 
@@ -86,7 +82,7 @@ namespace votingBackend3.Controllers
 
         [HttpPost]
         [Route("new_election")]
-        public async Task<IActionResult> CreateElection([FromBody] new_election request)
+        public async Task<IActionResult> CreateElection([FromBody] new_electionDto request)
         {
             try
             {
@@ -119,7 +115,7 @@ namespace votingBackend3.Controllers
 
         [HttpPost]
         [Route("new_party")]
-        public async Task<IActionResult> CreateParty([FromBody] new_party request)
+        public async Task<IActionResult> CreateParty([FromBody] new_partyDto request)
         {
             try
             {
@@ -130,7 +126,7 @@ namespace votingBackend3.Controllers
                     throw new Exception("Could not add new Party");
                 }
 
-                return Ok(new { 
+                return Ok(new {
                     message = "Party created successfully",
                     party = new_party
 
@@ -152,7 +148,7 @@ namespace votingBackend3.Controllers
 
         [HttpPut]
         [Route("update_election_status")]
-        public async Task<IActionResult> updateElectionStatus([FromBody] updateStatus request)
+        public async Task<IActionResult> updateElectionStatus([FromBody] updateStatusDto request)
         {
             try
             {
@@ -181,7 +177,7 @@ namespace votingBackend3.Controllers
 
         [HttpPut]
         [Route("update_party_status")]
-        public async Task<IActionResult> updatePartyStatus([FromBody] updateStatus request)
+        public async Task<IActionResult> updatePartyStatus([FromBody] updateStatusDto request)
         {
             try
             {
@@ -206,6 +202,54 @@ namespace votingBackend3.Controllers
             }
 
         }
+
+
+
+        [HttpPut]
+        [Route("updateElection{election_id}")]
+        public async Task<IActionResult> updateElection(Guid election_id, updateElectionDto request)
+        {
+            var updatedElection = await _adminService.updateElectionInformation(election_id, request);
+
+            if (updatedElection == null)
+            {
+                return NotFound(new
+                {
+                    message = "Election not found or update failed."
+                });
+            }
+
+            return Ok(new
+            {
+                message = "Election updated successfully.",
+                election = updatedElection
+            });
+
+
+        }
+
+
+        [HttpPut]
+        [Route("updateParty{party_id}")]
+        public async Task<IActionResult> updateParty(Guid party_id, updatePartyDto request)
+        {
+            var updatedParty = await _adminService.updatePartyInformation(party_id, request);
+            if (updatedParty == null)
+            {
+                return NotFound(new
+                {
+                    message = "Party not found or update failed."
+                });
+            }
+            return Ok(new
+            {
+                message = "Party updated successfully.",
+                party = updatedParty
+            });
+
+
+        }
+
 
 
 
@@ -279,90 +323,7 @@ namespace votingBackend3.Controllers
 
 
         }
-        //Edit election
-        [HttpGet]
-        [Route("get_elections/{election_id}")]
-        public async Task<IActionResult> EditElection(Guid election_id)
-        {
-            var election = await _context.Elections.FindAsync( election_id);
-            if (election == null)
-            {
-                return NotFound();
-            }
-            return Ok(election);
-        }
-        //Post edited election
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditElection(Guid election_id, Election election)
-        {
-            if (election_id != election.election_id)
-            {
-                return BadRequest();
-            }
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(election);
-                    await _context.SaveChangesAsync();
-                    TempData["Success"] = "Election updated successfully.";
 
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if(!_context.Elections.Any(e => e.election_id == election_id))
-                    {
-                        return BadRequest();
-                    }
-
-                    throw;
-                }
-                
-                return RedirectToAction("ElectionList");
-            }
-            return BadRequest(ModelState);
-        }
-        //Edit election Party
-        [HttpGet]
-        [Route("get_parties/{party_id}")]
-        public async Task<IActionResult> EditParty(Guid party_id)
-        {
-            var party = await _context.Party.FindAsync(party_id);
-            if (party == null)
-            {
-                return NotFound();
-            }
-            return Ok(party);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditParty(Guid party_id, Party party)
-        {
-         
-            if (party_id != party.party_id)
-            {
-                return BadRequest();
-            }
-            if (ModelState.IsValid) 
-            {
-                try
-                {
-                    _context.Update(party);
-                    await _context.SaveChangesAsync();
-                    TempData["Success"] = "Party updated successfully.";
-                }
-                catch (DbUpdateConcurrencyException) 
-                {
-                    if (!_context.Party.Any(p =>p.party_id == party_id))
-                    {
-                        return BadRequest();
-                    }
-
-                    throw;
-                }
-                return RedirectToAction("PartyList");
-            }
-            return View(party);
+      
     }
 }

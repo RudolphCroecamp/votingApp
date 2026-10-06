@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace votingBackend3.Models.DTOs
 {
-    public class new_election
+    public class new_electionDto
     {
 
         [NotNull, Required]

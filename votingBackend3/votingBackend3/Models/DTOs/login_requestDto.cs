@@ -1,6 +1,6 @@
 ﻿namespace votingBackend3.Models.DTOs
 {
-    public class login_request
+    public class login_requestDto
     {
         public string id_number { get; set; } = string.Empty;
 
