@@ -25,10 +25,7 @@ namespace votingBackend3.Migrations.BlocksDb
             modelBuilder.Entity("votingBackend3.Models.Entities.Block", b =>
                 {
                     b.Property<int>("index")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("index"));
 
                     b.Property<string>("Data")
                         .IsRequired()

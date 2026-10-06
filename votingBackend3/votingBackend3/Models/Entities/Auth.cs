@@ -5,16 +5,16 @@ namespace votingBackend3.Models.Entities
     public class Auth
     {
         [Key]
-        public Guid voter_id { get; set; }
-
+        public Guid voter_id { get; set; } = Guid.Empty;
+        [Required]
         public string id_number { get; set; } = string.Empty;
-
+        [Required]
         public double[] face_embedding { get; set; } = Array.Empty<double>();
-
-        public bool is_active { get; set; }
-
+        [Required]
+        public bool is_active { get; set; } = false;
+        [Required]
         public string role { get; set; } = string.Empty;
-
+        [Required]
         public DateTime created_at { get; set; }
     }
 }

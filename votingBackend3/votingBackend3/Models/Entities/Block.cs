@@ -16,25 +16,37 @@ namespace votingBackend3.Models.Entities
         [Required]
         public string previousHash { get; set; } = string.Empty;
 
-        public Block(int index, DateTime timestamp, string data, string previousHash)
+        public Block(int index, DateTime timestamp, string Data, string previousHash)
         {
             this.index = index;
-            this.timestamp = timestamp;
-            this.Data = data;
+            this.timestamp = NormalizeTimestamp(timestamp);//important to normalize the timestamp to ensure consistent hashing
+            this.Data = Data;
             this.previousHash = previousHash;
             this.hash = CalculateHash();
         }
 
+
         public string CalculateHash()
         {
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
-            {
-                var rawData = $"{index}-{timestamp.ToString()}-{Data}-{previousHash}";
-                var bytes = System.Text.Encoding.UTF8.GetBytes(rawData);
-                var hashBytes = sha256.ComputeHash(bytes);
-                //return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-                return Convert.ToBase64String(hashBytes);
-            }
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+
+            var rawData = $"{index}-{timestamp:O}-{Data}-{previousHash}";
+
+            var bytes = System.Text.Encoding.UTF8.GetBytes(rawData);
+
+            var hashBytes = sha256.ComputeHash(bytes);
+
+            return Convert.ToBase64String(hashBytes);
+        }
+
+
+        // Normalize the timestamp to ensure consistent hashing
+        // -> postgress saves timestamps with microsecond precision, but C# DateTime has a precision of 100 nanoseconds. This can lead to inconsistencies in the hash calculation if the timestamp is not normalized.
+        private static DateTime NormalizeTimestamp(DateTime timestamp)
+        {
+            timestamp = timestamp.ToUniversalTime();
+
+            return timestamp.AddTicks(-(timestamp.Ticks % 10));
         }
     }
 }

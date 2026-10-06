@@ -7,21 +7,22 @@ namespace votingBackend3.Models.Entities
     public class Voter
     {
         [Key]
-        public Guid voter_id { get; set; } = Guid.NewGuid();
-        [NotNull]
+        public Guid voter_id { get; set; } = Guid.Empty;
+        [Required]
         public string firstname { get; set; } = string.Empty;
-        [NotNull]
+        [Required]
         public string lastname { get; set; } = string.Empty;
-        [NotNull]
+        [Required]
         public string province { get; set; } = string.Empty;
-        [NotNull]
+        [Required]
         public string city { get; set; } = string.Empty;
         public string street { get; set; } = string.Empty;
-        [NotNull, DataType(DataType.PostalCode)]
-        public int postal { get; set; }
+        [Required, DataType(DataType.PostalCode)]
+        public int postal { get; set; } = 0;
 
 
-
+        
         public ICollection<ElectionVoter> ElectionVoters { get; set; } = new List<ElectionVoter>();
+        public ICollection<DocumentInfo> Documents { get; set; } = new List<DocumentInfo>();
     }
 }

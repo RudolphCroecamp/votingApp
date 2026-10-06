@@ -1,71 +1,98 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
+﻿using Microsoft.AspNetCore.Mvc;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
 using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
+    //[Authorize(Roles = "Voter")]
     [Route("api/[controller]")]
     [ApiController]
     public class VotesController : ControllerBase
     {
         private readonly VoteService _voteService;
         private readonly BlockchainService _blockchainService;
+        private readonly IConfiguration _configuration;
 
-        public VotesController(VoteService voteService, BlockchainService blockchainService)
+        private readonly int NODECOUNT = 0;
+
+        public VotesController(VoteService voteService, BlockchainService blockchainService, IConfiguration configuration)
         {
             _voteService = voteService;
             _blockchainService = blockchainService;
+            _configuration = configuration;
+            NODECOUNT = _configuration.GetValue<int>("NODECOUNT"!);
         }
 
-
-
+        //FIX block the add to blockchain request if vote token was already used
+        //FIX block the token after it was used
+        //TODO add authentication and authorisation to broad_cast_vote -> pass user's jwt
 
         [HttpPost]
         [Route("get_vote_token")]
         public async Task<IActionResult> GetVoteToken(VoteTokenRequest VoteTokenRequest) {
-            VoteToken voteToken = await _voteService.CreateVoteToken(VoteTokenRequest);
+            try { 
+                VoteToken voteToken = await _voteService.CreateVoteToken(VoteTokenRequest);
 
-            if (voteToken == null) return BadRequest(new { error = "Failed to create vote token" });
+                if (voteToken == null) throw new Exception("Failed to create vote token" );
 
-            return Ok(new { 
-                message = "Success",
-                token = voteToken
-            });
+                return Ok(new { 
+                    message = "Success",
+                    token = voteToken
+                });
+            
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new
+                {
+                    message = $"Error: {ex.Message}"
+                });
+            }
+
         }
-
 
         [HttpPost]
         [Route("cast_vote")]
         public async Task<IActionResult> CastVote([FromBody] vote_request request) {
 
-            //verify vote
+            try {
+                //verify vote
+                if (request == null) throw new Exception("Invalid request data");
+                if (request.GetType() != typeof(vote_request)) throw new Exception("Invalid request format");
 
-            if (request == null) return BadRequest(new { error = "Invalid request data" });
+                //check vote_request parameters
+                VotingToken token = await _voteService.VerifyVoteRequest(request);
 
-            if(request.GetType() != typeof(vote_request)) return BadRequest(new { error = "Invalid request format" });
+                if (token == null) throw new Exception("Invalid voting token data");
 
-            //check vote_request parameters
-            VotingToken token = await _voteService.VerifyVoteRequest(request);
+                //save vote to database
+                vote_response vote_receipt = await _voteService.SaveVote(request, token);
 
-            if (token == null) return BadRequest(new { error = "Invalid voting token data" });
+                //broadcast vote to other nodes
+                transaction_response broadcastResult = await _blockchainService.BroadCastVote(NODECOUNT, request);
 
-            //save vote to database
-            vote_response vote_receipt = await _voteService.SaveVote(request, token);
+                if (broadcastResult == null) throw new Exception("Failed to broadcast vote");//FIX
 
-            //broadcast vote to other nodes
-            transaction_response broadcastResult = await _blockchainService.BroadCastVote(4, request);
+                return Ok(new
+                {
+                    message = "Vote broadcasted successfully",
+                    data = broadcastResult,
+                    receipt = vote_receipt
+                });
 
-            if (broadcastResult == null) return BadRequest(new { error = "Failed to broadcast vote" });//fix later
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new
+                {
+                    message = $"Error: {ex.Message}"
+                });
+            }
 
             
-            return Ok(new {
-                message = "Vote broadcasted successfully",
-                data = broadcastResult,
-                receipt = vote_receipt
-            });
         }
 
     }

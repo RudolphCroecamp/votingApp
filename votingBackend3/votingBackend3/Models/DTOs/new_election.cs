@@ -5,6 +5,7 @@ namespace votingBackend3.Models.DTOs
 {
     public class new_election
     {
+
         [NotNull, Required]
         public string election_name { get; set; } = string.Empty;
         [NotNull, Required]

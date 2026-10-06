@@ -13,7 +13,14 @@ services:
       - "5000:8080"
     environment:
       NODE_ROLE: main
-      ConnectionStrings__MainDatabase: "Host=db_main;Port=5432;Database=main_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+      ConnectionStrings__MainDatabase: "${MainDbConnection}"
+      JWTKey: ${JWTKey}
+      Issuer: ${Issuer}
+      Audience: ${Audience}
+      ExpirationMinutes: ${ExpirationMinutes}
+    volumes:
+      - VotingDocuments:/app/VotingDocuments
+
     depends_on:
       - db_main
       - node1
@@ -34,8 +41,12 @@ services:
     environment:
       NODE_ROLE: node
       NODE_ID: 1
-      ConnectionStrings__MainDatabase: "Host=db_main;Port=5432;Database=main_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
-      ConnectionStrings__BlockchainDatabase: "Host=db_node1;Port=5432;Database=node1_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+      ConnectionStrings__MainDatabase: "${MainDbConnection}"
+      ConnectionStrings__BlockchainDatabase: "Host=db_node1;Port=5432;Database=node1_db;Username=postgres;Password=${PostgresPassword}"
+      JWTKey: ${JWTKey}
+      Issuer: ${Issuer}
+      Audience: ${Audience}
+      ExpirationMinutes: ${ExpirationMinutes}
     depends_on:
       - db_main
       - db_node1
@@ -49,8 +60,12 @@ services:
     environment:
       NODE_ROLE: node
       NODE_ID: 2
-      ConnectionStrings__MainDatabase: "Host=db_main;Port=5432;Database=main_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
-      ConnectionStrings__BlockchainDatabase: "Host=db_node2;Port=5432;Database=node2_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+      ConnectionStrings__MainDatabase: "${MainDbConnection}"
+      ConnectionStrings__BlockchainDatabase: "Host=db_node2;Port=5432;Database=node2_db;Username=postgres;Password=${PostgresPassword}"
+      JWTKey: ${JWTKey}
+      Issuer: ${Issuer}
+      Audience: ${Audience}
+      ExpirationMinutes: ${ExpirationMinutes}
     depends_on:
       - db_main
       - db_node2
@@ -64,8 +79,12 @@ services:
     environment:
       NODE_ROLE: node
       NODE_ID: 3
-      ConnectionStrings__MainDatabase: "Host=db_main;Port=5432;Database=main_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
-      ConnectionStrings__BlockchainDatabase: "Host=db_node3;Port=5432;Database=node3_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+      ConnectionStrings__MainDatabase: "${MainDbConnection}"
+      ConnectionStrings__BlockchainDatabase: "Host=db_node3;Port=5432;Database=node3_db;Username=postgres;Password=${PostgresPassword}"
+      JWTKey: ${JWTKey}
+      Issuer: ${Issuer}
+      Audience: ${Audience}
+      ExpirationMinutes: ${ExpirationMinutes}
     depends_on:
       - db_main
       - db_node3
@@ -79,8 +98,12 @@ services:
     environment:
       NODE_ROLE: node
       NODE_ID: 4
-      ConnectionStrings__MainDatabase: "Host=db_main;Port=5432;Database=main_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
-      ConnectionStrings__BlockchainDatabase: "Host=db_node4;Port=5432;Database=node4_db;Username=postgres;Password=ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365"
+      ConnectionStrings__MainDatabase: "${MainDbConnection}"
+      ConnectionStrings__BlockchainDatabase: "Host=db_node4;Port=5432;Database=node4_db;Username=postgres;Password=${PostgresPassword}"
+      JWTKey: ${JWTKey}
+      Issuer: ${Issuer}
+      Audience: ${Audience}
+      ExpirationMinutes: ${ExpirationMinutes}
     depends_on:
       - db_main
       - db_node4
@@ -95,7 +118,7 @@ services:
     container_name: db_main
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365
+      POSTGRES_PASSWORD: "${PostgresPassword}"
       POSTGRES_DB: main_db
     ports:
       - "7045:5432"
@@ -112,7 +135,7 @@ services:
     container_name: db_node1
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365
+      POSTGRES_PASSWORD: "${PostgresPassword}"
       POSTGRES_DB: node1_db
     ports:
     - "7051:5432"
@@ -129,7 +152,7 @@ services:
     container_name: db_node2
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365
+      POSTGRES_PASSWORD: "${PostgresPassword}"
       POSTGRES_DB: node2_db
     ports:
     - "7052:5432"
@@ -146,7 +169,7 @@ services:
     container_name: db_node3
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365
+      POSTGRES_PASSWORD: "${PostgresPassword}"
       POSTGRES_DB: node3_db
     ports:
     - "7053:5432"
@@ -163,7 +186,7 @@ services:
     container_name: db_node4
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ThisIs12667234323AverySecureAndStrong421432658PasswordForThisDatabase1234523975612365
+      POSTGRES_PASSWORD: "${PostgresPassword}"
       POSTGRES_DB: node4_db
     ports:
     - "7054:5432"
@@ -176,9 +199,9 @@ services:
 # ==============================================================
 
 volumes:
-
   main_db_data:
   node1_db_data:
   node2_db_data:
   node3_db_data:
   node4_db_data:
+  VotingDocuments:

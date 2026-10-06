@@ -19,6 +19,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<VoteService>();
+builder.Services.AddScoped<DocumentService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<BlockchainService>(provider =>
 {
@@ -47,7 +48,7 @@ builder.Services.AddDbContext<BlocksDbContext>(options =>
 
 
 //configure auth settings
-var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtKey = builder.Configuration["JWTKey"];
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -60,10 +61,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ),
 
             ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidIssuer = builder.Configuration["Issuer"],
 
             ValidateAudience = true,
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidAudience = builder.Configuration["Audience"],
 
             ValidateLifetime = true,
 

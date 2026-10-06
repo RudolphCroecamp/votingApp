@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.IdentityModel.Tokens;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 using votingBackend3.Data;
@@ -14,165 +12,207 @@ namespace votingBackend3.Services
     {
         private readonly VotingDbContext _votingDbContext;
         private readonly BlockchainService _blockchainService;
+        private readonly IConfiguration _configuration;
 
-        private readonly int TokenLifetime = 10;//number of minutes before the token expires
+        private readonly int TokenLifetime = 0;//number of minutes before the token expires
 
-        public VoteService(BlockchainService blockchainService, VotingDbContext votingDbContext)
+        public VoteService(BlockchainService blockchainService, VotingDbContext votingDbContext, IConfiguration configuration)
         {
             _blockchainService = blockchainService;
+            _configuration = configuration;
             _votingDbContext = votingDbContext;
+            TokenLifetime = _configuration.GetValue<int>("TokenLifetime"!);
         }
 
 
 
         public async Task<VoteToken> CreateVoteToken(VoteTokenRequest request) {
+            try {
+                //check if election is live
+                Election election = await _votingDbContext.election.FindAsync(request.election_id);
 
-            //check if election is live
-            Election election = await _votingDbContext.election.FindAsync(request.election_id);
+                if (election == null) throw new Exception("Election not found");
+                if (!election.isActive) throw new Exception("This Election is currently not live");
+                
 
-            if (election == null)//|| !election.isActive
-            {
-                return null;
+                //create the token
+                var token = RandomNumberGenerator.GetBytes(32);
+
+                //refers to token used to vote with
+                VoteToken voteToken = new VoteToken
+                {
+                    token_id = Guid.NewGuid(),
+                    Token = WebEncoders.Base64UrlEncode(token),
+                    IssuedAt = DateTime.UtcNow,
+                };
+
+                //refers to database table
+                VotingToken votingToken = new VotingToken
+                {
+                    token_id = voteToken.token_id,
+                    TokenHash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(voteToken.Token))),
+                    election_id = request.election_id,
+                    IssuedAt = voteToken.IssuedAt,
+                    isUsed = false
+                };
+
+
+                //save to database
+                _votingDbContext.voting_token.Add(votingToken);
+                await _votingDbContext.SaveChangesAsync();
+
+                return voteToken;
+
             }
-
-            //create the token
-            var token = RandomNumberGenerator.GetBytes(32);
-
-            //refers to token used toi vote with
-            VoteToken voteToken = new VoteToken
+            catch (Exception ex)
             {
-                token_id = Guid.NewGuid(),
-                Token = WebEncoders.Base64UrlEncode(token),
-                IssuedAt = DateTime.UtcNow,
-            };
-
-            //refers to database table
-            VotingToken votingToken = new VotingToken
-            {
-                token_id = voteToken.token_id,
-                TokenHash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(voteToken.Token))),
-                election_id = request.election_id,
-                IssuedAt = voteToken.IssuedAt,
-                isUsed = false
-            };
-
-
-            //save to database
-            _votingDbContext.voting_token.Add(votingToken);
-            await _votingDbContext.SaveChangesAsync();
-
-
-            return voteToken;
+                throw new Exception(ex.Message);
+            }
+            
         }
 
 
 
         //verify the vote to the database -> did we create the key
         public async Task<VotingToken> VerifyVoteRequest(vote_request request) {
+            try {
+                if (request == null) throw new Exception("Invalid vote data");
 
-            if(request == null) return null;
+                if (request.GetType() != typeof(vote_request)) throw new Exception("Invalid vote format");
 
-            if(request.GetType() != typeof(vote_request)) return null;
+                //check for null values
+                if (request.voteToken == null || request.voteToken.Equals(string.Empty)) throw new Exception("Invalid vote token");
+                if (request.election_id == Guid.Empty) throw new Exception("Invalid Election ID");
+                if (request.party_id == Guid.Empty) throw new Exception("Invalid Party ID");
+                if (request.election_type == null || request.election_type == string.Empty) throw new Exception("Invalid election type");
 
-            //check for null values
-            if(request.voteToken == null) return null;
-            if (request.election_id == Guid.Empty) return null;
-            if (request.party_id == Guid.Empty) return null;
-            if(request.election_type == null || request.election_type == string.Empty) return null;
+                //verify token
+                VotingToken token = await VerifyToken(request.voteToken);
 
-            //verify token
-            VotingToken token = await VerifyToken(request.voteToken);
-
-            //no token found
-            if (token == null) return null;
+                //no token found
+                if (token == null) throw new Exception("Vote token not found");
 
 
-            //valid token
-            return token;
+                //valid token
+                return token;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Could not verify the vote request: {ex.Message}");
+            }
+            
         }
 
 
-        //verify the vote token to the database -> did we create the key and has it been used
+        //verify the vote token to the database -> did we create the token and has it been used
         public async Task<VotingToken> VerifyToken(VoteToken request)
         {
-            //check if voteToken exist in database
-            var token = await _votingDbContext.voting_token.FindAsync(request.token_id);
+            try {
+                //check if voteToken exist in database
+                var token = await _votingDbContext.voting_token.FindAsync(request.token_id);
 
-            //no token found
-            if (token == null) return null;
+                //no token found
+                if (token == null) throw new Exception("Voting token not found");
 
-            //token is expired
-            if (DateTime.UtcNow - token.IssuedAt > TimeSpan.FromMinutes(TokenLifetime)) return null;
+                //token is expired
+                if (DateTime.UtcNow - token.IssuedAt > TimeSpan.FromMinutes(TokenLifetime)) throw new Exception("Voting token expired");
 
-            //token was already used
-            if (token.isUsed == true) return null;
-
-
-            //check if token form request matches hashed token in database
-            string tokenHash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(request.Token)));
-
-            if (token.TokenHash.Equals(tokenHash) == false) return null;
-
-            //valid token
-            return token;
-        }
+                //token was already used
+                if (token.isUsed == true) throw new Exception("Voting token already used");
 
 
-        public async Task<Vote> VerifyVote(vote_request request) { 
-            Vote vote = _votingDbContext.vote.FirstOrDefault(v => v.token_id == request.voteToken.token_id);
+                //check if token form request matches hashed token in database
+                string tokenHash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(request.Token)));
 
-            if(vote == null) return null;
+                if (token.TokenHash.Equals(tokenHash) == false) throw new Exception("Voting token hash does not match");
 
-            return vote;
-        }
-
-
-
-
-
-
-        public async Task<vote_response> SaveVote(vote_request request, VotingToken token) {
-            if(request == null || token == null) return null;   
-
-            //add vote_request to ledger
-            Vote vote = new Vote
+                //valid token
+                return token;
+            }
+            catch (Exception ex)
             {
-                token_id = token.token_id,
-                votingToken = token,
-                election_id = request.election_id,
-                party_id = request.party_id,
-                election_type = request.election_type,
-            };
+                throw new Exception($"Could not verify the voting token: {ex.Message}");
+            }
+            
+        }
+
+        //This checks if the user has voted using a voting token
+        //FIX this should check if the user has a token in the database and if it was used yet
+        public async Task<Vote> VerifyVote(vote_request request) {
+            try {
+                Vote vote = _votingDbContext.vote.FirstOrDefault(v => v.token_id == request.voteToken.token_id);
+
+                if (vote == null) throw new Exception("Vote not found");
+                //if(vote.votingToken.isUsed == false) throw new Exception("Vote was not submitted yet");
+
+                return vote;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Could not verify the vote: {ex.Message}");
+            }
+            
+        }
 
 
-            //save vote to db
+
+
+        //TODO mark the token as used after this function is called
+        //save the vote to the databse and mark the token as used
+        public async Task<vote_response> SaveVote(vote_request request, VotingToken token) {
+            
             var vote_transaction = await _votingDbContext.Database.BeginTransactionAsync();
 
-            try
-            {
+            try {
+                if(request == null) throw new Exception("Invalid vote_request");
+                if (token == null) throw new Exception("Invalid token");
+
+                //add vote_request to ledger
+                Vote vote = new Vote
+                {
+                    token_id = token.token_id,
+                    votingToken = token,
+                    election_id = request.election_id,
+                    party_id = request.party_id,
+                    election_type = request.election_type,
+                };
+
                 //add to database
-                _votingDbContext.vote.Add(vote);
+                await _votingDbContext.vote.AddAsync(vote);
+
+                //int rowsUpdated = await _votingDbContext.voting_token
+                //    .Where(t => t.token_id == token.token_id)
+                //    .ExecuteUpdateAsync(t => t.SetProperty(t => t.isUsed, true));
+
+                //// Token wasn't found, or something unexpected happened
+                //if (rowsUpdated < 1) throw new Exception("Failed to mark token as used");
+                
+                ////more than one token was found with the same token_id, this should never happen
+                //if (rowsUpdated > 1) throw new Exception("Duplicate voting tokens found, rejected request");
+                
 
                 //save changes
                 await _votingDbContext.SaveChangesAsync();
 
                 //commit changes
                 await vote_transaction.CommitAsync();
+
+                vote_response response = new vote_response
+                {
+                    token_receipt = token.token_id,//Fix this should probably not be the voting token id, but rather a unique receipt for the vote
+                    message = "Vote saved successfully"
+                };
+
+
+                return response;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return null;
+                await vote_transaction.RollbackAsync();
+                throw new Exception($"Could not save vote: {ex.Message}");
             }
-
-            vote_response response = new vote_response
-            {
-                token_receipt = token.token_id,
-                message = "Vote saved successfully"
-            };
-
-
-            return response;
+            
         }
 
 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ballot box logo. Isometric, single source of truth: design/ic_ballot_logo.svg -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+
+    <!-- box: top, left and right faces -->
+    <path
+        android:pathData="M48,34 L76,50 L48,66 L20,50 Z"
+        android:fillColor="#2A5C96" />
+    <path
+        android:pathData="M20,50 L48,66 L48,88 L20,72 Z"
+        android:fillColor="#0C2240" />
+    <path
+        android:pathData="M48,66 L76,50 L76,72 L48,88 Z"
+        android:fillColor="#1B4374" />
+
+    <!-- ballot slot -->
+    <path
+        android:pathData="M37.76,41.96 L62.06,55.86 L58.24,58.04 L33.94,44.14 Z"
+        android:fillColor="#081A31" />
+
+    <!-- ballot slip -->
+    <path
+        android:pathData="M38.89,14.79 L57.11,25.21 Q58.85,26.20 58.85,28.20 L58.85,54.20 Q58.85,56.20 57.11,55.21 L38.89,44.79 Q37.15,43.80 37.15,41.80 L37.15,15.80 Q37.15,13.80 38.89,14.79 Z"
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#113056"
+        android:strokeWidth="1.6"
+        android:strokeLineJoin="round" />
+
+    <!-- check mark -->
+    <path
+        android:pathData="M41,27.00 L45.5,37.57 L56,30.57"
+        android:strokeColor="#113056"
+        android:strokeWidth="3.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>
