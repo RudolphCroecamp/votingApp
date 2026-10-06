@@ -1,5 +1,7 @@
 package com.example.frontend.ui.Registration
 
+const val REGISTRATION_STEPS = 4
+
 enum class IdentityDocumentType {
     NATIONAL_ID,
     PASSPORT
@@ -7,11 +9,11 @@ enum class IdentityDocumentType {
 
 data class RegistrationUiState(
     val currentStep: Int = 1,
-    val idNumber: String = "",
     val fullNames: String = "",
-    val dob: String = "",
+    val idNumber: String = "",
     val phone: String = "",
     val email: String = "",
+    val postalCode: String = "",
     val otpCode: String = "",
 
     // Identity Verification Details
@@ -25,14 +27,29 @@ data class RegistrationUiState(
 
     val isLoading: Boolean = false,
     val errorMessage: String? = null
-)
+) {
+    val canSubmitDetails: Boolean
+        get() = fullNames.isNotBlank() &&
+            idNumber.isNotBlank() &&
+            phone.isNotBlank() &&
+            postalCode.isNotBlank()
+
+    val canSubmitIdentity: Boolean
+        get() = documentNumber.isNotBlank() && documentFrontImagePath != null && !isLoading
+
+    val canSubmitFace: Boolean
+        get() = capturedFaceImagePath != null && !isLoading
+
+    val voterName: String
+        get() = fullNames.ifBlank { "Voter" }
+}
 
 sealed interface RegistrationUiEvent {
-    data class OnIdNumberChanged(val value: String) : RegistrationUiEvent
     data class OnFullNamesChanged(val value: String) : RegistrationUiEvent
-    data class OnDobChanged(val value: String) : RegistrationUiEvent
+    data class OnIdNumberChanged(val value: String) : RegistrationUiEvent
     data class OnPhoneChanged(val value: String) : RegistrationUiEvent
     data class OnEmailChanged(val value: String) : RegistrationUiEvent
+    data class OnPostalCodeChanged(val value: String) : RegistrationUiEvent
     data class OnOtpChanged(val value: String) : RegistrationUiEvent
 
     // Identity Verification Events
@@ -43,6 +60,7 @@ sealed interface RegistrationUiEvent {
 
     // Face Verification Events
     data class OnFaceCaptured(val imagePath: String) : RegistrationUiEvent
+    data object OnFaceRetake : RegistrationUiEvent
     data object OnVerifyFaceSubmitted : RegistrationUiEvent
 
     data object OnRegistrationComplete : RegistrationUiEvent

@@ -13,16 +13,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.MarkunreadMailbox
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +36,10 @@ import com.example.frontend.ui.Components.HeadingLabel
 import com.example.frontend.ui.Components.IconLabel
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
+import com.example.frontend.ui.Registration.REGISTRATION_STEPS
+import com.example.frontend.ui.Registration.RegistrationUiEvent
+import com.example.frontend.ui.Registration.RegistrationUiState
+import com.example.frontend.ui.Registration.components.RegistrationStepper
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.PageBackground
@@ -45,17 +47,13 @@ import com.example.frontend.ui.theme.Spacing
 
 @Composable
 fun RegisterScreen(
-    onContinue: (fullName: String, idNumber: String, email: String) -> Unit,
+    uiState: RegistrationUiState,
+    onEvent: (RegistrationUiEvent) -> Unit,
+    onContinue: () -> Unit,
     onSignIn: () -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = PageBackground
 ) {
-    var fullName by remember { mutableStateOf("") }
-    var idNumber by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-
-    val canContinue = fullName.isNotBlank() && idNumber.isNotBlank() && email.isNotBlank()
-
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor
@@ -84,16 +82,16 @@ fun RegisterScreen(
             )
 
             AppTextField(
-                value = fullName,
-                onValueChange = { fullName = it },
+                value = uiState.fullNames,
+                onValueChange = { onEvent(RegistrationUiEvent.OnFullNamesChanged(it)) },
                 placeholder = "Full Name",
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.Person
             )
 
             AppTextField(
-                value = idNumber,
-                onValueChange = { idNumber = it },
+                value = uiState.idNumber,
+                onValueChange = { onEvent(RegistrationUiEvent.OnIdNumberChanged(it)) },
                 placeholder = "ID Number / Passport Number",
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.AccountBox,
@@ -101,24 +99,43 @@ fun RegisterScreen(
             )
 
             AppTextField(
-                value = email,
-                onValueChange = { email = it },
-                placeholder = "Email Address",
+                value = uiState.phone,
+                onValueChange = { onEvent(RegistrationUiEvent.OnPhoneChanged(it)) },
+                placeholder = "Cellphone Number",
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = Icons.Default.Phone,
+                keyboardType = KeyboardType.Phone
+            )
+
+            AppTextField(
+                value = uiState.email,
+                onValueChange = { onEvent(RegistrationUiEvent.OnEmailChanged(it)) },
+                placeholder = "Email Address (Optional)",
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.Email,
                 keyboardType = KeyboardType.Email
             )
 
+            AppTextField(
+                value = uiState.postalCode,
+                onValueChange = { onEvent(RegistrationUiEvent.OnPostalCodeChanged(it)) },
+                placeholder = "Postal Code",
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = Icons.Default.MarkunreadMailbox,
+                keyboardType = KeyboardType.Number
+            )
+
             SimpleButton(
                 label = "Continue",
-                onClick = { onContinue(fullName, idNumber, email) },
+                onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary,
-                enabled = canContinue
+                enabled = uiState.canSubmitDetails
             )
 
             IconLabel(
-                message = "Next you will scan your face. That scan replaces a password when you sign in.",
+                message = "Next you will capture your ID document, then scan your face. " +
+                    "That scan replaces a password when you sign in.",
                 type = StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -155,33 +172,51 @@ internal fun RegisterStepHeader(
     heading: String,
     description: String,
     modifier: Modifier = Modifier,
-    totalSteps: Int = 3
+    totalSteps: Int = REGISTRATION_STEPS
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.item)
     ) {
-        DescriptionLabel(
-            text = "Step $step of $totalSteps",
-            modifier = Modifier.fillMaxWidth(),
-            color = MutedText,
-            style = MaterialTheme.typography.labelLarge
-        )
-        HeadingLabel(text = heading, modifier = Modifier.fillMaxWidth())
-        DescriptionLabel(
-            text = description,
-            modifier = Modifier.fillMaxWidth(),
-            color = MutedText
+        RegistrationStepper(currentStep = step, totalSteps = totalSteps)
+        Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+            HeadingLabel(text = heading, modifier = Modifier.fillMaxWidth())
+            DescriptionLabel(
+                text = description,
+                modifier = Modifier.fillMaxWidth(),
+                color = MutedText
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun RegisterScreenEmptyPreview() {
+    FrontendTheme {
+        RegisterScreen(
+            uiState = RegistrationUiState(),
+            onEvent = {},
+            onContinue = {},
+            onSignIn = {}
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun RegisterScreenPreview() {
+private fun RegisterScreenFilledPreview() {
     FrontendTheme {
         RegisterScreen(
-            onContinue = { _, _, _ -> },
+            uiState = RegistrationUiState(
+                fullNames = "Adriaan van Wyk",
+                idNumber = "0203015800085",
+                phone = "0712345678",
+                email = "adriaan@example.com",
+                postalCode = "6001"
+            ),
+            onEvent = {},
+            onContinue = {},
             onSignIn = {}
         )
     }
