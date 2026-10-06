@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches PageBackground in ui/theme/Color.kt so the system splash and the
+         Compose splash share one background with no visible seam. -->
+    <color name="splash_background">#F7F9FC</color>
+</resources>
