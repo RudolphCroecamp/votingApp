@@ -38,13 +38,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
-import com.example.frontend.ui.Components.IconLabel
+import com.example.frontend.ui.Components.StatusLabel
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.Components.SuccessCheckmarkBadge
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
 import com.example.frontend.ui.screens.Registration.RegistrationUiState
 import com.example.frontend.ui.theme.CardBorder
+import com.example.frontend.ui.theme.BrandNavyDeep
+import com.example.frontend.ui.theme.motionEnabled
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
@@ -87,7 +89,7 @@ fun RegisterFaceScreen(
 
             FaceCaptureFrame(captured = captured, modifier = Modifier.fillMaxWidth())
 
-            IconLabel(
+            StatusLabel(
                 message = if (captured) {
                     "Face captured. Retake it if your face was not clearly inside the frame."
                 } else {
@@ -131,23 +133,31 @@ fun RegisterFaceScreen(
 
 @Composable
 private fun FaceCaptureFrame(captured: Boolean, modifier: Modifier = Modifier) {
-    val transition = rememberInfiniteTransition(label = "faceScan")
-    val sweep by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2200, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "sweep"
-    )
+    // The sweep only runs while we are actually waiting for a capture, and not
+    // at all when the device has animations turned off.
+    val animate = motionEnabled && !captured
+    val sweep = if (animate) {
+        val transition = rememberInfiniteTransition(label = "faceScan")
+        val value by transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 2200, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "sweep"
+        )
+        value
+    } else {
+        0.5f
+    }
     val outline = if (captured) SuccessBorder else Color.White.copy(alpha = 0.75f)
 
     Box(
         modifier = modifier
             .aspectRatio(0.85f)
             .clip(MaterialTheme.shapes.medium)
-            .background(Color(0xFF1C2430)),
+            .background(BrandNavyDeep),
         contentAlignment = Alignment.Center
     ) {
         Canvas(Modifier.fillMaxSize()) {

@@ -20,6 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.effects.entrance
+import com.example.frontend.effects.rememberEntranceTrigger
 import androidx.compose.ui.unit.dp
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
@@ -30,6 +32,7 @@ import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.HeadingLabel
 import com.example.frontend.ui.Components.PartyOption
+import com.example.frontend.ui.Components.SectionHeading
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Spacing
@@ -47,13 +50,18 @@ fun VotePartySelectionScreen(
     onTabSelected: (BottomTab) -> Unit = {},
     backgroundColor: Color = PageBackground
 ) {
+    val entered by rememberEntranceTrigger()
     var selectedId by remember { mutableStateOf<String?>(null) }
     val selectedParty = parties.firstOrNull { it.id == selectedId }
 
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "National Election", onBackClick = onBackClick) },
+        topBar = { AppTopBar(
+                title = "National Election",
+                subtitle = "Step 1 of 2 \u00b7 Choose your party",
+                onBackClick = onBackClick
+            ) },
         bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
     ) { innerPadding ->
         Column(
@@ -64,24 +72,20 @@ fun VotePartySelectionScreen(
                 .padding(Spacing.screen),
             verticalArrangement = Arrangement.spacedBy(Spacing.item)
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(Spacing.tight)
-            ) {
-                HeadingLabel(text = ballotTitle, modifier = Modifier.fillMaxWidth())
-                DescriptionLabel(
-                    text = "Select ONE party",
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MutedText
-                )
-            }
+            SectionHeading(
+                title = ballotTitle,
+                description = "Select ONE party",
+                modifier = Modifier.entrance(entered, index = 0)
+            )
 
-            parties.forEach { party ->
+            parties.forEachIndexed { index, party ->
                 PartyOption(
                     party = party,
                     selected = party.id == selectedId,
                     onClick = { selectedId = party.id },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .entrance(entered, index = index + 1)
                 )
             }
 

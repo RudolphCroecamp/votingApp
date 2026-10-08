@@ -51,12 +51,18 @@ import com.example.frontend.ui.theme.FlagRed
 import com.example.frontend.ui.theme.FlagWhite
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.PageBackground
+import com.example.frontend.ui.theme.SkylineTint
+import com.example.frontend.ui.theme.motionEnabled
 import com.example.frontend.ui.theme.Spacing
 import kotlin.math.PI
 import kotlin.math.hypot
 import kotlin.math.sin
 
-private const val WAVE_STEPS = 64
+/** Points along the flag's bottom edge. Enough to read as a curve, few enough to stay cheap. */
+private const val WAVE_STEPS = 40
+
+/** Fold shading slices. Each one is a gradient fill, so this is the costly loop. */
+private const val FOLD_SLICES = 20
 
 @Composable
 fun WelcomeScreen(
@@ -237,9 +243,9 @@ private fun DrawScope.drawSouthAfricanFlag(
             drawPath(triangle(blackEdge), FlagBlack)
 
             if (amplitude > 0f && foldStrength > 0f) {
-                val sliceWidth = w / WAVE_STEPS
-                for (i in 0 until WAVE_STEPS) {
-                    val t = (i + 0.5f) / WAVE_STEPS
+                val sliceWidth = w / FOLD_SLICES
+                for (i in 0 until FOLD_SLICES) {
+                    val t = (i + 0.5f) / FOLD_SLICES
                     val swing = sin(t * waveCount * 2f * PI.toFloat() + wavePhase)
                     val shade = if (swing < 0f) {
                         FlagBlack.copy(alpha = 0.14f * foldStrength * -swing)
@@ -280,16 +286,24 @@ private fun WelcomeDecor(
     modifier: Modifier = Modifier,
     backgroundColor: Color = PageBackground
 ) {
-    val transition = rememberInfiniteTransition(label = "flagWave")
-    val wavePhase by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 2f * PI.toFloat(),
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 7000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "wavePhase"
-    )
+    // With animations switched off there is no infinite transition at all, so
+    // the canvas draws once and the frame loop goes quiet.
+    val animate = motionEnabled
+    val wavePhase = if (animate) {
+        val transition = rememberInfiniteTransition(label = "flagWave")
+        val phase by transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 2f * PI.toFloat(),
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 7000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "wavePhase"
+        )
+        phase
+    } else {
+        0f
+    }
 
     Canvas(modifier) {
         val w = size.width
@@ -301,13 +315,13 @@ private fun WelcomeDecor(
             waveDepth = 0.08f,
             waveCount = 1.5f,
             wavePhase = wavePhase,
-            foldStrength = 0.6f,
+            foldStrength = if (animate) 0.6f else 0.35f,
             fadeInto = backgroundColor
         )
 
         val ground = h * 0.012f
         val base = h - ground
-        val sky = Color(0xFFC9D3E3).copy(alpha = 0.6f)
+        val sky = SkylineTint.copy(alpha = 0.6f)
         val u = w / 20f
         val blocks = listOf(
             0f to 0.06f,

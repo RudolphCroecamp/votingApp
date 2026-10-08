@@ -33,10 +33,14 @@ import com.example.frontend.ui.Components.AppBottomBar
 import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.HeadingLabel
-import com.example.frontend.ui.Components.IconLabel
+import com.example.frontend.ui.Components.StatusLabel
 import com.example.frontend.ui.Components.QrCodeImage
 import com.example.frontend.ui.Components.StatusType
+import com.example.frontend.ui.theme.CardBorder
+import com.example.frontend.ui.theme.DividerColor
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.ui.theme.MutedText
+import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
 
 @Composable
@@ -50,7 +54,7 @@ fun VoteReceiptScreen(
     status: String = "Valid",
     selectedTab: BottomTab = BottomTab.Vote,
     onTabSelected: (BottomTab) -> Unit = {},
-    backgroundColor: Color = Color(0xFFEEF1F6)
+    backgroundColor: Color = PageBackground
 ) {
     Scaffold(
         modifier = modifier,
@@ -86,13 +90,13 @@ private fun ReceiptDetailsCard(
     electionName: String,
     status: String
 ) {
-    val shape = MaterialTheme.shapes.medium
+    val shape = MaterialTheme.shapes.large
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(Color.White)
-            .border(width = 1.dp, color = Color(0xFFE1E5EC), shape = shape)
+            .background(MaterialTheme.colorScheme.surface)
+            .border(width = 1.dp, color = CardBorder, shape = shape)
             .padding(Spacing.card),
         verticalArrangement = Arrangement.spacedBy(Spacing.item),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -101,7 +105,7 @@ private fun ReceiptDetailsCard(
         HeadingLabel(
             text = "Voting Receipt",
             modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
         HeadingLabel(
@@ -113,16 +117,16 @@ private fun ReceiptDetailsCard(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = ballotTitle,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
                 text = castAt,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
+                style = MaterialTheme.typography.bodySmall,
+                color = MutedText
             )
         }
-        HorizontalDivider(color = Color(0xFFD9D9D9))
+        HorizontalDivider(color = DividerColor)
         ReceiptDetailRow(icon = Icons.Default.DateRange, label = "Election", value = electionName)
         ReceiptDetailRow(icon = Icons.Default.Lock, label = "Receipt ID", value = receiptCode)
         ReceiptDetailRow(
@@ -131,7 +135,7 @@ private fun ReceiptDetailsCard(
             value = status,
             valueColor = StatusType.Success.contentColor
         )
-        IconLabel(
+        StatusLabel(
             message = "This receipt can be used to verify that your vote was recorded, but it does not reveal who you voted for.",
             type = StatusType.Info,
             icon = Icons.Default.Lock,
@@ -162,7 +166,7 @@ private fun ReceiptDetailRow(
             text = label,
             modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFF6B7280)
+            color = MutedText
         )
         Text(
             text = value,
