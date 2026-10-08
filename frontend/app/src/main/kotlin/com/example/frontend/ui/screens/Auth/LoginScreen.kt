@@ -27,13 +27,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.effects.entrance
+import com.example.frontend.effects.rememberEntranceTrigger
 import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.Components.AppTextField
 import com.example.frontend.ui.Components.BrandHeader
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.HeadingLabel
-import com.example.frontend.ui.Components.IconLabel
+import com.example.frontend.ui.Components.StatusLabel
+import com.example.frontend.ui.Components.SectionHeading
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.theme.FrontendTheme
@@ -48,6 +51,7 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     backgroundColor: Color = PageBackground
 ) {
+    val entered by rememberEntranceTrigger()
     var idNumber by remember { mutableStateOf("") }
 
     Scaffold(
@@ -66,28 +70,26 @@ fun LoginScreen(
             BrandHeader(
                 title = "South Africa\nNational Voting App",
                 subtitle = "Secure  ·  Anonymous  ·  Verifiable",
-                logoSize = 72.dp
+                logoSize = 72.dp,
+                modifier = Modifier.entrance(entered, index = 0)
             )
 
             Spacer(modifier = Modifier.height(Spacing.small))
 
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(Spacing.tight)
-            ) {
-                HeadingLabel(text = "Sign In", modifier = Modifier.fillMaxWidth())
-                DescriptionLabel(
-                    text = "Enter your South African ID or passport number, then verify your face to sign in.",
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MutedText
-                )
-            }
+            SectionHeading(
+                modifier = Modifier.entrance(entered, index = 1),
+                title = "Sign in",
+                description = "Enter your South African ID or passport number, then verify your " +
+                    "face to sign in."
+            )
 
             AppTextField(
                 value = idNumber,
                 onValueChange = { idNumber = it },
                 placeholder = "ID Number / Passport Number",
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .entrance(entered, index = 2),
                 leadingIcon = Icons.Default.AccountBox,
                 maxLength = ID_NUMBER_MAX_LENGTH
             )
@@ -95,16 +97,20 @@ fun LoginScreen(
             SimpleButton(
                 label = "Sign in with Face Verification",
                 onClick = { onFaceVerification(idNumber) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .entrance(entered, index = 3),
                 variant = ButtonVariant.Tertiary,
                 leadingIcon = Icons.Default.CenterFocusStrong,
                 enabled = idNumber.isNotBlank()
             )
 
-            IconLabel(
+            StatusLabel(
                 message = "Your face is matched against your registration scan. No password is needed.",
                 type = StatusType.Info,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .entrance(entered, index = 4)
             )
 
             Row(verticalAlignment = Alignment.CenterVertically) {

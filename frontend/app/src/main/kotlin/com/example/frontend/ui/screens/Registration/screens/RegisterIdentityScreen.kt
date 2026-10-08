@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +37,7 @@ import com.example.frontend.ui.Components.AppTextField
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
-import com.example.frontend.ui.Components.IconLabel
+import com.example.frontend.ui.Components.StatusLabel
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.Components.SuccessCheckmarkBadge
@@ -137,7 +138,7 @@ fun RegisterIdentityScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            IconLabel(
+            StatusLabel(
                 message = if (uiState.documentFrontImagePath != null) {
                     "Document captured. Tap it again to retake the photo."
                 } else {
@@ -178,7 +179,7 @@ private fun DocumentOptionChip(
     val accent = MaterialTheme.colorScheme.primary
 
     Surface(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(onClick = onClick, role = Role.Button),
         shape = MaterialTheme.shapes.small,
         color = if (isSelected) accent.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surface,
         border = BorderStroke(if (isSelected) 1.5.dp else 1.dp, if (isSelected) accent else CardBorder)
@@ -202,7 +203,7 @@ private fun DocumentCaptureBox(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier.clickable(onClick = onCapture),
+        modifier = modifier.clickable(onClick = onCapture, role = Role.Button),
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceVariant,
         border = BorderStroke(1.dp, CardBorder)

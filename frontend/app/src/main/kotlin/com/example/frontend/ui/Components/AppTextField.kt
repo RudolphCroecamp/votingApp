@@ -49,8 +49,14 @@ fun AppTextField(
         modifier = modifier,
         enabled = enabled,
         singleLine = true,
-        shape = MaterialTheme.shapes.small,
-        placeholder = { Text(text = placeholder, color = MutedText) },
+        shape = MaterialTheme.shapes.medium,
+        placeholder = {
+            Text(
+                text = placeholder,
+                color = MutedText,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
         leadingIcon = if (leadingIcon == null) null else {
             {
                 Icon(
@@ -73,9 +79,12 @@ fun AppTextField(
         },
         visualTransformation = if (hideText) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        textStyle = MaterialTheme.typography.bodyLarge,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = CardBorder,
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
             focusedTextColor = MaterialTheme.colorScheme.primary,
             unfocusedTextColor = MaterialTheme.colorScheme.primary
         )

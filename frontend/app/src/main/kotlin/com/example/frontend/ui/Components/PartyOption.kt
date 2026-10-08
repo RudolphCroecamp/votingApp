@@ -1,7 +1,11 @@
 package com.example.frontend.ui.Components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,19 +18,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
+import com.example.frontend.effects.pressScale
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Spacing
+import com.example.frontend.ui.theme.MotionDurations
 import com.example.frontend.ui.theme.MutedText
+import com.example.frontend.ui.theme.StandardEasing
+import com.example.frontend.ui.theme.motionDuration
 
 @Composable
 fun PartyOption(
@@ -35,17 +44,28 @@ fun PartyOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    // The border grows into the selection rather than snapping, which reads as
+    // confirmation without animating anything that would trigger a re-layout.
+    val borderColor by animateColorAsState(
+        targetValue = if (selected) MaterialTheme.colorScheme.secondary else CardBorder,
+        animationSpec = tween(motionDuration(MotionDurations.medium), easing = StandardEasing),
+        label = "partyBorderColor"
+    )
+    val borderWidth by animateDpAsState(
+        targetValue = if (selected) 2.dp else 1.dp,
+        animationSpec = tween(motionDuration(MotionDurations.medium), easing = StandardEasing),
+        label = "partyBorderWidth"
+    )
+
     Card(
         onClick = onClick,
-        modifier = modifier,
+        interactionSource = interactionSource,
+        modifier = modifier.pressScale(interactionSource),
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = if (selected) {
-            BorderStroke(2.dp, MaterialTheme.colorScheme.secondary)
-        } else {
-            BorderStroke(1.dp, CardBorder)
-        }
+        border = BorderStroke(borderWidth, borderColor)
     ) {
         Row(
             modifier = Modifier
@@ -74,12 +94,12 @@ fun PartyOption(
             ) {
                 HeadingLabel(
                     text = party.name,
-                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 14.sp, lineHeight = 18.sp)
+                    style = MaterialTheme.typography.titleSmall
                 )
                 DescriptionLabel(
                     text = party.slogan,
                     color = MutedText,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp, lineHeight = 16.sp)
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }

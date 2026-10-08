@@ -1,15 +1,20 @@
 package com.example.frontend.ui.Components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.HowToVote
@@ -17,16 +22,23 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.ui.theme.InfoContainer
+import com.example.frontend.ui.theme.MotionDurations
 import com.example.frontend.ui.theme.MutedText
+import com.example.frontend.ui.theme.StandardEasing
+import com.example.frontend.ui.theme.motionDuration
+import com.example.frontend.ui.theme.pressSpring
 
 enum class BottomTab(val label: String, val icon: ImageVector) {
     Home("Home", Icons.Default.Home),
@@ -35,13 +47,17 @@ enum class BottomTab(val label: String, val icon: ImageVector) {
     Settings("Settings", Icons.Default.Settings)
 }
 
+/**
+ * Flat navigation bar: the active tab goes navy on a soft tinted pill, the
+ * rest stay muted. No raised action, matching the home design.
+ */
 @Composable
 fun AppBottomBar(
     selected: BottomTab,
     onSelect: (BottomTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    androidx.compose.material3.Surface(
+    Surface(
         modifier = modifier,
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = 8.dp
@@ -55,8 +71,26 @@ fun AppBottomBar(
         ) {
             BottomTab.entries.forEach { tab ->
                 val active = tab == selected
-                val raised = active && tab == BottomTab.Vote
-                val tint = if (active) MaterialTheme.colorScheme.secondary else MutedText
+                val colorSpec = tween<androidx.compose.ui.graphics.Color>(
+                    durationMillis = motionDuration(MotionDurations.medium),
+                    easing = StandardEasing
+                )
+                val tint by animateColorAsState(
+                    targetValue = if (active) MaterialTheme.colorScheme.primary else MutedText,
+                    animationSpec = colorSpec,
+                    label = "tabTint"
+                )
+                val pill by animateColorAsState(
+                    targetValue = if (active) InfoContainer else MaterialTheme.colorScheme.surface,
+                    animationSpec = colorSpec,
+                    label = "tabPill"
+                )
+                // A small pop so switching tabs registers without a layout change.
+                val iconScale by animateFloatAsState(
+                    targetValue = if (active) 1.08f else 1f,
+                    animationSpec = pressSpring(),
+                    label = "tabIconScale"
+                )
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -65,28 +99,33 @@ fun AppBottomBar(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    if (raised) {
-                        Box(
+                    Box(
+                        modifier = Modifier
+                            .background(color = pill, shape = MaterialTheme.shapes.small)
+                            .padding(horizontal = 14.dp, vertical = 3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = tab.icon,
+                            contentDescription = tab.label,
+                            tint = tint,
                             modifier = Modifier
-                                .offset(y = (-14).dp)
-                                .size(52.dp)
-                                .shadow(6.dp, CircleShape)
-                                .background(MaterialTheme.colorScheme.secondary, CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(tab.icon, tab.label, tint = Color.White, modifier = Modifier.size(26.dp))
-                        }
-                        Text(
-                            tab.label, color = tint, fontSize = 12.sp, fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.offset(y = (-12).dp)
-                        )
-                    } else {
-                        Icon(tab.icon, tab.label, tint = tint, modifier = Modifier.size(24.dp))
-                        Text(
-                            tab.label, color = tint, fontSize = 12.sp,
-                            fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal
+                                .size(22.dp)
+                                .graphicsLayer {
+                                    scaleX = iconScale
+                                    scaleY = iconScale
+                                }
                         )
                     }
+                    Text(
+                        text = tab.label,
+                        color = tint,
+                        style = if (active) {
+                            MaterialTheme.typography.labelSmall
+                        } else {
+                            MaterialTheme.typography.bodySmall
+                        }
+                    )
                 }
             }
         }

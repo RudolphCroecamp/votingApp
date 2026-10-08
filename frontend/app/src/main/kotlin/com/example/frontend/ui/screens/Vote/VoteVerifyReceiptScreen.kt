@@ -1,5 +1,10 @@
 package com.example.frontend.ui.screens.Vote
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,13 +32,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.Components.AppBottomBar
@@ -43,14 +49,20 @@ import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.HeadingLabel
-import com.example.frontend.ui.Components.IconLabel
+import com.example.frontend.ui.Components.StatusLabel
+import com.example.frontend.ui.Components.SectionHeading
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.ui.theme.MotionDurations
 import com.example.frontend.ui.theme.MutedText
+import com.example.frontend.ui.theme.StandardEasing
+import com.example.frontend.ui.theme.motionDuration
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
+import com.example.frontend.util.getPlainText
+import kotlinx.coroutines.launch
 
 private const val RECEIPT_CODE_LENGTH = 19
 
@@ -76,7 +88,9 @@ fun VoteVerifyReceiptScreen(
 ) {
     var receiptCode by remember { mutableStateOf("") }
     var result by remember { mutableStateOf<ReceiptLookup>(ReceiptLookup.Idle) }
-    val clipboard = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
+    val resultSwapMillis = motionDuration(MotionDurations.medium)
 
     Scaffold(
         modifier = modifier,
@@ -92,18 +106,11 @@ fun VoteVerifyReceiptScreen(
                 .padding(Spacing.screen),
             verticalArrangement = Arrangement.spacedBy(Spacing.item)
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(Spacing.tight)
-            ) {
-                HeadingLabel(text = "Confirm Your Vote", modifier = Modifier.fillMaxWidth())
-                DescriptionLabel(
-                    text = "Enter the receipt code you were given after voting to check that your " +
-                        "ballot was recorded.",
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MutedText
-                )
-            }
+            SectionHeading(
+                title = "Confirm your vote",
+                description = "Enter the receipt code you were given after voting to check that " +
+                    "your ballot was recorded."
+            )
 
             AppTextField(
                 value = receiptCode,
@@ -129,9 +136,11 @@ fun VoteVerifyReceiptScreen(
             SimpleButton(
                 label = "Paste from Clipboard",
                 onClick = {
-                    clipboard.getText()?.text?.let {
-                        receiptCode = it.trim().uppercase().take(RECEIPT_CODE_LENGTH)
-                        result = ReceiptLookup.Idle
+                    scope.launch {
+                        clipboard.getPlainText()?.let {
+                            receiptCode = it.trim().uppercase().take(RECEIPT_CODE_LENGTH)
+                            result = ReceiptLookup.Idle
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -141,20 +150,32 @@ fun VoteVerifyReceiptScreen(
 
             Spacer(modifier = Modifier.height(Spacing.tight))
 
-            when (val lookup = result) {
-                ReceiptLookup.Idle -> IconLabel(
-                    message = "Your receipt proves your ballot was counted. It never reveals who you voted for.",
-                    type = StatusType.Info,
-                    modifier = Modifier.fillMaxWidth()
-                )
+            // Fading between outcomes makes the lookup feel like it answered,
+            // rather than the panel blinking from one state to another.
+            AnimatedContent(
+                targetState = result,
+                transitionSpec = {
+                    val spec = tween<Float>(resultSwapMillis, easing = StandardEasing)
+                    fadeIn(spec) togetherWith fadeOut(spec)
+                },
+                label = "receiptLookup"
+            ) { lookup ->
+                when (lookup) {
+                    ReceiptLookup.Idle -> StatusLabel(
+                        message = "Your receipt proves your ballot was counted. It never reveals " +
+                            "who you voted for.",
+                        type = StatusType.Info,
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-                ReceiptLookup.NotFound -> IconLabel(
-                    message = "No vote matches that receipt code. Check the code and try again.",
-                    type = StatusType.Error,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    ReceiptLookup.NotFound -> StatusLabel(
+                        message = "No vote matches that receipt code. Check the code and try again.",
+                        type = StatusType.Error,
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-                is ReceiptLookup.Found -> VerifiedReceiptCard(lookup)
+                    is ReceiptLookup.Found -> VerifiedReceiptCard(lookup)
+                }
             }
         }
     }
@@ -162,17 +183,17 @@ fun VoteVerifyReceiptScreen(
 
 @Composable
 private fun VerifiedReceiptCard(lookup: ReceiptLookup.Found) {
-    val shape = MaterialTheme.shapes.medium
+    val shape = MaterialTheme.shapes.large
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .border(width = 1.dp, color = CardBorder, shape = shape)
             .padding(Spacing.card),
         verticalArrangement = Arrangement.spacedBy(Spacing.item)
     ) {
-        IconLabel(
+        StatusLabel(
             message = "This vote was recorded and counted.",
             type = StatusType.Success,
             modifier = Modifier.fillMaxWidth()
@@ -206,7 +227,7 @@ private fun VerifiedDetailRow(icon: ImageVector, label: String, value: String) {
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.primary
         )
     }
