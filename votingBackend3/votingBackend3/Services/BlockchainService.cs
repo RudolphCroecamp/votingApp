@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 using System.Xml.Linq;
 using votingBackend3.Data;
 using votingBackend3.Models.DTOs;
@@ -11,11 +12,13 @@ namespace votingBackend3.Services
     {
         private readonly BlocksDbContext _blocksDbContext;
         private readonly HttpClient _httpClient;
+        private readonly NodeTokenService _nodeTokenService;
 
-        public BlockchainService(BlocksDbContext blocksDbContext, HttpClient httpClient)
+        public BlockchainService(BlocksDbContext blocksDbContext, HttpClient httpClient, NodeTokenService nodeTokenService)
         {
             _blocksDbContext = blocksDbContext;
             _httpClient = httpClient;
+            _nodeTokenService = nodeTokenService;
         }
 
         public async Task AddgenesisBlock()
@@ -88,42 +91,83 @@ namespace votingBackend3.Services
             }
         }
 
-
+        //return true if all nodes received a transaction, false if any node failed to receive it --fix later
         public async Task<transaction_response> BroadCastVote(int numNodes, VoteBroadcastRequest req)
-        { //return true if all nodes received a transaction, false if any node failed to receive it --fix later
+        { 
 
             //store the responses from nodes
-            transaction_response transaction_response = new transaction_response
+            transaction_response result = new transaction_response
             {
                 messages = new List<string>(),
                 status = new List<bool>()
             };
 
-            
+            //Validate the request object.
+            if (req is null)
+            {
+                result.messages.Add("Vote broadcast request cannot be null.");
+                result.status.Add(false);
+                return result;
+            }
 
+            //Generate the internal service JWT.
+            string serviceToken;
 
+            try
+            {
+                serviceToken = _nodeTokenService.GenerateToken();
+            }
+            catch (Exception)
+            {
+                //Do not expose secrets or configuration details.
+                result.messages.Add("Could not authenticate with the blockchain nodes.");
+                result.status.Add(false);
+
+                return result;
+            }
+
+            //Broadcast to each node independently.
             for (int i = 1; i <= numNodes; i++)
             {
                 try
-                {   //node{i} represents the internal docker node
-                    //do not send the actual vote in this request -> it will fail
-                    using HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"http://node{i}:8080/api/Blockchain/handle_vote_request", req);
-                    
-                    //FIX we should check if the node responded successfully on each broadcast
-                    //response.EnsureSuccessStatusCode();<- adding this breaks the code
-                    string responseBody = await response.Content.ReadAsStringAsync();
-
-                    transaction_response.messages.Add(responseBody);
-                    transaction_response.status.Add(true);      
-                }
-                catch (HttpRequestException e)
                 {
-                    transaction_response.messages.Add($"Node {i}: {e.Message}");
-                    transaction_response.status.Add(false);
+                    var nodeUrl = $"http://node{i}:8080/api/Blockchain/handle_vote_request";
+
+                    using var request = new HttpRequestMessage(HttpMethod.Post, nodeUrl);
+
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", serviceToken);
+
+                    request.Content = JsonContent.Create(req);
+
+                    using var response = await _httpClient.SendAsync(request);
+
+                    var responseBody = await response.Content.ReadAsStringAsync();
+
+                    //Check the HTTP status code.
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result.messages.Add($"Node {i}: Request accepted. {responseBody}");
+                        result.status.Add(true);
+                    }
+                    else
+                    {
+                        result.messages.Add($"Node {i}: HTTP {(int)response.StatusCode} " + $"{response.StatusCode}. {responseBody}");
+                        result.status.Add(false);
+                    }
+                }
+                catch (HttpRequestException)
+                {
+                    result.messages.Add($"Node {i}: Network error or connection failure.");
+                    result.status.Add(false);
+                }
+                catch (TaskCanceledException)
+                {
+                    result.messages.Add($"Node {i}: Request timed out or was cancelled.");
+                    result.status.Add(false);
                 }
             }
 
-            return transaction_response;
+            return result;
         }
 
 

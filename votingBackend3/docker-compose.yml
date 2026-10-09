@@ -18,6 +18,9 @@ services:
       Issuer: ${Issuer}
       Audience: ${Audience}
       ExpirationMinutes: ${ExpirationMinutes}
+      NodeAuth__Issuer: VotingBackend
+      NodeAuth__Audience: BlockchainNodes
+      NodeAuth__SigningKey: ${NODE_AUTH_SIGNING_KEY}
     volumes:
       - VotingDocuments:/app/VotingDocuments
 
@@ -47,6 +50,9 @@ services:
       Issuer: ${Issuer}
       Audience: ${Audience}
       ExpirationMinutes: ${ExpirationMinutes}
+      NodeAuth__Issuer: VotingBackend
+      NodeAuth__Audience: BlockchainNodes
+      NodeAuth__SigningKey: ${NODE_AUTH_SIGNING_KEY}
     depends_on:
       - db_main
       - db_node1
@@ -66,6 +72,9 @@ services:
       Issuer: ${Issuer}
       Audience: ${Audience}
       ExpirationMinutes: ${ExpirationMinutes}
+      NodeAuth__Issuer: VotingBackend
+      NodeAuth__Audience: BlockchainNodes
+      NodeAuth__SigningKey: ${NODE_AUTH_SIGNING_KEY}
     depends_on:
       - db_main
       - db_node2
@@ -85,6 +94,9 @@ services:
       Issuer: ${Issuer}
       Audience: ${Audience}
       ExpirationMinutes: ${ExpirationMinutes}
+      NodeAuth__Issuer: VotingBackend
+      NodeAuth__Audience: BlockchainNodes
+      NodeAuth__SigningKey: ${NODE_AUTH_SIGNING_KEY}
     depends_on:
       - db_main
       - db_node3
@@ -104,6 +116,9 @@ services:
       Issuer: ${Issuer}
       Audience: ${Audience}
       ExpirationMinutes: ${ExpirationMinutes}
+      NodeAuth__Issuer: VotingBackend
+      NodeAuth__Audience: BlockchainNodes
+      NodeAuth__SigningKey: ${NODE_AUTH_SIGNING_KEY}
     depends_on:
       - db_main
       - db_node4

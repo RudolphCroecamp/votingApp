@@ -252,16 +252,6 @@ namespace votingBackend3.Services
                 //more than one token was found with the same token_id, this should never happen
                 if (rowsUpdated > 1) throw new Exception("Duplicate voting tokens found, rejected request");
 
-
-                //vote_receipt receipt = new vote_receipt
-                //{
-                //    election_id = request.election_id,
-                //    token_id = token.token_id,
-                //    hasVoted = true,
-                //    voted_at = vote.created_at
-                //};
-
-
                 //save changes
                 await _votingDbContext.SaveChangesAsync();
 

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
+    [EnableRateLimiting("Authentication")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
@@ -27,6 +28,7 @@ namespace votingBackend3.Controllers
         //verifies and adds the vote to te current node's blockchain
         [HttpPost]
         [Route("handle_vote_request")]
+        [Authorize(Policy = "NodeVoteReceiver")]
         public async Task<IActionResult> HandleVoteRequest(VoteBroadcastRequest request)
         {
             try

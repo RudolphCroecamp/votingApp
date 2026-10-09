@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using votingBackend3.Models.DTOs;
@@ -8,6 +9,7 @@ using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
+    [EnableRateLimiting("VoteSubmission")]
     [Authorize(Roles = "Voter")]
     [Route("api/[controller]")]
     [ApiController]
@@ -133,7 +135,6 @@ namespace votingBackend3.Controllers
                 vote_receipt receipt = new vote_receipt
                 {
                     election_id = vote.election_id,
-                    token_id = vote.token_id,
                     hasVoted = true,
                     voted_at = vote.created_at
                 };
