@@ -29,7 +29,8 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.HeadingLabel
-import com.example.frontend.ui.Components.IconLabel
+import com.example.frontend.ui.Components.StatusLabel
+import com.example.frontend.ui.Components.SectionHeading
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.Components.SuccessCheckmarkBadge
@@ -66,20 +67,16 @@ fun RegisterDoneScreen(
 
             Spacer(modifier = Modifier.height(Spacing.section))
 
+            //#TODO: put the checkmark badge, heading and description in a box
+
             SuccessCheckmarkBadge()
 
             Spacer(modifier = Modifier.height(Spacing.small))
 
-            HeadingLabel(
-                text = "Welcome, $voterName",
-                modifier = Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
-            )
-            DescriptionLabel(
-                text = "You can now sign in with your ID number and a face scan.",
-                modifier = Modifier.fillMaxWidth(),
-                color = MutedText,
+            SectionHeading(
+                title = "Welcome, $voterName",
+                description = "You can now sign in with your ID number and a face scan.",
+                titleStyle = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center
             )
 
@@ -96,13 +93,13 @@ fun RegisterDoneScreen(
                 description = "You can only vote once in each election."
             )
 
-            Spacer(modifier = Modifier.height(Spacing.section))
-
-            IconLabel(
+            StatusLabel(
                 message = "Keep your ID number handy. You will need it every time you sign in.",
                 type = StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(Spacing.section))
 
             SimpleButton(
                 label = "Continue to App",
@@ -135,8 +132,12 @@ private fun RegistrationFact(
             modifier = Modifier.size(20.dp)
         )
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
-            HeadingLabel(text = title, style = MaterialTheme.typography.labelLarge)
-            DescriptionLabel(text = description, color = MutedText)
+            HeadingLabel(text = title, style = MaterialTheme.typography.titleSmall)
+            DescriptionLabel(
+                text = description,
+                color = MutedText,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }

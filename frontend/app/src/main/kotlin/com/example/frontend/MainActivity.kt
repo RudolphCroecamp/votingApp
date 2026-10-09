@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.frontend.navigation.FrontendNavHost
+import com.example.frontend.navigation.AppNavGraph
 import com.example.frontend.ui.theme.FrontendTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FrontendTheme {
-                FrontendNavHost(modifier = Modifier.fillMaxSize())
+                AppNavGraph(modifier = Modifier.fillMaxSize())
             }
         }
     }

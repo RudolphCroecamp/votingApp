@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -45,7 +46,6 @@ kotlin {
 dependencies {
     implementation(libs.activity.ktx)
     implementation(libs.core.splashscreen)
-    implementation(libs.androidx.compose.material3)
     implementation(libs.lifecycle.runtime.ktx)
 
     implementation(platform(libs.compose.bom))
@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.navigation.compose)
+    // Type-safe navigation routes need generated serializers at runtime.
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
 

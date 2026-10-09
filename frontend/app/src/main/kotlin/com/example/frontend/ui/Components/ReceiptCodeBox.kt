@@ -16,12 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Spacing
+import com.example.frontend.ui.theme.SurfaceSunken
 import com.example.frontend.ui.theme.MutedText
 
 @Composable
@@ -36,7 +36,7 @@ fun ReceiptCodeBox(
         modifier = modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(Color(0xFFF7FAFD))
+            .background(SurfaceSunken)
             .border(width = 1.dp, color = CardBorder, shape = shape)
             .padding(horizontal = Spacing.card, vertical = Spacing.item),
         verticalAlignment = Alignment.CenterVertically,
@@ -46,7 +46,11 @@ fun ReceiptCodeBox(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(Spacing.tight)
         ) {
-            DescriptionLabel(text = label, color = MutedText)
+            DescriptionLabel(
+                text = label,
+                color = MutedText,
+                style = MaterialTheme.typography.bodySmall
+            )
             HeadingLabel(
                 text = receiptCode,
                 style = MaterialTheme.typography.titleLarge

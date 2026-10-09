@@ -3,10 +3,8 @@ package com.example.frontend.ui.screens.Registration.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -27,14 +25,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.Components.AppTextField
-import com.example.frontend.ui.Components.BrandHeader
+import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.HeadingLabel
-import com.example.frontend.ui.Components.IconLabel
+import com.example.frontend.ui.Components.StatusLabel
+import com.example.frontend.ui.Components.SectionHeading
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.screens.Registration.REGISTRATION_STEPS
@@ -51,30 +49,30 @@ fun RegisterScreen(
     onEvent: (RegistrationUiEvent) -> Unit,
     onContinue: () -> Unit,
     onSignIn: () -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = PageBackground
 ) {
     Scaffold(
         modifier = modifier,
-        containerColor = backgroundColor
+        containerColor = backgroundColor,
+        topBar = {
+            AppTopBar(
+                title = "Create your account",
+                subtitle = "Step 1 of $REGISTRATION_STEPS",
+                onBackClick = onBackClick
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = Spacing.screen, vertical = Spacing.section),
+                .padding(horizontal = Spacing.screen, vertical = Spacing.card),
             verticalArrangement = Arrangement.spacedBy(Spacing.item),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BrandHeader(
-                title = "South Africa\nNational Voting App",
-                subtitle = "Secure  ·  Anonymous  ·  Verifiable",
-                logoSize = 72.dp
-            )
-
-            Spacer(modifier = Modifier.height(Spacing.small))
-
             RegisterStepHeader(
                 step = 1,
                 heading = "Your Details",
@@ -133,7 +131,7 @@ fun RegisterScreen(
                 enabled = uiState.canSubmitDetails
             )
 
-            IconLabel(
+            StatusLabel(
                 message = "Next you will capture your ID document, then scan your face. " +
                     "That scan replaces a password when you sign in.",
                 type = StatusType.Info,
@@ -180,12 +178,7 @@ internal fun RegisterStepHeader(
     ) {
         RegistrationStepper(currentStep = step, totalSteps = totalSteps)
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
-            HeadingLabel(text = heading, modifier = Modifier.fillMaxWidth())
-            DescriptionLabel(
-                text = description,
-                modifier = Modifier.fillMaxWidth(),
-                color = MutedText
-            )
+            SectionHeading(title = heading, description = description)
         }
     }
 }
@@ -198,7 +191,8 @@ private fun RegisterScreenEmptyPreview() {
             uiState = RegistrationUiState(),
             onEvent = {},
             onContinue = {},
-            onSignIn = {}
+            onSignIn = {},
+            onBackClick = {}
         )
     }
 }
@@ -217,7 +211,8 @@ private fun RegisterScreenFilledPreview() {
             ),
             onEvent = {},
             onContinue = {},
-            onSignIn = {}
+            onSignIn = {},
+            onBackClick = {}
         )
     }
 }

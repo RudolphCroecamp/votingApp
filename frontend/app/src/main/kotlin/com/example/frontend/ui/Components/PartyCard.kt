@@ -21,7 +21,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.frontend.R
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.MutedText
@@ -38,7 +37,7 @@ fun PartyCard(
     onClick: (() -> Unit)? = null
 ) {
     val shape = MaterialTheme.shapes.medium
-    val elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    val elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     val colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     val border = if (selected) {
         BorderStroke(2.dp, MaterialTheme.colorScheme.secondary)
@@ -65,12 +64,12 @@ fun PartyCard(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.labelLarge.copy(fontSize = 14.sp, lineHeight = 18.sp),
+                    style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = slogan,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp, lineHeight = 16.sp),
+                    style = MaterialTheme.typography.bodySmall,
                     color = MutedText
                 )
             }
