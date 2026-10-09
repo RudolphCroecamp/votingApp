@@ -27,47 +27,40 @@ namespace votingBackend3.Controllers
         //verifies and adds the vote to te current node's blockchain
         [HttpPost]
         [Route("handle_vote_request")]
-        public async Task<IActionResult> HandleVoteRequest(vote_request request)//Fix check if this need [frombody]
+        public async Task<IActionResult> HandleVoteRequest(VoteBroadcastRequest request)
         {
             try
             {
                 //verify vote
                 if (request == null) throw new Exception("Invalid request data");
 
-                if (request.GetType() != typeof(vote_request)) throw new Exception("Invalid request format");
+                if (request.GetType() != typeof(VoteBroadcastRequest)) throw new Exception("Invalid request format");
 
-                //check valid voting token 
-                VotingToken votingToken = await _voteService.VerifyVoteRequest(request);//should return voting token if valid, else return null
-
-                if (votingToken == null) throw new Exception("Invalid voting token");
-
-                //check if vote was submitted for this token <- if no vote was subitted it means the user did not vot yet
-                //FIX we want to check if the user's vote is added to the database and if the token was used.
-                Vote vote = await _voteService.VerifyVote(request);
-
-                if (vote == null) throw new Exception("No vote was found for this token");
-
+                //create block data from the vote information
                 BlockData newBlockData = new BlockData
                 {
-                    vote_id = vote.vote_id,
-                    token_id = vote.token_id,
-                    election_id = vote.election_id,
-                    party_id = vote.party_id,
+                    vote_id = request.vote_id,
+                    token_id = request.token_id,
+                    election_id = request.election_id,
+                    party_id = request.party_id
                 };
-
+                //deserialise vote information to json string to be stored in the block
                 string blockdataJson = JsonSerializer.Serialize(newBlockData);
-
-
+                //get the latest block form the blockchain to create a new block with the previous block's hash
                 Block previousBlock = await _blockchainService.GetLatestBlock();
-
+                //create block
                 Block newBlock = new Block(
                     previousBlock.index + 1,
-                    request.timestamp, //DateTime.UtcNow.ToUniversalTime(),//should be the timestamp of the vote
+                    request.created_at,
                     blockdataJson,
                     previousBlock.hash
                 );
 
-
+                //validate the voteing data
+                bool isValidVote = await _voteService.ValidateBroadCastRequest(request, newBlock.hash);
+                if (isValidVote != true) throw new Exception("Could not validate vote data");
+                
+                //save the block to blockchain
                 await _blockchainService.addBlock(newBlock);
 
                 return Ok(new
@@ -80,7 +73,6 @@ namespace votingBackend3.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return BadRequest($"handle_vote_request Error: {ex.Message}");
             }
 

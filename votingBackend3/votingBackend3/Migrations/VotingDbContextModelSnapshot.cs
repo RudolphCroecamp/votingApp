@@ -22,6 +22,27 @@ namespace votingBackend3.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("votingBackend3.Models.DTOs.VoteTokenDto", b =>
+                {
+                    b.Property<Guid>("token_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("token_id");
+
+                    b.HasIndex("token_id")
+                        .IsUnique();
+
+                    b.ToTable("VoteTokenDto");
+                });
+
             modelBuilder.Entity("votingBackend3.Models.Entities.Auth", b =>
                 {
                     b.Property<Guid>("voter_id")
@@ -129,12 +150,10 @@ namespace votingBackend3.Migrations
                     b.Property<Guid>("voter_id")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("vote_id")
-                        .HasColumnType("uuid");
+                    b.Property<bool>("has_voted")
+                        .HasColumnType("boolean");
 
                     b.HasKey("election_id", "voter_id");
-
-                    b.HasIndex("vote_id");
 
                     b.HasIndex("voter_id");
 
@@ -174,10 +193,6 @@ namespace votingBackend3.Migrations
 
                     b.Property<Guid>("election_id")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("election_type")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<Guid>("party_id")
                         .HasColumnType("uuid");
@@ -296,10 +311,6 @@ namespace votingBackend3.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("votingBackend3.Models.Entities.Vote", "Vote")
-                        .WithMany()
-                        .HasForeignKey("vote_id");
-
                     b.HasOne("votingBackend3.Models.Entities.Voter", "Voter")
                         .WithMany("ElectionVoters")
                         .HasForeignKey("voter_id")
@@ -307,8 +318,6 @@ namespace votingBackend3.Migrations
                         .IsRequired();
 
                     b.Navigation("Election");
-
-                    b.Navigation("Vote");
 
                     b.Navigation("Voter");
                 });

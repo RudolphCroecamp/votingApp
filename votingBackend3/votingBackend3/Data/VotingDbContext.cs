@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
 
 namespace votingBackend3.Data
@@ -61,6 +62,12 @@ namespace votingBackend3.Data
                 .HasForeignKey(ep => ep.party_id);
 
 
+            //voting token unique
+            modelBuilder.Entity<VoteTokenDto>()
+                .HasIndex(v => v.token_id)
+                .IsUnique();
+
+
             // VotingToken -> Election
             modelBuilder.Entity<VotingToken>()
                 .HasOne(vt => vt.Election)
@@ -75,12 +82,17 @@ namespace votingBackend3.Data
                 .HasForeignKey<Vote>(v => v.token_id);
 
 
+            //vote table unique index on token_id
+            modelBuilder.Entity<Vote>()
+                .HasIndex(v => v.token_id)
+                .IsUnique();
+
+
             // Vote -> Election
             modelBuilder.Entity<Vote>()
                 .HasOne(v => v.Election)
                 .WithMany()
                 .HasForeignKey(v => v.election_id);
-
 
             // Vote -> Party
             modelBuilder.Entity<Vote>()

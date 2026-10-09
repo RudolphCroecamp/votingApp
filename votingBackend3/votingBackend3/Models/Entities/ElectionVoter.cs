@@ -3,11 +3,12 @@
     public class ElectionVoter
     {
         public Guid election_id { get; set; }
-        public Election Election { get; set; } = null!;
-
         public Guid voter_id { get; set; }
-        public Voter Voter { get; set; } = null!;
 
-        public Vote? Vote { get; set; }
+        public bool has_voted { get; set; } = false;
+
+        public Election Election { get; set; } = null!;
+        public Voter Voter { get; set; } = null!;
     }
 }
+

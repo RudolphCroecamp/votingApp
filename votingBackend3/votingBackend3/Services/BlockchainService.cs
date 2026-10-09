@@ -27,10 +27,12 @@ namespace votingBackend3.Services
                 var hasBlocks = await _blocksDbContext.blocks.AnyAsync();
                 if (hasBlocks) return;
 
+                DateTime today = new DateTime().ToUniversalTime();
+               
                 //create genesis block
                 Block genesisBlock = new Block(
                         0, 
-                        new DateTime(2026, 10, 2, 9, 0, 0, DateTimeKind.Utc),//FIX this should be the same timestamp for all the nodes, but for now we will use a fixed timestamp
+                        new DateTime(today.Year, today.Month, today.Day, today.Hour, 0, 0, DateTimeKind.Utc),
                         "genesis block", 
                         ""
                     );
@@ -82,12 +84,12 @@ namespace votingBackend3.Services
             catch (Exception ex)
             {
                 await block_transaction.RollbackAsync();
-                throw new Exception(ex.Message);
+                throw new Exception($"Could not add block : {ex.Message}");
             }
         }
 
 
-        public async Task<transaction_response> BroadCastVote(int numNodes, vote_request request )
+        public async Task<transaction_response> BroadCastVote(int numNodes, VoteBroadcastRequest req)
         { //return true if all nodes received a transaction, false if any node failed to receive it --fix later
 
             //store the responses from nodes
@@ -97,12 +99,16 @@ namespace votingBackend3.Services
                 status = new List<bool>()
             };
 
+            
+
 
             for (int i = 1; i <= numNodes; i++)
             {
                 try
-                {
-                    using HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"http://node{i}:8080/api/Blockchain/handle_vote_request", request);//node{i} represents the internal docker node
+                {   //node{i} represents the internal docker node
+                    //do not send the actual vote in this request -> it will fail
+                    using HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"http://node{i}:8080/api/Blockchain/handle_vote_request", req);
+                    
                     //FIX we should check if the node responded successfully on each broadcast
                     //response.EnsureSuccessStatusCode();<- adding this breaks the code
                     string responseBody = await response.Content.ReadAsStringAsync();

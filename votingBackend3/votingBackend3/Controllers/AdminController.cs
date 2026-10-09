@@ -146,7 +146,7 @@ namespace votingBackend3.Controllers
 
 
 
-        [HttpPut]
+        [HttpPatch]
         [Route("update_election_status")]
         public async Task<IActionResult> updateElectionStatus([FromBody] updateStatusDto request)
         {
@@ -175,7 +175,7 @@ namespace votingBackend3.Controllers
         }
 
 
-        [HttpPut]
+        [HttpPatch]
         [Route("update_party_status")]
         public async Task<IActionResult> updatePartyStatus([FromBody] updateStatusDto request)
         {
@@ -253,7 +253,7 @@ namespace votingBackend3.Controllers
 
 
 
-
+        //FIX blockchain sould handle multiple elections and parties, and should be able to return the results of a specific election
         //check each node's blockchain and see if they are valid
         [HttpGet]
         [Route("isBlockchainValid")]
@@ -296,6 +296,8 @@ namespace votingBackend3.Controllers
             }
         }
 
+
+        //FIX could have more than one winner, should return a list of winners
         [HttpGet]
         [Route("GetElectionWinner/{election_id}")]
         public async Task<IActionResult> GetElectionWinner([FromRoute] Guid election_id)
