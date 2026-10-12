@@ -141,7 +141,6 @@ namespace votingBackend3.Services
             {
                 // Require authentication data and the voter profile fields needed by the database.
                 if (string.IsNullOrWhiteSpace(request.id_number)) throw new Exception("Id number is required");
-                if (string.IsNullOrWhiteSpace(request.role)) throw new Exception("Role is required");
                 if (request.face_embedding == null || request.face_embedding.Length == 0) throw new Exception("Face embedding is required");
                 if (string.IsNullOrWhiteSpace(request.firstname)) throw new Exception("First name is required");
                 if (string.IsNullOrWhiteSpace(request.lastname)) throw new Exception("Last name is required");
@@ -174,7 +173,7 @@ namespace votingBackend3.Services
                 {
                     voter_id = voterId,
                     id_number = request.id_number,
-                    role = request.role,
+                    role = "Voter",
                     face_embedding = request.face_embedding,
                     is_active = true,
                     created_at = DateTime.UtcNow
