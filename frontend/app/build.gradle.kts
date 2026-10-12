@@ -44,6 +44,14 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.camerax.core)
+    implementation(libs.camerax.camera2)
+    implementation(libs.camerax.lifecycle)
+    implementation(libs.camerax.view)
+    // On-device face detection + the CameraX bridge that feeds it preview frames.
+    implementation(libs.camerax.mlkit.vision)
+    implementation(libs.mlkit.face.detection)
+
     implementation(libs.activity.ktx)
     implementation(libs.core.splashscreen)
     implementation(libs.lifecycle.runtime.ktx)
@@ -56,6 +64,7 @@ dependencies {
     implementation(libs.compose.material.icons.core)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.activity.compose)
+    implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.navigation.compose)
     // Type-safe navigation routes need generated serializers at runtime.
