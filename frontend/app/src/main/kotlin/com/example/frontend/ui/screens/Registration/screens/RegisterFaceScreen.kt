@@ -1,5 +1,7 @@
 package com.example.frontend.ui.screens.Registration.screens
 
+import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -27,6 +29,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,25 +40,37 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
-import com.example.frontend.ui.Components.StatusLabel
+import com.example.frontend.ui.Components.Camera.CameraCaptureStates
+import com.example.frontend.ui.Components.Camera.CameraView
+import com.example.frontend.ui.Components.Camera.CaptureState
+import com.example.frontend.ui.Components.Camera.evaluateCapture
+import com.example.frontend.ui.Components.Camera.rememberCameraPermission
 import com.example.frontend.ui.Components.SimpleButton
+import com.example.frontend.ui.Components.StatusLabel
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.Components.SuccessCheckmarkBadge
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
 import com.example.frontend.ui.screens.Registration.RegistrationUiState
-import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.BrandNavyDeep
-import com.example.frontend.ui.theme.motionEnabled
+import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
 import com.example.frontend.ui.theme.SuccessBorder
-/** Simulated capture path until CameraX is wired up. */
-private const val CAPTURED_FACE_PATH = "path/to/captured_face.jpg"
+import com.example.frontend.ui.theme.motionEnabled
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+
+/** Only used by the previews, which cannot open a camera. */
+private const val PREVIEW_FACE_PATH = "path/to/captured_face.jpg"
 
 @Composable
 fun RegisterFaceScreen(
@@ -64,6 +82,13 @@ fun RegisterFaceScreen(
     backgroundColor: Color = PageBackground
 ) {
     val captured = uiState.capturedFaceImagePath != null
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val inPreview = LocalInspectionMode.current
+    val (cameraGranted, requestCamera) = rememberCameraPermission()
+
+    // Capture state lives here: the screen owns the camera, the view model owns the result.
+    var capture by remember { mutableStateOf<CaptureState>(CaptureState.Framing) }
 
     Scaffold(
         modifier = modifier,
@@ -87,14 +112,40 @@ fun RegisterFaceScreen(
 
             Spacer(modifier = Modifier.height(Spacing.small))
 
-            FaceCaptureFrame(captured = captured, modifier = Modifier.fillMaxWidth())
+            if (captured || !cameraGranted || inPreview) {
+                // Nothing to show live: either we already have a photo, or we cannot open the camera.
+                FaceCaptureFrame(captured = captured, modifier = Modifier.fillMaxWidth())
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(0.85f)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(BrandNavyDeep)
+                ) {
+                    CameraView(
+                        mode = CameraCaptureStates.FACE,
+                        state = capture,
+                        onPhotoTaken = { photo -> capture = evaluateCapture(photo) },
+                        onRetake = { capture = CaptureState.Framing },
+                        onConfirm = {
+                            val photo = (capture as? CaptureState.Captured)?.photo
+                            if (photo != null) {
+                                capture = CaptureState.Uploading
+                                scope.launch {
+                                    onEvent(
+                                        RegistrationUiEvent.OnFaceCaptured(saveFaceImage(context, photo))
+                                    )
+                                }
+                            }
+                        },
+                        onError = { message -> capture = CaptureState.Problem(message) }
+                    )
+                }
+            }
 
             StatusLabel(
-                message = if (captured) {
-                    "Face captured. Retake it if your face was not clearly inside the frame."
-                } else {
-                    "Find a well-lit spot, remove hats and sunglasses, and look straight ahead."
-                },
+                message = statusMessage(captured, cameraGranted, capture),
                 type = if (captured) StatusType.Success else StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -112,24 +163,47 @@ fun RegisterFaceScreen(
                 )
                 SimpleButton(
                     label = "Retake Scan",
-                    onClick = { onEvent(RegistrationUiEvent.OnFaceRetake) },
+                    onClick = {
+                        capture = CaptureState.Framing
+                        onEvent(RegistrationUiEvent.OnFaceRetake)
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Secondary,
                     leadingIcon = Icons.Default.Refresh,
                     enabled = !uiState.isLoading
                 )
-            } else {
+            } else if (!cameraGranted) {
                 SimpleButton(
-                    label = "Capture Face",
-                    onClick = { onEvent(RegistrationUiEvent.OnFaceCaptured(CAPTURED_FACE_PATH)) },
+                    label = "Allow Camera Access",
+                    onClick = requestCamera,
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Tertiary,
                     leadingIcon = Icons.Default.CenterFocusStrong
                 )
             }
+            // Permission granted and nothing captured yet: the shutter lives inside CameraView.
         }
     }
 }
+
+private fun statusMessage(
+    captured: Boolean,
+    cameraGranted: Boolean,
+    capture: CaptureState
+): String = when {
+    captured -> "Face captured. Retake it if your face was not clearly inside the frame."
+    !cameraGranted -> "We need the camera to scan your face. Nothing is recorded until you tap the shutter."
+    capture is CaptureState.Problem -> capture.message
+    else -> "Find a well-lit spot, remove hats and sunglasses, and look straight ahead."
+}
+
+/** Registration sends a file path, so the capture is written to the app cache first. */
+private suspend fun saveFaceImage(context: Context, photo: Bitmap): String =
+    withContext(Dispatchers.IO) {
+        val file = File(context.cacheDir, "face_capture.jpg")
+        file.outputStream().use { out -> photo.compress(Bitmap.CompressFormat.JPEG, 90, out) }
+        file.absolutePath
+    }
 
 @Composable
 private fun FaceCaptureFrame(captured: Boolean, modifier: Modifier = Modifier) {
@@ -212,7 +286,7 @@ private fun RegisterFaceScreenEmptyPreview() {
 private fun RegisterFaceScreenCapturedPreview() {
     FrontendTheme {
         RegisterFaceScreen(
-            uiState = RegistrationUiState(capturedFaceImagePath = CAPTURED_FACE_PATH),
+            uiState = RegistrationUiState(capturedFaceImagePath = PREVIEW_FACE_PATH),
             onEvent = {},
             onBackClick = {},
             onContinue = {}
