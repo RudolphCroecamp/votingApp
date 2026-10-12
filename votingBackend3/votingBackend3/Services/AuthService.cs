@@ -265,43 +265,23 @@ namespace votingBackend3.Services
         {
             try
             {
-                // Require an account ID and a currently valid token before logging out.
+                // Validate the submitted token and ensure it belongs to the requested account.
                 if (voter_id == Guid.Empty) throw new Exception("Invalid voter id");
                 if (string.IsNullOrWhiteSpace(token)) throw new Exception("Token is required");
-                if (!await ValidateToken(token)) throw new Exception("Token is invalid or expired");
 
-                // Disable the account to prevent it from being treated as active.
-                return await RevokeToken(voter_id);
+                var principal = GetValidatedPrincipal(token);
+                var tokenVoterId = principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!Guid.TryParse(tokenVoterId, out var tokenUserId) || tokenUserId != voter_id)
+                    throw new Exception("Token is invalid or does not belong to this account");
+
+                // Logout is client-side: after this confirmation, the client must delete its stored token.
+                return await _votingDbContext.auth.AnyAsync(user => user.voter_id == voter_id && user.is_active);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-
-        public async Task<bool> RevokeToken(Guid voter_id)
-        {
-            try
-            {
-                // Find the account that should be disabled.
-                var user = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.voter_id == voter_id);
-
-                if (user == null) return false;
-
-                // Mark the account inactive and persist the change.
-                user.is_active = false;
-                await _votingDbContext.SaveChangesAsync();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        
-
 
     }
 }

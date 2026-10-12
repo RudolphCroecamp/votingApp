@@ -181,6 +181,7 @@ namespace votingBackend3.Controllers
                     });
                 }
 
+                // The client must delete its locally stored token after receiving this confirmation.
                 return Ok(new
                 {
                     message = "Logout success",
