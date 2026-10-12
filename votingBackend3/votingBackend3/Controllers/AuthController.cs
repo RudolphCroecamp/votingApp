@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Services;
@@ -170,7 +170,7 @@ namespace votingBackend3.Controllers
         {
             try
             {
-                var success = await _authService.Logout(request.voter_id, request.token);
+                var success = await _authService.Logout(request.token);
 
                 if (!success)
                 {

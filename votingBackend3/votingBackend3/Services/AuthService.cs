@@ -261,21 +261,20 @@ namespace votingBackend3.Services
             }
         }
 
-        public async Task<bool> Logout(Guid voter_id, string token)
+        public async Task<bool> Logout(string token)
         {
             try
             {
-                // Validate the submitted token and ensure it belongs to the requested account.
-                if (voter_id == Guid.Empty) throw new Exception("Invalid voter id");
+                // Validate the submitted token and read its account ID.
                 if (string.IsNullOrWhiteSpace(token)) throw new Exception("Token is required");
 
                 var principal = GetValidatedPrincipal(token);
                 var tokenVoterId = principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!Guid.TryParse(tokenVoterId, out var tokenUserId) || tokenUserId != voter_id)
-                    throw new Exception("Token is invalid or does not belong to this account");
+                if (!Guid.TryParse(tokenVoterId, out var voterId))
+                    throw new Exception("Token is invalid");
 
                 // Logout is client-side: after this confirmation, the client must delete its stored token.
-                return await _votingDbContext.auth.AnyAsync(user => user.voter_id == voter_id && user.is_active);
+                return await _votingDbContext.auth.AnyAsync(user => user.voter_id == voterId && user.is_active);
             }
             catch (Exception ex)
             {
