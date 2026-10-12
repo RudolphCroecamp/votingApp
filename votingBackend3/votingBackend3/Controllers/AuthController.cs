@@ -129,6 +129,42 @@ namespace votingBackend3.Controllers
         }
 
         [HttpPost]
+        [Route("refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] token_request request)
+        {
+            try
+            {
+                var token = await _authService.RefreshToken(request.token);
+
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    return Unauthorized(new
+                    {
+                        message = "Token is invalid, expired, or its account is inactive",
+                        status = false
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "Token refreshed",
+                    status = true,
+                    token = token
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return BadRequest(new
+                {
+                    message = $"Token refresh error: {ex.Message}",
+                    status = false
+                });
+            }
+        }
+
+        [HttpPost]
         [Route("logout")]
         public async Task<IActionResult> Logout([FromBody] logout_request request)
         {
