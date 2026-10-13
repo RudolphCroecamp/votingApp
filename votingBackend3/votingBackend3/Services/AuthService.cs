@@ -341,7 +341,6 @@ namespace votingBackend3.Services
                     await _votingDbContext.SaveChangesAsync();
                 }
 
-                // Logout is idempotent for a session that has already been revoked.
                 return true;
             }
             catch (Exception ex)
