@@ -27,6 +27,7 @@ import com.example.frontend.ui.screens.Auth.LoginScreen
 import com.example.frontend.ui.screens.Info.InfoScreen
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
 import com.example.frontend.ui.screens.Registration.RegistrationViewModel
+import com.example.frontend.ui.screens.PrivacyConsent.PrivacyConsentScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterDoneScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterFaceScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterIdentityScreen
@@ -161,10 +162,25 @@ fun AppNavGraph(
                 onEvent = registrationViewModel::onEvent,
                 onContinue = {
                     registrationViewModel.onEvent(RegistrationUiEvent.OnNextStepClicked)
-                    navController.navigate(Screen.RegisterIdentity)
+                    navController.navigate(Screen.PrivacyConsent)
                 },
                 onSignIn = { navController.popBackStack() },
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable<Screen.PrivacyConsent> {
+            PrivacyConsentScreen(
+                uiState = registrationState,
+                onEvent = registrationViewModel::onEvent,
+                onBackClick = {
+                    registrationViewModel.onEvent(RegistrationUiEvent.OnPreviousStepClicked)
+                    navController.popBackStack()
+                },
+                onContinue = {
+                    registrationViewModel.onEvent(RegistrationUiEvent.OnNextStepClicked)
+                    navController.navigate(Screen.RegisterIdentity)
+                }
             )
         }
 

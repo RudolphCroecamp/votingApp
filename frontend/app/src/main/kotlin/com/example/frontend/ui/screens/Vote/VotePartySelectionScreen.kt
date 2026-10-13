@@ -28,6 +28,8 @@ import com.example.frontend.data.SampleParties
 import com.example.frontend.ui.Components.AppBottomBar
 import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.AppTopBar
+import com.example.frontend.ui.Components.Ballot
+import com.example.frontend.ui.Components.BallotStepIndicator
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.HeadingLabel
@@ -44,7 +46,8 @@ fun VotePartySelectionScreen(
     onBackClick: () -> Unit,
     onContinue: (Party) -> Unit,
     modifier: Modifier = Modifier,
-    ballotTitle: String = "National Assembly",
+    ballot: Ballot = Ballot.National,
+    ballotTitle: String = ballot.title,
     parties: List<Party> = SampleParties,
     selectedTab: BottomTab = BottomTab.Vote,
     onTabSelected: (BottomTab) -> Unit = {},
@@ -59,7 +62,7 @@ fun VotePartySelectionScreen(
         containerColor = backgroundColor,
         topBar = { AppTopBar(
                 title = "National Election",
-                subtitle = "Step 1 of 2 \u00b7 Choose your party",
+                subtitle = "Choose your party",
                 onBackClick = onBackClick
             ) },
         bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
@@ -72,10 +75,15 @@ fun VotePartySelectionScreen(
                 .padding(Spacing.screen),
             verticalArrangement = Arrangement.spacedBy(Spacing.item)
         ) {
+            BallotStepIndicator(
+                ballot = ballot,
+                modifier = Modifier.entrance(entered, index = 0)
+            )
+
             SectionHeading(
                 title = ballotTitle,
                 description = "Select ONE party",
-                modifier = Modifier.entrance(entered, index = 0)
+                modifier = Modifier.entrance(entered, index = 1)
             )
 
             parties.forEachIndexed { index, party ->
@@ -85,7 +93,7 @@ fun VotePartySelectionScreen(
                     onClick = { selectedId = party.id },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .entrance(entered, index = index + 1)
+                        .entrance(entered, index = index + 2)
                 )
             }
 

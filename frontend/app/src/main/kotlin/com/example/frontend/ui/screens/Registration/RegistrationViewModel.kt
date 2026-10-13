@@ -37,6 +37,8 @@ class RegistrationViewModel : ViewModel() {
                 if (event.value.length <= OTP_LENGTH) _uiState.update { it.copy(otpCode = event.value) }
             }
 
+            is RegistrationUiEvent.OnConsentChanged -> _uiState.update { it.copy(hasConsented = event.granted) }
+
             is RegistrationUiEvent.OnDocumentTypeSelected -> _uiState.update { it.copy(documentType = event.type) }
             is RegistrationUiEvent.OnDocumentNumberChanged -> _uiState.update { it.copy(documentNumber = event.number) }
             is RegistrationUiEvent.OnDocumentCaptured -> _uiState.update { it.copy(documentFrontImagePath = event.imagePath) }
@@ -63,7 +65,7 @@ class RegistrationViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             delay(500) // Simulate processing
-            _uiState.update { it.copy(isLoading = false, currentStep = 3) }
+            _uiState.update { it.copy(isLoading = false, currentStep = 4) }
         }
     }
 
@@ -75,7 +77,7 @@ class RegistrationViewModel : ViewModel() {
                 it.copy(
                     isLoading = false,
                     isFaceVerified = true,
-                    currentStep = 4
+                    currentStep = 5
                 )
             }
         }

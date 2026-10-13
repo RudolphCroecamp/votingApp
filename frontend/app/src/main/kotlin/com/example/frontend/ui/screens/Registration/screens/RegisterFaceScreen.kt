@@ -105,7 +105,7 @@ fun RegisterFaceScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RegisterStepHeader(
-                step = 3,
+                step = 4,
                 heading = "Scan Your Face",
                 description = "Hold your phone at eye level and keep your face inside the frame."
             )
