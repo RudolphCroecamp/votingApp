@@ -72,7 +72,14 @@ namespace votingBackend3.Services
             try
             {
                 var issuedAt = DateTime.UtcNow;
-                var session = new AuthSession
+                var existingSession = await _votingDbContext.auth_sessions
+                    .FirstOrDefaultAsync(session =>
+                        session.voter_id == voter_id &&
+                        session.expires_at > issuedAt &&
+                        session.revoked_at == null);
+
+                var isNewSession = existingSession == null;
+                var session = existingSession ?? new AuthSession
                 {
                     jti = Guid.NewGuid(),
                     voter_id = voter_id,
@@ -103,9 +110,11 @@ namespace votingBackend3.Services
                     signingCredentials: credentials
                 );
 
-                // Save the session in the database
-                await _votingDbContext.auth_sessions.AddAsync(session);
-                await _votingDbContext.SaveChangesAsync();
+                if (isNewSession)
+                {
+                    await _votingDbContext.auth_sessions.AddAsync(session);
+                    await _votingDbContext.SaveChangesAsync();
+                }
 
                 // Convert the JWT object into a serialized string that the client can send back.
                 return new JwtSecurityTokenHandler().WriteToken(token);
