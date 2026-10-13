@@ -1,6 +1,6 @@
 package com.example.frontend.ui.screens.Registration
 
-const val REGISTRATION_STEPS = 4
+const val REGISTRATION_STEPS = 5
 
 enum class IdentityDocumentType {
     NATIONAL_ID,
@@ -15,6 +15,8 @@ data class RegistrationUiState(
     val email: String = "",
     val postalCode: String = "",
     val otpCode: String = "",
+
+    val hasConsented: Boolean = false,
 
     // Identity Verification Details
     val documentType: IdentityDocumentType = IdentityDocumentType.NATIONAL_ID,
@@ -34,11 +36,17 @@ data class RegistrationUiState(
             phone.isNotBlank() &&
             postalCode.isNotBlank()
 
+    val canSubmitConsent: Boolean
+        get() = hasConsented && !isLoading
+
     val canSubmitIdentity: Boolean
-        get() = documentNumber.isNotBlank() && documentFrontImagePath != null && !isLoading
+        get() = hasConsented &&
+            documentNumber.isNotBlank() &&
+            documentFrontImagePath != null &&
+            !isLoading
 
     val canSubmitFace: Boolean
-        get() = capturedFaceImagePath != null && !isLoading
+        get() = hasConsented && capturedFaceImagePath != null && !isLoading
 
     val voterName: String
         get() = fullNames.ifBlank { "Voter" }
@@ -51,6 +59,8 @@ sealed interface RegistrationUiEvent {
     data class OnEmailChanged(val value: String) : RegistrationUiEvent
     data class OnPostalCodeChanged(val value: String) : RegistrationUiEvent
     data class OnOtpChanged(val value: String) : RegistrationUiEvent
+
+    data class OnConsentChanged(val granted: Boolean) : RegistrationUiEvent
 
     // Identity Verification Events
     data class OnDocumentTypeSelected(val type: IdentityDocumentType) : RegistrationUiEvent

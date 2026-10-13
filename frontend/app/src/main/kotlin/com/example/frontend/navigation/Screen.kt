@@ -14,6 +14,8 @@ sealed interface Screen {
     @Serializable
     data object Register : Screen
     @Serializable
+    data object PrivacyConsent : Screen
+    @Serializable
     data object RegisterIdentity : Screen
     @Serializable
     data object RegisterFace : Screen

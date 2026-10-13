@@ -60,7 +60,7 @@ fun RegisterDoneScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RegisterStepHeader(
-                step = 4,
+                step = 5,
                 heading = "You're Registered",
                 description = "Your details, ID document and face scan have been submitted for verification."
             )
