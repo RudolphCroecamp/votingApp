@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Net.Http.Headers;
 using System.Xml.Linq;
 using votingBackend3.Data;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
 
 
 namespace votingBackend3.Services
@@ -15,11 +12,13 @@ namespace votingBackend3.Services
     {
         private readonly BlocksDbContext _blocksDbContext;
         private readonly HttpClient _httpClient;
+        private readonly NodeTokenService _nodeTokenService;
 
-        public BlockchainService(BlocksDbContext blocksDbContext, HttpClient httpClient)
+        public BlockchainService(BlocksDbContext blocksDbContext, HttpClient httpClient, NodeTokenService nodeTokenService)
         {
             _blocksDbContext = blocksDbContext;
             _httpClient = httpClient;
+            _nodeTokenService = nodeTokenService;
         }
 
         public async Task AddgenesisBlock()
@@ -31,9 +30,17 @@ namespace votingBackend3.Services
                 var hasBlocks = await _blocksDbContext.blocks.AnyAsync();
                 if (hasBlocks) return;
 
+                DateTime today = new DateTime().ToUniversalTime();
+               
                 //create genesis block
-                Console.WriteLine("========GENESIS BLOCK============");
-                Block genesisBlock = new Block(0, DateTime.UtcNow, "genesis block", "");
+                Block genesisBlock = new Block(
+                        0, 
+                        new DateTime(today.Year, today.Month, today.Day, today.Hour, 0, 0, DateTimeKind.Utc),
+                        "genesis block", 
+                        ""
+                    );
+
+
 
                 //add to database
                 _blocksDbContext.blocks.Add(genesisBlock);
@@ -80,157 +87,286 @@ namespace votingBackend3.Services
             catch (Exception ex)
             {
                 await block_transaction.RollbackAsync();
+                throw new Exception($"Could not add block : {ex.Message}");
+            }
+        }
+
+        //return true if all nodes received a transaction, false if any node failed to receive it --fix later
+        public async Task<transaction_response> BroadCastVote(int numNodes, VoteBroadcastRequest req)
+        { 
+
+            //store the responses from nodes
+            transaction_response result = new transaction_response
+            {
+                messages = new List<string>(),
+                status = new List<bool>()
+            };
+
+            //Validate the request object.
+            if (req is null)
+            {
+                result.messages.Add("Vote broadcast request cannot be null.");
+                result.status.Add(false);
+                return result;
+            }
+
+            //Generate the internal service JWT.
+            string serviceToken;
+
+            try
+            {
+                serviceToken = _nodeTokenService.GenerateToken();
+            }
+            catch (Exception)
+            {
+                //Do not expose secrets or configuration details.
+                result.messages.Add("Could not authenticate with the blockchain nodes.");
+                result.status.Add(false);
+
+                return result;
+            }
+
+            //Broadcast to each node independently.
+            for (int i = 1; i <= numNodes; i++)
+            {
+                try
+                {
+                    var nodeUrl = $"http://node{i}:8080/api/Blockchain/handle_vote_request";
+
+                    using var request = new HttpRequestMessage(HttpMethod.Post, nodeUrl);
+
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", serviceToken);
+
+                    request.Content = JsonContent.Create(req);
+
+                    using var response = await _httpClient.SendAsync(request);
+
+                    var responseBody = await response.Content.ReadAsStringAsync();
+
+                    //Check the HTTP status code.
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result.messages.Add($"Node {i}: Request accepted. {responseBody}");
+                        result.status.Add(true);
+                    }
+                    else
+                    {
+                        result.messages.Add($"Node {i}: HTTP {(int)response.StatusCode} " + $"{response.StatusCode}. {responseBody}");
+                        result.status.Add(false);
+                    }
+                }
+                catch (HttpRequestException)
+                {
+                    result.messages.Add($"Node {i}: Network error or connection failure.");
+                    result.status.Add(false);
+                }
+                catch (TaskCanceledException)
+                {
+                    result.messages.Add($"Node {i}: Request timed out or was cancelled.");
+                    result.status.Add(false);
+                }
+            }
+
+            return result;
+        }
+
+
+        //check that all the nodes are valid and that all the nodes matches eachother
+        public async Task<bool> IsBlockchainValid(int numNodes) {
+            try {
+                //check if all nodes have valid chains
+                var _IsAllNodeChainValid = await IsAllNodeChainsValid(numNodes);
+                if (!_IsAllNodeChainValid) return false;
+
+                //check that all nodes have the same chain
+                var _IsAllNodesEqual = await IsAllNodesEqual(numNodes);
+                if (!_IsAllNodesEqual) return false;
+
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            
+        }
+
+
+
+
+
+         //===========================================VALIDATE BLOCKCHAIN METHODS===================================================
+        public async Task<bool> IsAllNodeChainsValid(int numNodes) {
+            try {
+                var tasks = Enumerable
+                    .Range(1, numNodes)
+                    .Select(isNodechainValid_id);
+
+                bool[] results = await Task.WhenAll(tasks);
+
+                if(results.Length <= 0) throw new Exception("No nodes found to validate");
+
+                return results.All(x => x == true);
+            }
+            catch (Exception ex)
+            {
                 throw new Exception(ex.Message);
             }
         }
 
 
-        public async Task<transaction_response> BroadCastVote(int numNodes, vote_request request )
-        { //return true if all nodes received a transaction, false if any node failed to receive it --fix later
-
-            //store the responses from nodes
-            transaction_response transaction_response = new transaction_response
-            {
-                messages = new List<string>(),
-                status = new List<bool>()
-            };
-
-
-            for (int i = 1; i <= numNodes; i++)
-            {
-                try
-                {
-                    using HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"http://node{i}:8080/api/Blockchain/handle_vote_request", request);//node{i} represents the internal docker node
-                    //response.EnsureSuccessStatusCode();
-                    string responseBody = await response.Content.ReadAsStringAsync();
-
-                    transaction_response.messages.Add(responseBody);
-                    transaction_response.status.Add(true);      
-                }
-                catch (HttpRequestException e)
-                {
-                    transaction_response.messages.Add($"Node {i}: {e.Message}");
-                    transaction_response.status.Add(false);
-                }
-            }
-
-            return transaction_response;
-        }
-
-
-        public async Task<transaction_response> IsBlockchainValid(int numNodes)
+        //compares all the nodes in the blockchain network and see if they are all equal, returns true if all nodes have the same chain, false if any node has a different chain
+        public async Task<bool> IsAllNodesEqual(int numNodes)
         {
-            var transactionResponse = new transaction_response
-            {
-                messages = new List<string>(),
-                status = new List<bool>()
-            };
+            try {
+                var tasks = Enumerable
+                    .Range(1, numNodes)
+                    .Select(GetNodeChain_id);
 
-            for (int i = 1; i <= numNodes; i++)
-            {
-                try
+                List<Block>[] blockchains = await Task.WhenAll(tasks);
+
+                if (blockchains.Length == 0) throw new Exception("No blockchains found to compare");
+
+                var referenceChain = blockchains[0];
+
+                foreach (var chain in blockchains.Skip(1))
                 {
-                    using var request = new HttpRequestMessage(HttpMethod.Get,$"http://node{i}:8080/api/Blockchain/isNodechainValid");
+                    // Different number of blocks
+                    if (chain.Count != referenceChain.Count)
+                        return false;
 
-                    var response = await _httpClient.SendAsync(request);
-                    var responseBody = await response.Content.ReadAsStringAsync();
-
-                    if (!response.IsSuccessStatusCode)
+                    for (int i = 0; i < referenceChain.Count; i++)
                     {
-                        transactionResponse.messages.Add($"Node {i}: HTTP {(int)response.StatusCode} - {responseBody}");
+                        var referenceBlock = referenceChain[i];
+                        var currentBlock = chain[i];
 
-                        transactionResponse.status.Add(false);
-                        continue;
+                        if (referenceBlock.hash != currentBlock.hash)
+                        {
+                            return false;
+                        }
                     }
-
-                    transactionResponse.messages.Add($"Node {i}: {responseBody}");
-
-                    transactionResponse.status.Add(true);
                 }
-                catch (Exception ex)
-                {
-                    transactionResponse.messages.Add($"Node {i}: {ex.Message}");
 
-                    transactionResponse.status.Add(false);
-                }
+                return true;
+
             }
-
-            return transactionResponse;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
-        
-        //public async Task<string> GetNodeChain_id(int node) {
-        //    try
-        //    {
-        //        using var request = new HttpRequestMessage(HttpMethod.Get, $"http://node{node}:8080/api/Blockchain/GetNodeChain");
-
-        //        var response = await _httpClient.SendAsync(request);
-        //        var responseBody = await response.Content.ReadAsStringAsync();
-
-        //        //if (!response.IsSuccessStatusCode) return null;
-
-        //        return responseBody;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-
-        //}
-
-        //public async Task<List<Block>> GetNodeChain()
-        //{
-        //    var blockchain = await _blocksDbContext.blocks
-        //         .OrderBy(b => b.index)
-        //         .ToListAsync();
-
-        //    return blockchain;
-
-        //}
 
 
 
+
+        //makes a request to all the nodes to check if their individual chains are valid
+        public async Task<bool> isNodechainValid_id(int node_id)
+        {
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"http://node{node_id}:8080/api/Blockchain/isNodechainValid");
+
+                var response = await _httpClient.SendAsync(request);
+                var responseBody = await response.Content.ReadFromJsonAsync<bool>();
+
+                //if (!response.IsSuccessStatusCode) return false;
+
+                return responseBody;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+
+        //checks the current node's blockchain and see if it is valid
         public async Task<bool> IsNodeChainValid()
         {
-            var blockchain = await _blocksDbContext.blocks
-                .OrderBy(b => b.index)
-                .ToArrayAsync();
-
             try {
-                Console.WriteLine(blockchain[1]);
-                Console.WriteLine(blockchain[2]);
-                Console.WriteLine(blockchain[3]);
-                Console.WriteLine(blockchain[4]);
-            }
-            catch{ 
-           
-            }
+                var blockchain = await _blocksDbContext.blocks
+                    .OrderBy(b => b.index)
+                    .ToArrayAsync();
 
-
-            for (int i = 0; i < blockchain.Length; i++)
-            {
-                var current = blockchain[i];
-
-                // Recalculate the hash
-                var calculatedHash = current.CalculateHash();
-
-                Console.WriteLine("==============VERIFYING BLOCK===============");
-                var rawData = $"{current.index}-{current.timestamp.ToUniversalTime():O}-{current.Data}-{current.previousHash}";
-                Console.WriteLine($"hash: {current.hash}");
-                Console.WriteLine($"caclulated hash: {calculatedHash}");
-
-                if (current.hash != calculatedHash) return false;
-
-                // Check link to previous block
-                if (i > 0)
+                for (int i = 0; i < blockchain.Length; i++)
                 {
-                    var previous = blockchain[i - 1];
+                    var current = blockchain[i];
 
-                    if (current.previousHash != previous.hash) return false;
+                    // Recalculate the hash
+                    var calculatedHash = current.CalculateHash();
+
+                    var rawData = $"{current.index}-{current.timestamp.ToUniversalTime():O}-{current.Data}-{current.previousHash}";
+
+                    if (current.hash != calculatedHash) return false;
+
+                    // Check link to previous block
+                    if (i > 0)
+                    {
+                        var previous = blockchain[i - 1];
+
+                        if (current.previousHash != previous.hash) return false;
+                    }
                 }
+
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
+        //used by main sever to get the blockchain from a specific node
+        public async Task<List<Block>> GetNodeChain_id(int node_id)
+        {
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"http://node{node_id}:8080/api/Blockchain/GetNodeChain");
+
+                var response = await _httpClient.SendAsync(request);
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                //if (!response.IsSuccessStatusCode) return null;
+
+                var blockchain = await response.Content.ReadFromJsonAsync<List<Block>>();
+
+                return blockchain ?? new List<Block>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
 
-            return true;
         }
+
+
+        //used on curent node to get the blockchain from the database 
+        public async Task<List<Block>> GetNodeChain()
+        {
+            try {
+                var blockchain = await _blocksDbContext.blocks
+                     .OrderBy(b => b.index)
+                     .ToListAsync();
+
+                return blockchain;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+
+        }
+
+
+
+
+
 
     }
 

@@ -33,6 +33,7 @@ import com.example.frontend.ui.theme.SuccessBorder
 import com.example.frontend.ui.theme.SuccessContainer
 import com.example.frontend.ui.theme.SuccessContent
 import com.example.frontend.ui.theme.WarningBorder
+import com.example.frontend.ui.theme.WarningText
 import com.example.frontend.ui.theme.WarningContainer
 import com.example.frontend.ui.theme.WarningContent
 
@@ -57,7 +58,7 @@ fun StatusLabel(
 ) {
     Surface(
         modifier = modifier,
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.medium,
         color = type.containerColor,
         border = BorderStroke(1.dp, type.borderColor)
     ) {
@@ -75,8 +76,8 @@ fun StatusLabel(
             Text(
                 text = message,
                 modifier = Modifier.weight(1f, fill = false),
-                style = MaterialTheme.typography.bodyLarge,
-                color = type.contentColor
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (type == StatusType.Warning) WarningText else type.contentColor
             )
         }
     }

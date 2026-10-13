@@ -1,46 +1,89 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
 using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
-    //[Authorize(Roles = "Voter")]
+    [EnableRateLimiting("VoteSubmission")]
+    [Authorize(Roles = "Voter")]
     [Route("api/[controller]")]
     [ApiController]
     public class VotesController : ControllerBase
     {
         private readonly VoteService _voteService;
         private readonly BlockchainService _blockchainService;
+        private readonly IConfiguration _configuration;
 
-        private readonly int NODECOUNT = 4;
+        private readonly int NODECOUNT = 0;
 
-        public VotesController(VoteService voteService, BlockchainService blockchainService)
+        public VotesController(VoteService voteService, BlockchainService blockchainService, IConfiguration configuration)
         {
             _voteService = voteService;
             _blockchainService = blockchainService;
+            _configuration = configuration;
+            NODECOUNT = _configuration.GetValue<int>("NODECOUNT"!);
         }
 
-        //FIX block the add to blockchain request if vote token was already used
-        //FIX block the token after it was used
-        //TODO add authentication and authorisation to broad_cast_vote -> pass user's jwt
+        //first check if the user has voted before they can access the election
+        [HttpGet]
+        [Route("hasUserVoted/{election_id}")]
+        public async Task<IActionResult> HasUserVoted([FromRoute] Guid election_id)
+        {
+            if (election_id == Guid.Empty)
+            {
+                return BadRequest("No valid election_id was provided.");
+            }
 
-        [HttpPost]
-        [Route("get_vote_token")]
-        public async Task<IActionResult> GetVoteToken(VoteTokenRequest VoteTokenRequest) {
-            try { 
-                VoteToken voteToken = await _voteService.CreateVoteToken(VoteTokenRequest);
+            //get voter ID from claims
+            Guid voter_id = await GetVoterIDFromClaims();
 
-                if (voteToken == null) throw new Exception("Failed to create vote token" );
+            try
+            {
+                bool hasVoted = await _voteService.HasUserVoted(voter_id, election_id);
 
-                return Ok(new { 
+                return Ok(new
+                {
+                    message = "Success",
+                    hasVoted = hasVoted
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new
+                {
+                    message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        //retrieve a token that can be used to cast a vote in a election
+        [HttpGet]
+        [Route("get_vote_token/{election_id}")]
+        public async Task<IActionResult> GetVoteToken([FromRoute] Guid election_id) {
+            if (election_id == Guid.Empty)
+            {
+                return BadRequest("No valid election_id was provided.");
+            }
+
+            try {
+                //get voter ID from claims
+                Guid voter_id = await GetVoterIDFromClaims();
+
+                VoteTokenDto voteToken = await _voteService.CreateVoteToken(voter_id, election_id);
+
+                if (voteToken == null) throw new Exception("Failed to create vote token");
+
+                return Ok(new {
                     message = "Success",
                     token = voteToken
                 });
-            
+
             }
             catch (Exception ex)
             {
@@ -53,6 +96,8 @@ namespace votingBackend3.Controllers
 
         }
 
+
+        //cast a vote towards an election
         [HttpPost]
         [Route("cast_vote")]
         public async Task<IActionResult> CastVote([FromBody] vote_request request) {
@@ -62,24 +107,43 @@ namespace votingBackend3.Controllers
                 if (request == null) throw new Exception("Invalid request data");
                 if (request.GetType() != typeof(vote_request)) throw new Exception("Invalid request format");
 
-                //check vote_request parameters
+                //get voter ID from claims
+                Guid voter_id = await GetVoterIDFromClaims();
+
+                //check vote_request parameters - verify the token
                 VotingToken token = await _voteService.VerifyVoteRequest(request);
-
                 if (token == null) throw new Exception("Invalid voting token data");
-
                 //save vote to database
-                vote_response vote_receipt = await _voteService.SaveVote(request, token);
+                Vote vote = await _voteService.SaveVote(voter_id, request, token);
+                if (vote == null) throw new Exception("Failed to save vote");
 
                 //broadcast vote to other nodes
-                transaction_response broadcastResult = await _blockchainService.BroadCastVote(NODECOUNT, request);
+                VoteBroadcastRequest req = new VoteBroadcastRequest
+                {
+                    vote_id = vote.vote_id,
+                    token_id = vote.token_id,
+                    election_id = vote.election_id,
+                    party_id = vote.party_id,
+                    created_at = vote.created_at
+                };
 
-                if (broadcastResult == null) throw new Exception("Failed to broadcast vote");//FIX
+                transaction_response BroadCastSuccess = await _blockchainService.BroadCastVote(NODECOUNT, req);
+                if (BroadCastSuccess == null) throw new Exception("Failed to broadcast vote");
+
+
+                //generate vote receipt
+                vote_receipt receipt = new vote_receipt
+                {
+                    election_id = vote.election_id,
+                    hasVoted = true,
+                    voted_at = vote.created_at
+                };
 
                 return Ok(new
                 {
                     message = "Vote broadcasted successfully",
-                    data = broadcastResult,
-                    receipt = vote_receipt
+                    BroadCastSuccess = BroadCastSuccess,
+                    receipt = receipt
                 });
 
             }
@@ -92,7 +156,31 @@ namespace votingBackend3.Controllers
                 });
             }
 
-            
+        }
+
+        //check if the vote was placed
+        [HttpGet]
+        [Route("verify_vote/{vote_id}")]
+        public async Task<IActionResult> VerifyVote_Receipt(Guid vote_id) {
+            var vote_receipt = await _voteService.VerifyVote_Receipt(vote_id);
+
+            if (vote_receipt == null) return NotFound("Vote receipt not found");
+
+            return Ok(vote_receipt);
+        }
+
+
+        //get the voter's voter_id form jwt claims
+        public async Task<Guid> GetVoterIDFromClaims(){
+            var voterIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!Guid.TryParse(voterIdClaim, out Guid voter_id))
+            {
+                return Guid.Empty;
+            }
+
+            return voter_id;
+
         }
 
     }

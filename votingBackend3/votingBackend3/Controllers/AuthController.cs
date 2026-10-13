@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
+    [EnableRateLimiting("Authentication")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -18,10 +20,10 @@ namespace votingBackend3.Controllers
 
 
 
-
+        //use users credentials to log them in
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] login_request request) {
+        public async Task<IActionResult> Login([FromBody] login_requestDto request) {
 
             try
             {

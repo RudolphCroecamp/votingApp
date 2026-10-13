@@ -25,7 +25,7 @@ namespace votingBackend3.Services
 
 
 
-        public async Task<string> Login(login_request creds) {
+        public async Task<string> Login(login_requestDto creds) {
             try
             {
                 // Find the account associated with the supplied ID number.

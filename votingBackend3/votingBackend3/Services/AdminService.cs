@@ -23,7 +23,8 @@ namespace votingBackend3.Services
 
 
 
-        public async Task<List<Election>> GetElections() {
+        public async Task<List<Election>> GetElections()
+        {
             //get all elections from db
             List<Election> elections = await _votingDbContext.election.ToListAsync();
             return elections;
@@ -37,12 +38,13 @@ namespace votingBackend3.Services
         }
 
 
-        public async Task<Election> CreateElection(new_election request) {
+        public async Task<Election> CreateElection(new_electionDto request)
+        {
             try
             {
                 if (request == null) throw new Exception("Invalid request data");
 
-                if (request.GetType() != typeof(new_election)) throw new Exception("Invalid request format");
+                if (request.GetType() != typeof(new_electionDto)) throw new Exception("Invalid request format");
 
                 Election new_election = new Election
                 {
@@ -60,21 +62,21 @@ namespace votingBackend3.Services
 
                 return new_election;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 throw new Exception($"Could not create the Election. error: {ex.Message}");
-            } 
+            }
         }
 
 
 
-        public async Task<Party> CreateParty(new_party request)
+        public async Task<Party> CreateParty(new_partyDto request)
         {
             try
             {
                 if (request == null) throw new Exception("Invalid request data");
 
-                if (request.GetType() != typeof(new_party)) throw new Exception("Invalid request format");
+                if (request.GetType() != typeof(new_partyDto)) throw new Exception("Invalid request format");
 
 
                 Party new_party = new Party
@@ -97,12 +99,14 @@ namespace votingBackend3.Services
                 throw new Exception($"Could not create the Party. error: {ex.Message}");
             }
 
-            
+
         }
 
-
-        public async Task<Election> updateElectionStatus(updateStatus data) {//true if updated fasle if failed
-            try {
+        //update election status and party status
+        public async Task<Election> updateElectionStatus(updateStatusDto data)
+        {//true if updated fasle if failed
+            try
+            {
                 if (data.ID.GetType() != typeof(Guid) || data.ID == Guid.Empty) throw new Exception("Invalid ID");
                 if (data.status.GetType() != typeof(bool)) throw new Exception("Invalid status");
 
@@ -124,12 +128,12 @@ namespace votingBackend3.Services
             }
         }
 
-        public async Task<Party> updatePartyStatus(updateStatus data)
+        public async Task<Party> updatePartyStatus(updateStatusDto data)
         {
             try
-            { 
-                if(data.ID.GetType() != typeof(Guid) || data.ID == Guid.Empty) throw new Exception("Invalid ID");
-                if(data.status.GetType() != typeof(bool)) throw new Exception("Invalid status");
+            {
+                if (data.ID.GetType() != typeof(Guid) || data.ID == Guid.Empty) throw new Exception("Invalid ID");
+                if (data.status.GetType() != typeof(bool)) throw new Exception("Invalid status");
 
 
                 var party = await _votingDbContext.party.FindAsync(data.ID);
@@ -149,6 +153,130 @@ namespace votingBackend3.Services
                 throw new Exception($"Could not update the Party. error: {ex.Message}");
             }
         }
+
+
+
+        //update election information
+        public async Task<Election> updateElectionInformation(Guid election_id, updateElectionDto request)
+        {
+            try
+            {
+                var election = await _votingDbContext.election.FindAsync(election_id);
+
+                if (election == null) throw new Exception("Election not found");
+
+                //update
+                election.election_name = request.election_name;
+                election.election_type = request.election_type;
+                election.start_date = request.start_date;
+                election.end_date = request.end_date;
+                election.isActive = request.isActive;
+
+                //save changes
+                await _votingDbContext.SaveChangesAsync();
+                return election;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Could not update the Election: {ex.Message}");
+            }
+        }
+
+        //update party information
+        public async Task<Party> updatePartyInformation(Guid party_id, updatePartyDto request)
+        {
+            try
+            {
+                var party = await _votingDbContext.party.FindAsync(party_id);
+
+                if (party == null) throw new Exception("Party not found");
+
+                //update
+                party.party_name = request.party_name;
+                party.party_description = request.party_description;
+                party.status = request.status;
+
+                //save changes
+                await _votingDbContext.SaveChangesAsync();
+                return party;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Could not update the Party: {ex.Message}");
+            }
+        }
+
+
+
+        //calculate winners and results of the election
+
+        public async Task<List<ElectionResultsDTO>> GetElectionResults(Guid election_id)
+        {
+            var totalVotes = await _votingDbContext.vote.CountAsync(v => v.election_id == election_id);
+
+            var electionResults = await _votingDbContext.vote
+                .Where(v => v.election_id == election_id)
+                .GroupBy(v => new { v.party_id, v.Party.party_name })
+                .Select(g => new ElectionResultsDTO
+                {
+                    party_id = g.Key.party_id,
+                    party_name = g.Key.party_name,
+                    votes = g.Count(),
+                    percentage = totalVotes == 0 ? 0 : (double)g.Count() / totalVotes * 100
+                })
+                .ToListAsync();
+
+            if (electionResults == null) throw new Exception("Election results not found");
+
+            return electionResults;
+
+        }
+
+        //public async Task<List<ElectionResultsDTO>> GetAllElectionResults()
+        //{
+        //    var totalVotes = await _votingDbContext.vote.CountAsync();
+        //    var electionResults = await _votingDbContext.vote
+        //        .GroupBy(v => new { v.election_id, v.Party.party_name })
+        //        .Select(g => new ElectionResultsDTO
+        //        {
+        //            party_id = g.Key.election_id,
+        //            party_name = g.Key.party_name,
+        //            votes = g.Count(),
+        //            percentage = totalVotes == 0 ? 0 : (double)g.Count() / totalVotes * 100
+        //        })
+        //        .ToListAsync();
+        //    if (electionResults == null) throw new Exception("Election results not found");
+        //    return electionResults;
+
+        //}
+
+
+        public async Task<ElectionResultsDTO> GetElectionWinner(Guid election_id)
+        {
+            var totalVotes = await _votingDbContext.vote.CountAsync(v => v.election_id == election_id);
+            var electionResults = await _votingDbContext.vote
+                .Where(v => v.election_id == election_id)
+                .GroupBy(v => new { v.party_id, v.Party.party_name })
+                .Select(g => new ElectionResultsDTO
+                {
+                    party_id = g.Key.party_id,
+                    party_name = g.Key.party_name,
+                    votes = g.Count(),
+                    percentage = totalVotes == 0 ? 0 : (double)g.Count() / totalVotes * 100
+                })
+                .OrderByDescending(r => r.votes)
+                .ToListAsync();
+
+            if (electionResults == null || electionResults.Count == 0) throw new Exception("Election results not found");
+
+            return electionResults.First();
+        }
+
+
+
+
+
+
 
     }
 }

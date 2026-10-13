@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -43,8 +44,16 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.camerax.core)
+    implementation(libs.camerax.camera2)
+    implementation(libs.camerax.lifecycle)
+    implementation(libs.camerax.view)
+    // On-device face detection + the CameraX bridge that feeds it preview frames.
+    implementation(libs.camerax.mlkit.vision)
+    implementation(libs.mlkit.face.detection)
+
     implementation(libs.activity.ktx)
-    implementation(libs.androidx.compose.material3)
+    implementation(libs.core.splashscreen)
     implementation(libs.lifecycle.runtime.ktx)
 
     implementation(platform(libs.compose.bom))
@@ -53,9 +62,13 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.core)
+    implementation(libs.compose.material.icons.extended)
     implementation(libs.activity.compose)
+    implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.navigation.compose)
+    // Type-safe navigation routes need generated serializers at runtime.
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
 
