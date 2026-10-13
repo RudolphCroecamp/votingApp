@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -32,6 +33,9 @@ namespace votingBackend3.Services
 
                 // Stop if no account matches the supplied ID.
                 if(user == null) throw new Exception("User not found");
+
+                // Stop if the account is inactive
+                if (!user.is_active) throw new Exception("Account is inactive");
 
                 // Embeddings must have equal lengths to be compared.
                 if (user.face_embedding.Length != creds.face_embedding.Length) throw new Exception("Invalid face embedding");
@@ -67,12 +71,28 @@ namespace votingBackend3.Services
         {
             try
             {
+                var issuedAt = DateTime.UtcNow;
+                var existingSession = await _votingDbContext.auth_sessions
+                    .FirstOrDefaultAsync(session =>
+                        session.voter_id == voter_id &&
+                        session.expires_at > issuedAt &&
+                        session.revoked_at == null);
+
+                var isNewSession = existingSession == null;
+                var session = existingSession ?? new AuthSession
+                {
+                    jti = Guid.NewGuid(),
+                    voter_id = voter_id,
+                    created_at = issuedAt,
+                    expires_at = issuedAt.AddMinutes(double.Parse(_configuration["ExpirationMinutes"]!))
+                };
+
                 // Create the token payload with the user identity, assigned role, and a unique token ID.
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, voter_id.ToString()),
                     new Claim(ClaimTypes.Role, role),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),// unique token ID used later for revocation or blocking
+                    new Claim(JwtRegisteredClaimNames.Jti, session.jti.ToString()),
                 };
 
                 // Turn the JWT secret into a key that can be used to sign the token.
@@ -86,9 +106,15 @@ namespace votingBackend3.Services
                     issuer: _configuration["Issuer"],
                     audience: _configuration["Audience"],
                     claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["ExpirationMinutes"]!)),
+                    expires: session.expires_at,
                     signingCredentials: credentials
                 );
+
+                if (isNewSession)
+                {
+                    await _votingDbContext.auth_sessions.AddAsync(session);
+                    await _votingDbContext.SaveChangesAsync();
+                }
 
                 // Convert the JWT object into a serialized string that the client can send back.
                 return new JwtSecurityTokenHandler().WriteToken(token);
@@ -141,7 +167,6 @@ namespace votingBackend3.Services
             {
                 // Require authentication data and the voter profile fields needed by the database.
                 if (string.IsNullOrWhiteSpace(request.id_number)) throw new Exception("Id number is required");
-                if (string.IsNullOrWhiteSpace(request.role)) throw new Exception("Role is required");
                 if (request.face_embedding == null || request.face_embedding.Length == 0) throw new Exception("Face embedding is required");
                 if (string.IsNullOrWhiteSpace(request.firstname)) throw new Exception("First name is required");
                 if (string.IsNullOrWhiteSpace(request.lastname)) throw new Exception("Last name is required");
@@ -174,7 +199,7 @@ namespace votingBackend3.Services
                 {
                     voter_id = voterId,
                     id_number = request.id_number,
-                    role = request.role,
+                    role = "Voter",
                     face_embedding = request.face_embedding,
                     is_active = true,
                     created_at = DateTime.UtcNow
@@ -198,11 +223,30 @@ namespace votingBackend3.Services
             // Validate the JWT and read the account ID from its claims.
             var principal = GetValidatedPrincipal(token);
             var userId = principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var tokenId = principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
 
-            // Confirm that the token belongs to an account that is still active.
-            if (!Guid.TryParse(userId, out var voterId)) return false;
+            if (!Guid.TryParse(userId, out var voterId) || !Guid.TryParse(tokenId, out var jti)) return false;
 
-            return await _votingDbContext.auth.AnyAsync(user => user.voter_id == voterId && user.is_active);
+            // A correctly signed JWT is accepted only while its matching DB session remains active.
+            return await ValidateSession(voterId, jti);
+        }
+
+        public async Task<bool> ValidateSession(Guid voterId, Guid jti)
+        {
+            var now = DateTime.UtcNow;
+
+            // Inactive accounts invalidate all their sessions, regardless of session state.
+            var accountIsActive = await _votingDbContext.auth
+                .AnyAsync(user => user.voter_id == voterId && user.is_active);
+
+            if (!accountIsActive) return false;
+
+            // Require an exact user/JTI match and reject expired or revoked sessions.
+            return await _votingDbContext.auth_sessions.AnyAsync(session =>
+                session.jti == jti &&
+                session.voter_id == voterId &&
+                session.revoked_at == null &&
+                session.expires_at > now);
         }
 
         public async Task<string?> RefreshToken(string token)
@@ -212,15 +256,34 @@ namespace votingBackend3.Services
             var userId = principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var tokenId = principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
 
-            if (!Guid.TryParse(userId, out var voterId) || string.IsNullOrWhiteSpace(tokenId)) return null;
+            if (!Guid.TryParse(userId, out var voterId) || !Guid.TryParse(tokenId, out var jti)) return null;
 
             // Load the active account so its current role is used in the replacement token.
             var user = await _votingDbContext.auth.FirstOrDefaultAsync(account => account.voter_id == voterId && account.is_active);
 
             if (user == null) return null;
 
-            // Create a new token for the active account.
-            return await GenerateToken(user.voter_id, user.role);
+            // Consume the old session and issue its replacement to prevent token reuse.
+            var now = DateTime.UtcNow;
+
+            var session = await _votingDbContext.auth_sessions
+                    .FirstOrDefaultAsync(session => 
+                    session.jti == jti
+                    && session.voter_id == voterId
+                    && session.revoked_at == null
+                    && session.expires_at > now);
+
+                // If session is not found, revoked or expired, return null to indicate that the token cannot be refreshed.
+                if (session == null) return null;
+
+                // Revoke old session to prevent reuse
+                session.revoked_at = now;
+                await _votingDbContext.SaveChangesAsync();
+
+            // Replace the consumed session with a fresh token/session in the same transaction.
+            var refreshedToken = await GenerateToken(user.voter_id, user.role);
+
+            return refreshedToken;
         }
 
         private ClaimsPrincipal? GetValidatedPrincipal(string token)
@@ -244,7 +307,7 @@ namespace votingBackend3.Services
                     ValidateAudience = true,
                     ValidAudience = _configuration["Audience"],
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(1)
+                    ClockSkew = TimeSpan.Zero
                 };
 
                 // Validate the token and require its account ID and unique token ID claims.
@@ -252,7 +315,7 @@ namespace votingBackend3.Services
                 var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var tokenId = principal.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
 
-                if (!Guid.TryParse(userId, out _) || string.IsNullOrWhiteSpace(tokenId)) return null;
+                if (!Guid.TryParse(userId, out _) || !Guid.TryParse(tokenId, out _)) return null;
 
                 return principal;
             }
@@ -262,36 +325,30 @@ namespace votingBackend3.Services
             }
         }
 
-        public async Task<bool> Logout(Guid voter_id, string token)
+        public async Task<bool> Logout(string token)
         {
             try
             {
-                // Require an account ID and a currently valid token before logging out.
-                if (voter_id == Guid.Empty) throw new Exception("Invalid voter id");
+                // Validate the submitted token and read its account ID.
                 if (string.IsNullOrWhiteSpace(token)) throw new Exception("Token is required");
-                if (!await ValidateToken(token)) throw new Exception("Token is invalid or expired");
 
-                // Disable the account to prevent it from being treated as active.
-                return await RevokeToken(voter_id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+                var principal = GetValidatedPrincipal(token);
+                var tokenVoterId = principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var tokenId = principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+                if (!Guid.TryParse(tokenVoterId, out var voterId) || !Guid.TryParse(tokenId, out var jti))
+                    throw new Exception("Token is invalid");
 
-        public async Task<bool> RevokeToken(Guid voter_id)
-        {
-            try
-            {
-                // Find the account that should be disabled.
-                var user = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.voter_id == voter_id);
+                var session = await _votingDbContext.auth_sessions
+                    .FirstOrDefaultAsync(item => item.jti == jti && item.voter_id == voterId);
 
-                if (user == null) return false;
+                if (session == null) return false;
 
-                // Mark the account inactive and persist the change.
-                user.is_active = false;
-                await _votingDbContext.SaveChangesAsync();
+                // Persist revocation so subsequent validation rejects this JWT before its expiry.
+                if (session.revoked_at == null)
+                {
+                    session.revoked_at = DateTime.UtcNow;
+                    await _votingDbContext.SaveChangesAsync();
+                }
 
                 return true;
             }
@@ -300,9 +357,6 @@ namespace votingBackend3.Services
                 throw new Exception(ex.Message);
             }
         }
-
-        
-
 
     }
 }

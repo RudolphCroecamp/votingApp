@@ -12,6 +12,7 @@ namespace votingBackend3.Data
         }
 
         public DbSet<Auth> auth { get; set; }
+        public DbSet<AuthSession> auth_sessions { get; set; }
         public DbSet<Election> election { get; set; }
         public DbSet<ElectionParty> election_party { get; set; }
         public DbSet<ElectionVoter> election_voter { get; set; }
@@ -24,6 +25,12 @@ namespace votingBackend3.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AuthSession>()
+                .HasOne(session => session.Auth)
+                .WithMany()
+                .HasForeignKey(session => session.voter_id)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // ElectionVoter
             modelBuilder.Entity<ElectionVoter>()
                 .HasKey(ev => new

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Services;
@@ -171,7 +172,7 @@ namespace votingBackend3.Controllers
         {
             try
             {
-                var success = await _authService.Logout(request.voter_id, request.token);
+                var success = await _authService.Logout(request.token);
 
                 if (!success)
                 {
@@ -182,6 +183,7 @@ namespace votingBackend3.Controllers
                     });
                 }
 
+                // The client must delete its locally stored token after receiving this confirmation.
                 return Ok(new
                 {
                     message = "Logout success",
