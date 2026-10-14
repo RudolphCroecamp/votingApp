@@ -76,7 +76,7 @@ fun RegisterIdentityScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RegisterStepHeader(
-                step = 3,
+                step = 4,
                 heading = "Identity Document",
                 description = "Pick your document type and capture a clear photo of the front."
             )
