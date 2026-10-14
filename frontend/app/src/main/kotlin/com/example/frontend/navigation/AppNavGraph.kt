@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,9 +21,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
 import com.example.frontend.ui.Components.BottomTab
+import com.example.frontend.ui.screens.Auth.LoginFaceScreen
+import com.example.frontend.ui.screens.Auth.LoginFaceViewModel
 import com.example.frontend.ui.screens.Auth.LoginScreen
 import com.example.frontend.ui.screens.Info.InfoScreen
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
@@ -31,6 +35,7 @@ import com.example.frontend.ui.screens.PrivacyConsent.PrivacyConsentScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterDoneScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterFaceScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterIdentityScreen
+import com.example.frontend.ui.screens.Registration.screens.RegisterOtpScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterScreen
 import com.example.frontend.ui.screens.Splash.SplashScreen
 import com.example.frontend.ui.screens.Vote.VoteConfirmationScreen
@@ -151,8 +156,27 @@ fun AppNavGraph(
 
         composable<Screen.Login> {
             LoginScreen(
-                onFaceVerification = { navController.navigate(Screen.Home) },
+                onFaceVerification = { idNumber -> navController.navigate(Screen.LoginFace(idNumber)) },
                 onRegister = { navController.navigate(Screen.Register) }
+            )
+        }
+
+        composable<Screen.LoginFace> { entry ->
+            val route = entry.toRoute<Screen.LoginFace>()
+            val faceViewModel: LoginFaceViewModel = viewModel()
+            val faceState by faceViewModel.uiState.collectAsState()
+
+            LaunchedEffect(route.idNumber) { faceViewModel.start(route.idNumber) }
+
+            LoginFaceScreen(
+                uiState = faceState,
+                onEvent = faceViewModel::onEvent,
+                onBackClick = { navController.popBackStack() },
+                onVerified = {
+                    navController.navigate(Screen.Home) {
+                        popUpTo<Screen.Login> { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -162,10 +186,29 @@ fun AppNavGraph(
                 onEvent = registrationViewModel::onEvent,
                 onContinue = {
                     registrationViewModel.onEvent(RegistrationUiEvent.OnNextStepClicked)
-                    navController.navigate(Screen.PrivacyConsent)
+                    registrationViewModel.onEvent(RegistrationUiEvent.OnOtpRequested)
+                    navController.navigate(Screen.RegisterOtp)
                 },
                 onSignIn = { navController.popBackStack() },
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable<Screen.RegisterOtp> {
+            RegisterOtpScreen(
+                uiState = registrationState,
+                onEvent = registrationViewModel::onEvent,
+                onBackClick = {
+                    registrationViewModel.onEvent(RegistrationUiEvent.OnPreviousStepClicked)
+                    navController.popBackStack()
+                },
+                onContinue = {
+                    registrationViewModel.onEvent(RegistrationUiEvent.OnNextStepClicked)
+                    navController.navigate(Screen.PrivacyConsent) {
+                        // The number is confirmed, so Back should not land on a dead code screen.
+                        popUpTo<Screen.RegisterOtp> { inclusive = true }
+                    }
+                }
             )
         }
 

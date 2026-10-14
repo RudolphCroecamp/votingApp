@@ -1,5 +1,6 @@
 package com.example.frontend.ui.screens.Registration.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +36,7 @@ import com.example.frontend.ui.Components.SectionHeading
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
 import com.example.frontend.ui.Components.SuccessCheckmarkBadge
+import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.PageBackground
@@ -60,25 +63,36 @@ fun RegisterDoneScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RegisterStepHeader(
-                step = 5,
+                step = 6,
                 heading = "You're Registered",
                 description = "Your details, ID document and face scan have been submitted for verification."
             )
 
             Spacer(modifier = Modifier.height(Spacing.section))
 
-            //#TODO: put the checkmark badge, heading and description in a box
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, CardBorder)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Spacing.card, vertical = Spacing.section),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.item),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SuccessCheckmarkBadge()
 
-            SuccessCheckmarkBadge()
-
-            Spacer(modifier = Modifier.height(Spacing.small))
-
-            SectionHeading(
-                title = "Welcome, $voterName",
-                description = "You can now sign in with your ID number and a face scan.",
-                titleStyle = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
-            )
+                    SectionHeading(
+                        title = "Welcome, $voterName",
+                        description = "You can now sign in with your ID number and a face scan.",
+                        titleStyle = MaterialTheme.typography.titleLarge,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(Spacing.section))
 

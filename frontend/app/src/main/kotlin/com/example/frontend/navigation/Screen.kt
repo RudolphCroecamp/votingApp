@@ -12,7 +12,11 @@ sealed interface Screen {
     @Serializable
     data object Login : Screen
     @Serializable
+    data class LoginFace(val idNumber: String) : Screen
+    @Serializable
     data object Register : Screen
+    @Serializable
+    data object RegisterOtp : Screen
     @Serializable
     data object PrivacyConsent : Screen
     @Serializable

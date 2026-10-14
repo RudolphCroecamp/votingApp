@@ -11,7 +11,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.MarkunreadMailbox
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.MaterialTheme
@@ -35,9 +34,11 @@ import com.example.frontend.ui.Components.StatusLabel
 import com.example.frontend.ui.Components.SectionHeading
 import com.example.frontend.ui.Components.SimpleButton
 import com.example.frontend.ui.Components.StatusType
+import com.example.frontend.ui.screens.Registration.Province
 import com.example.frontend.ui.screens.Registration.REGISTRATION_STEPS
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
 import com.example.frontend.ui.screens.Registration.RegistrationUiState
+import com.example.frontend.ui.screens.Registration.components.AddressFields
 import com.example.frontend.ui.screens.Registration.components.RegistrationStepper
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
@@ -114,13 +115,10 @@ fun RegisterScreen(
                 keyboardType = KeyboardType.Email
             )
 
-            AppTextField(
-                value = uiState.postalCode,
-                onValueChange = { onEvent(RegistrationUiEvent.OnPostalCodeChanged(it)) },
-                placeholder = "Postal Code",
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = Icons.Default.MarkunreadMailbox,
-                keyboardType = KeyboardType.Number
+            AddressFields(
+                uiState = uiState,
+                onEvent = onEvent,
+                modifier = Modifier.fillMaxWidth()
             )
 
             SimpleButton(
@@ -207,6 +205,9 @@ private fun RegisterScreenFilledPreview() {
                 idNumber = "0203015800085",
                 phone = "0712345678",
                 email = "adriaan@example.com",
+                province = Province.EASTERN_CAPE,
+                street = "12 Govan Mbeki Avenue",
+                city = "Gqeberha",
                 postalCode = "6001"
             ),
             onEvent = {},

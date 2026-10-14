@@ -57,7 +57,7 @@ import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
 
-const val PRIVACY_CONSENT_STEP = 2
+const val PRIVACY_CONSENT_STEP = 3
 
 private const val CONSENT_STATEMENT =
     "I have read the above and I agree to the Electoral Commission collecting and " +
