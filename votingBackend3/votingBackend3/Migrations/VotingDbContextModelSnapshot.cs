@@ -49,6 +49,9 @@ namespace votingBackend3.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("allowed")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("created_at")
                         .HasColumnType("timestamp with time zone");
 
@@ -60,8 +63,9 @@ namespace votingBackend3.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("is_active")
-                        .HasColumnType("boolean");
+                    b.Property<string>("password")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("role")
                         .IsRequired()
@@ -152,6 +156,9 @@ namespace votingBackend3.Migrations
 
                     b.Property<bool>("has_voted")
                         .HasColumnType("boolean");
+
+                    b.Property<int>("status")
+                        .HasColumnType("integer");
 
                     b.HasKey("election_id", "voter_id");
 

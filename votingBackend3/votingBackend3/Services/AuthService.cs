@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -31,16 +32,23 @@ namespace votingBackend3.Services
                 var user = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.id_number == creds.id_number);
 
                 // Stop if no account matches the supplied ID.
-                if(user == null) throw new Exception("User not found");
+                if(user == null) throw new UnauthorizedAccessException("User not found");
+
+
+                //check if user is allowed access to the services
+                if(user.allowed == false) throw new UnauthorizedAccessException("User does not have access to the service");
+
+                //block admin request
+                if(user.role == "Admin") throw new UnauthorizedAccessException("User does not have access to these services");
 
                 // Embeddings must have equal lengths to be compared.
-                if (user.face_embedding.Length != creds.face_embedding.Length) throw new Exception("Invalid face embedding");
+                if (user.face_embedding.Length != creds.face_embedding.Length) throw new UnauthorizedAccessException("Invalid face embedding");
 
                 // Compare the submitted face embedding with the saved embedding.
                 double similarity = CosineSimilarity(user.face_embedding, creds.face_embedding);
 
                 // Reject embeddings that do not meet the configured similarity threshold.
-                if (similarity < SIMULARITYSCORE) throw new Exception($"Face embedding does not match, similarity score: {similarity}"); ;
+                if (similarity < SIMULARITYSCORE) throw new UnauthorizedAccessException($"Face embedding does not match, similarity score: {similarity}"); ;
 
                 // Issue a signed token for the authenticated account.
                 string token = await GenerateToken(user.voter_id, user.role);
@@ -57,6 +65,48 @@ namespace votingBackend3.Services
         
         
         }
+
+        public async Task<string> AdminLogin(AdminLoginDTO creds)
+        {
+            try
+            {
+                // Find the account associated with the supplied ID number.
+                var user = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.id_number == creds.id_number);
+
+                // Stop if no account matches the supplied ID.
+                if (user == null) throw new UnauthorizedAccessException("User not found");
+
+
+                //check if user is allowed access to the services
+                if (user.allowed == false) throw new UnauthorizedAccessException("User does not have access to the service");
+
+                //block voter request
+                if (user.role == "Voter") throw new UnauthorizedAccessException("User does not have access to these services");
+
+                //check password
+                var passwordHasher = new PasswordHasher<object>();
+
+                var result = passwordHasher.VerifyHashedPassword(null!, user.password, creds.password);
+
+                if (result == PasswordVerificationResult.Failed) throw new UnauthorizedAccessException("Invalid ID number or password.");
+
+                // Issue a signed token for the authenticated account.
+                string token = await GenerateToken(user.voter_id, user.role);
+
+                //TODO: update login status in db
+
+                return token;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+
+        }
+
+
 
 
 
@@ -176,7 +226,7 @@ namespace votingBackend3.Services
                     id_number = request.id_number,
                     role = request.role,
                     face_embedding = request.face_embedding,
-                    is_active = true,
+                    allowed = true,//NOTE voters should probably be checked out before allowing them
                     created_at = DateTime.UtcNow
                 };
 
@@ -202,7 +252,7 @@ namespace votingBackend3.Services
             // Confirm that the token belongs to an account that is still active.
             if (!Guid.TryParse(userId, out var voterId)) return false;
 
-            return await _votingDbContext.auth.AnyAsync(user => user.voter_id == voterId && user.is_active);
+            return await _votingDbContext.auth.AnyAsync(user => user.voter_id == voterId && user.allowed);
         }
 
         public async Task<string?> RefreshToken(string token)
@@ -215,7 +265,7 @@ namespace votingBackend3.Services
             if (!Guid.TryParse(userId, out var voterId) || string.IsNullOrWhiteSpace(tokenId)) return null;
 
             // Load the active account so its current role is used in the replacement token.
-            var user = await _votingDbContext.auth.FirstOrDefaultAsync(account => account.voter_id == voterId && account.is_active);
+            var user = await _votingDbContext.auth.FirstOrDefaultAsync(account => account.voter_id == voterId && account.allowed);
 
             if (user == null) return null;
 
@@ -290,7 +340,7 @@ namespace votingBackend3.Services
                 if (user == null) return false;
 
                 // Mark the account inactive and persist the change.
-                user.is_active = false;
+                user.allowed = false;
                 await _votingDbContext.SaveChangesAsync();
 
                 return true;

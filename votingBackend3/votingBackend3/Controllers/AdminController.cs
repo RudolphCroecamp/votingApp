@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
@@ -7,7 +9,7 @@ using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
@@ -326,6 +328,220 @@ namespace votingBackend3.Controllers
 
         }
 
-      
+
+
+        [HttpGet]
+        [Route("GetElectionVoters")]
+        public async Task<IActionResult> GetElectionVoters([FromQuery] Guid election_id, [FromQuery] int limit = 10, [FromQuery] int skip = 0)
+        {
+            try
+            {
+                if (election_id == Guid.Empty)
+                {
+                    return BadRequest(new { message = "A valid election_id is required." });
+                }
+
+                if (limit < 1 || limit > 100)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Limit must be between 1 and 100."
+                    });
+                }
+
+                if (skip < 0)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Skip cannot be negative."
+                    });
+                }
+
+                var result = await _adminService.GetElectionVoters(
+                    election_id,
+                    limit,
+                    skip
+                );
+
+                return Ok(new
+                {
+                    message = "Voters registered in this election retrieved successfully.",
+                    election_voters = result
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return StatusCode(500, new
+                {
+                    message = "An error occurred while retrieving election voters."
+                });
+            }
+        }
+
+
+
+        /// manage voters
+        [HttpGet]
+        [Route("GetAllVoters")]
+        public async Task<IActionResult> GetAllVoters(int page = 1, int limit = 10)
+        {
+            var result = await _adminService.GetAllVoters(page, limit);
+
+            return Ok(new
+            {
+                message = "Successfully received all the voters",
+                voters = result
+            });
+        }
+
+        [HttpGet]
+        [Route("GetVoterByID/{voter_id:guid}")]
+        public async Task<IActionResult> GetVoterByID(Guid voter_id)
+        {
+            var voter = await _adminService.GetVoterByID(voter_id);
+
+            return Ok(new
+            {
+                message = "Successfully received voter details",
+                voter = voter
+            });
+        }
+
+
+        [HttpPatch]
+        [Route("Update_voter_access")]
+        public async Task<IActionResult> Update_voter_access(updateStatusDto request) {
+            var user = await _adminService.Update_voter_access(request);
+
+            if (user == null) return BadRequest(new
+            {
+                message = "User not found"
+            });
+
+            return Ok(new
+            {
+                message = "Successfully updated user status",
+                user = user
+            });
+
+        }
+
+        //allow user to vote in the election
+        [HttpPatch("AssignVoterToElection")]
+        public async Task<IActionResult> AssignVoterToElection([FromBody] AssignElectionVoterDTO request)
+        {
+            try
+            {
+                var assignment = await _adminService.AssignVoterToElection(request);
+
+                return Ok(new
+                {
+                    message = "Voter successfully assigned to election.",
+                    election_id = assignment.election_id,
+                    voter_id = assignment.voter_id,
+                    has_voted = assignment.voted,
+                    status = assignment.status
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+        }
+
+
+
+
+        ///Manage admins
+        [HttpGet]
+        [Route("GetAllAdmins")]
+        public async Task<IActionResult> GetAdmin(int page = 1, int limit = 10)
+        {
+            var admins = await _adminService.GetAllAdmins();
+
+            if (admins == null || admins.Count <= 0) return BadRequest(new
+            {
+                message = "No admins found"
+            });
+
+            return Ok(new
+            {
+                message = "Successfully retrieved admin details",
+                admins = admins
+            });
+
+        }
+
+
+
+
+
+        [HttpPost]
+        [Route("NewAdmin")]
+        public async Task<IActionResult> NewAdmin(newAdminDTO request) {
+            try
+            {
+                var newAdminUser = await _adminService.NewAdmin(request);
+
+                if (newAdminUser == null) return BadRequest(new
+                {
+                    message = "user not found"
+                });
+
+                return Ok(new
+                {
+                    message = "Successfully added new admin user",
+                    user = newAdminUser
+                });
+            }
+            catch (Exception ex) {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+        }
+
+
+        [HttpPut]
+        [Route("UpdateAdmin/{userId:guid}")]
+        public async Task<IActionResult> UpdateAdmin(Guid userId, [FromBody] UpdateAdmin request)
+        {
+            try
+            { 
+                var result = await _adminService.UpdateAdmin(userId, request);
+
+                if (result == null) return BadRequest(new
+                {
+                    message = "No user data found"
+                });
+
+                return Ok(new
+                {
+                    message = "Successfully updated admin information",
+                    user = result
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+        }
+
+        
+
+
+
+
     }
 }

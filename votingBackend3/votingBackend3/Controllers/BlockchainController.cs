@@ -158,5 +158,29 @@ namespace votingBackend3.Controllers
             }
             
         }
+
+
+
+        //check node health
+        [HttpGet]
+        [Route("GetNodeHealth/{node_id}")]
+        public async Task<IActionResult> GetNodeHealth([FromRoute] int node_id)
+        {
+            try
+            {
+                if (node_id > NODECOUNT || node_id < 1)
+                {
+                    return BadRequest("Invalid node ID");
+                }
+
+                var chain = await _blockchainService.GetNodeChain_id(node_id);
+                return Ok(chain);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"GetNodeChain_id Error: {ex.Message}");
+            }
+
+        }
     }
 }

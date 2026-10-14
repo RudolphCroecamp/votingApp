@@ -18,6 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 //add services
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<VoteService>();
@@ -60,10 +61,10 @@ builder.Services.AddDbContext<BlocksDbContext>(options =>
 
 
 //configure auth settings
-var jwtKey = builder.Configuration["JWTKey"]?? throw new InvalidOperationException("JWTKey is missing.");
-var nodeSigningKey = builder.Configuration["NodeAuth:SigningKey"]?? throw new InvalidOperationException("NodeAuth:SigningKey is missing.");
-var nodeIssuer = builder.Configuration["NodeAuth:Issuer"]?? throw new InvalidOperationException( "NodeAuth:Issuer is missing.");
-var nodeAudience = builder.Configuration["NodeAuth:Audience"]?? throw new InvalidOperationException("NodeAuth:Audience is missing.");
+var jwtKey = builder.Configuration["JWTKey"]; //?? throw new InvalidOperationException("JWTKey is missing.");
+var nodeSigningKey = builder.Configuration["NodeAuth:SigningKey"]; //?? throw new InvalidOperationException("NodeAuth:SigningKey is missing.");
+var nodeIssuer = builder.Configuration["NodeAuth:Issuer"]; //?? throw new InvalidOperationException( "NodeAuth:Issuer is missing.");
+var nodeAudience = builder.Configuration["NodeAuth:Audience"]; //?? throw new InvalidOperationException("NodeAuth:Audience is missing.");
 
 builder.Services.AddAuthentication(
     JwtBearerDefaults.AuthenticationScheme)
@@ -173,6 +174,18 @@ builder.Services.AddRateLimiter(options =>
 
 });
 
+//apply CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 var nodeRole = builder.Configuration["NODE_ROLE"];
@@ -211,6 +224,7 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseRouting();
+app.UseCors("ReactFrontend");//added cors so frontend can access backend
 
 app.UseRateLimiter();
 
@@ -223,3 +237,30 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+
+
+
+
+
+//FIX do we need voter street address
+//FIX should we automatically allow all users or should they request access and an admin needs to allow them to participate in the election
+//FIX admin users should not be added to the election_voter table
+//FIX check if user has status = 'approved' before they can cast a vote
+//example
+/*
+ var eligible = await _votingDbContext.ElectionVoter
+    .AnyAsync(ev =>
+        ev.election_id == electionId &&
+        ev.voter_id == voterId &&
+        ev.status == ElectionVoterStatus.Approved &&
+        !ev.has_voted);
+
+if (!eligible)
+{
+    throw new UnauthorizedAccessException(
+        "You are not eligible to vote in this election.");
+}
+ 
+ */

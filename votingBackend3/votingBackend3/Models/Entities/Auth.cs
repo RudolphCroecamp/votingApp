@@ -11,7 +11,9 @@ namespace votingBackend3.Models.Entities
         [Required]
         public double[] face_embedding { get; set; } = Array.Empty<double>();
         [Required]
-        public bool is_active { get; set; } = false;
+        public string password { get; set; } = string.Empty;
+        [Required]
+        public bool allowed { get; set; } = false;
         [Required]
         public string role { get; set; } = string.Empty;
         [Required]

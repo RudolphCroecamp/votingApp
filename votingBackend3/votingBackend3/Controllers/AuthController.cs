@@ -5,7 +5,7 @@ using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
-    [EnableRateLimiting("Authentication")]
+    //[EnableRateLimiting("Authentication")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -58,6 +58,51 @@ namespace votingBackend3.Controllers
             
 
         }
+
+
+        [HttpPost]
+        [Route("AdminLogin")]
+        public async Task<IActionResult> AdminLogin([FromBody] AdminLoginDTO creds)
+        {
+
+            try
+            {
+                var token = await _authService.AdminLogin(creds);
+
+                if (token == null || token.ToString().Length <= 0)
+                {
+
+                    return Unauthorized(new
+                    {
+                        message = "Invalid credentials",
+                        status = false
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "Login success",
+                    status = true,
+                    token = token
+                });
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return BadRequest(new
+                {
+                    message = $"Login Error: {ex.Message}",
+                    status = false
+                });
+
+            }
+
+
+        }
+
+
 
         [HttpPost]
         [Route("register")]
