@@ -76,6 +76,31 @@ namespace votingBackend3.Migrations
                     b.ToTable("auth");
                 });
 
+            modelBuilder.Entity("votingBackend3.Models.Entities.AuthSession", b =>
+                {
+                    b.Property<Guid>("jti")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("created_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("expires_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("revoked_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("voter_id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("jti");
+
+                    b.HasIndex("voter_id");
+
+                    b.ToTable("auth_sessions");
+                });
+
             modelBuilder.Entity("votingBackend3.Models.Entities.DocumentInfo", b =>
                 {
                     b.Property<Guid>("fileId")
@@ -165,6 +190,17 @@ namespace votingBackend3.Migrations
                     b.HasIndex("voter_id");
 
                     b.ToTable("election_voter");
+                });
+
+            modelBuilder.Entity("votingBackend3.Models.Entities.AuthSession", b =>
+                {
+                    b.HasOne("votingBackend3.Models.Entities.Auth", "Auth")
+                        .WithMany()
+                        .HasForeignKey("voter_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auth");
                 });
 
             modelBuilder.Entity("votingBackend3.Models.Entities.Party", b =>

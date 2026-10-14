@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using votingBackend3.Data;
 using votingBackend3.Services;
@@ -105,7 +107,30 @@ builder.Services.AddAuthentication(
                 ValidAudience = nodeAudience,
 
                 ValidateLifetime = true,
-                ClockSkew = TimeSpan.FromSeconds(10)
+                ClockSkew = TimeSpan.Zero
+            };
+
+            // Add database-backed session checks after standard JWT signature and lifetime validation.
+            options.Events = new JwtBearerEvents
+            {
+                OnTokenValidated = async context =>
+                {
+                    // Extract the identity and session ID that must match the persisted session.
+                    var voterIdValue = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    var jtiValue = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+
+                    if (!Guid.TryParse(voterIdValue, out var voterId) ||
+                        !Guid.TryParse(jtiValue, out var jti))
+                    {
+                        context.Fail("Token is missing a valid voter ID or JTI.");
+                        return;
+                    }
+
+                    // Reject protected requests if the account/session is inactive, expired, or revoked.
+                    var authService = context.HttpContext.RequestServices.GetRequiredService<AuthService>();
+                    if (!await authService.ValidateSession(voterId, jti))
+                        context.Fail("Token session is invalid, expired, or revoked.");
+                }
             };
     });
 
@@ -120,6 +145,7 @@ builder.Services.AddAuthorization(options =>
     });
 
 });
+
 
 
 
