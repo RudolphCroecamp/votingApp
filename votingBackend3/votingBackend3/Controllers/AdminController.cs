@@ -261,15 +261,26 @@ namespace votingBackend3.Controllers
         [Route("isBlockchainValid")]
         public async Task<IActionResult> isBlockchainValid()
         {
-            var blockchain = await _blockchainService.IsBlockchainValid(NODECOUNT);
-
-            if (blockchain == null) return NotFound("No blockchain data found");
-
-            return Ok(new
+            try
             {
-                message = "Blockchain data",
-                blockchain = blockchain
-            });
+                var blockchain_result = await _blockchainService.IsBlockchainValid(NODECOUNT);
+
+                if (blockchain_result == null) return NotFound("No blockchain data found");
+
+                return Ok(new
+                {
+                    message = "Blockchain data",
+                    blockchain = blockchain_result
+                });
+
+            }
+            catch (Exception ex) {
+                return BadRequest(new
+                {
+                    message = $"Error: {ex.Message}"
+                });
+            }
+            
 
         }
 
@@ -382,6 +393,83 @@ namespace votingBackend3.Controllers
 
 
 
+
+
+        [HttpPost]
+        [Route("assign_party_to_election")]
+        public async Task<IActionResult> AssignPartyToElection([FromBody] AssignPartyToElectionDto request)
+        {
+            try
+            {
+                var assignment = await _adminService.AssignPartyToElection(request);
+
+                return Ok(new
+                {
+                    message = "Party assigned to election successfully.",
+                    assignment = new
+                    {
+                        party_id = assignment.party_id,
+                        election_id = assignment.election_id
+                    }
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+
+                return BadRequest(new
+                {
+                    message = "Failed to assign party to election."
+                });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("get_election_parties/{election_id:guid}")]
+        public async Task<IActionResult> GetElectionParties(Guid election_id)
+        {
+            try
+            {
+                var parties = await _adminService.GetElectionParties(election_id);
+
+                return Ok(new
+                {
+                    message = "Election parties retrieved successfully.",
+                    parties = parties
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return BadRequest(new
+                {
+                    message = "Failed to retrieve election parties."
+                });
+            }
+        }
+
+
+
+
+
+
+
+
+
         /// manage voters
         [HttpGet]
         [Route("GetAllVoters")]
@@ -461,7 +549,7 @@ namespace votingBackend3.Controllers
         ///Manage admins
         [HttpGet]
         [Route("GetAllAdmins")]
-        public async Task<IActionResult> GetAdmin(int page = 1, int limit = 10)
+        public async Task<IActionResult> GetAllAdmins(int page = 1, int limit = 10)
         {
             var admins = await _adminService.GetAllAdmins();
 

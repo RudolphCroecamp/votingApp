@@ -328,13 +328,12 @@ export default function VoterDirectory() {
 
                                                     <td>
                                                         <span
-                                                            className={`pill ${
-                                                                isAllowed === true
+                                                            className={`pill ${isAllowed === true
                                                                     ? "pill-success"
                                                                     : isAllowed === false
                                                                         ? "pill-neutral"
                                                                         : "pill-warning"
-                                                            }`}
+                                                                }`}
                                                         >
                                                             {isAllowed === true
                                                                 ? "Allowed"
@@ -347,11 +346,10 @@ export default function VoterDirectory() {
                                                     <td>
                                                         <button
                                                             type="button"
-                                                            className={`btn btn-sm ${
-                                                                isAllowed
+                                                            className={`btn btn-sm ${isAllowed
                                                                     ? "btn-outline-danger"
                                                                     : "btn-outline-success"
-                                                            }`}
+                                                                }`}
                                                             disabled={
                                                                 isUpdating ||
                                                                 isAllowed === null ||
@@ -410,9 +408,10 @@ export default function VoterDirectory() {
                         </footer>
                     </section>
 
-                    <p className="voter-page-footer">
-                        BallotAdmin · Voter Directory
-                    </p>
+                    <footer className="page-footer">
+                        <span>BallotAdmin · Voter Management</span>
+                        <span>Secure access for authorised personal only</span>
+                    </footer>
                 </div>
             </main>
         </div>

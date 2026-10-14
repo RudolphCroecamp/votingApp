@@ -192,33 +192,32 @@ namespace votingBackend3.Migrations
                     b.ToTable("election_voter");
                 });
 
-            modelBuilder.Entity("votingBackend3.Models.Entities.AuthSession", b =>
-                {
-                    b.HasOne("votingBackend3.Models.Entities.Auth", "Auth")
-                        .WithMany()
-                        .HasForeignKey("voter_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Auth");
-                });
-
             modelBuilder.Entity("votingBackend3.Models.Entities.Party", b =>
                 {
                     b.Property<Guid>("party_id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("party_description")
+                    b.Property<string>("abbreviation")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
-                    b.Property<string>("party_name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("status")
+                    b.Property<bool>("allowed")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTime>("created_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.HasKey("party_id");
 
@@ -314,6 +313,17 @@ namespace votingBackend3.Migrations
                     b.HasIndex("election_id");
 
                     b.ToTable("voting_token");
+                });
+
+            modelBuilder.Entity("votingBackend3.Models.Entities.AuthSession", b =>
+                {
+                    b.HasOne("votingBackend3.Models.Entities.Auth", "Auth")
+                        .WithMany()
+                        .HasForeignKey("voter_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auth");
                 });
 
             modelBuilder.Entity("votingBackend3.Models.Entities.DocumentInfo", b =>

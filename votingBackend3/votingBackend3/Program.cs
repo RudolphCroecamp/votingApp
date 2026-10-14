@@ -269,7 +269,7 @@ app.Run();
 
 
 
-
+//FIX register we need to add the user's facial image
 //FIX do we need voter street address
 //FIX should we automatically allow all users or should they request access and an admin needs to allow them to participate in the election
 //FIX admin users should not be added to the election_voter table

@@ -17,7 +17,7 @@ export default function AdminDash() {
                         <h1 className="h4 mb-0 mt-1">Overview</h1>
                     </div>
 
-                    <div className="d-flex align-items-center gap-3">
+                    <div className="d-flex align-items-center gap-3 ">
                         <span className="status-dot"></span>
                         <span className="small text-secondary d-none d-sm-inline">
                             System status: operational
@@ -45,8 +45,8 @@ export default function AdminDash() {
                     </div>
 
                     {/* Statistics */}
-                    <div className="row g-3 mb-4">
-                        <div className="col-sm-6 col-xl-3">
+                    <div className="row g-0 mb-4">
+                        <div className="col-sm-6 col-xl-3 panel">
                             <div className="stat-card">
                                 <div className="stat-top">
                                     <span className="stat-label">
@@ -62,7 +62,7 @@ export default function AdminDash() {
                             </div>
                         </div>
 
-                        <div className="col-sm-6 col-xl-3">
+                        <div className="col-sm-6 col-xl-3 panel">
                             <div className="stat-card">
                                 <div className="stat-top">
                                     <span className="stat-label">
@@ -77,7 +77,7 @@ export default function AdminDash() {
                             </div>
                         </div>
 
-                        <div className="col-sm-6 col-xl-3">
+                        <div className="col-sm-6 col-xl-3 panel">
                             <div className="stat-card">
                                 <div className="stat-top">
                                     <span className="stat-label">
@@ -92,7 +92,7 @@ export default function AdminDash() {
                             </div>
                         </div>
 
-                        <div className="col-sm-6 col-xl-3">
+                        <div className="col-sm-6 col-xl-3 panel">
                             <div className="stat-card">
                                 <div className="stat-top">
                                     <span className="stat-label">
@@ -126,7 +126,7 @@ export default function AdminDash() {
 
                                     <Link
                                         className="btn btn-sm btn-outline-secondary"
-                                        to="/Election_voters"
+                                        to="/voter"
                                     >
                                         View all
                                     </Link>
@@ -317,10 +317,8 @@ export default function AdminDash() {
                     </div>
 
                     <footer className="page-footer">
-                        <span>BallotAdmin · Static UI prototype</span>
-                        <span>
-                            Sample data only — connect to your API before production.
-                        </span>
+                        <span>BallotAdmin · Dashboard</span>
+                        <span>Secure access for authorised personal only</span>
                     </footer>
                 </div>
             </main>

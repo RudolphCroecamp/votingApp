@@ -16,18 +16,23 @@ export default function Sidebar() {
             icon: "▦",
         },
         {
+            to: "/Election_Results",
+            label: "Election Results",
+            icon: "▦",
+        },
+        {
             to: "/manage_elections",
-            label: "Elections",
+            label: "Manage Elections",
             icon: "▤",
         },
-        // {
-        //     to: "/view_Election_voters",
-        //     label: "View election voters",
-        //     icon: "♙",
-        // },
         {
-            to: "/Election_voters",
-            label: "Election voters",
+            to: "/manage_parties",
+            label: "Manage Parties",
+            icon: "▤",
+        },
+        {
+            to: "/Election_Voter_Management",
+            label: "Election Voter Management",
             icon: "♙",
         },
         {

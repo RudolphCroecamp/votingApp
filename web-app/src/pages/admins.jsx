@@ -54,6 +54,9 @@ async function apiRequest(path, options = {}) {
     if (response.status === 204) return null;
 
     const contentType = response.headers.get("content-type") || "";
+
+    // console.log(await response.json());
+
     return contentType.includes("application/json")
         ? response.json()
         : null;
@@ -294,17 +297,6 @@ export default function AdminDash() {
                             {success}
                         </div>
                     )}
-
-                    <div className="alert alert-primary border-0 d-flex gap-3 align-items-start admin-notice">
-                        <span className="fs-4">ⓘ</span>
-                        <div>
-                            <strong>Protected administrator access</strong>
-                            <div className="small mt-1">
-                                Administrator creation and modification must be
-                                authorized by your ASP.NET Core API.
-                            </div>
-                        </div>
-                    </div>
 
                     {showAddForm && (
                         <section className="panel mb-4">

@@ -74,34 +74,22 @@ namespace votingBackend3.Services
 
         public async Task<Party> CreateParty(new_partyDto request)
         {
-            try
+            if (request == null) throw new ArgumentNullException(nameof(request), "Invalid request data.");
+
+            var newParty = new Party
             {
-                if (request == null) throw new Exception("Invalid request data");
+                party_id = Guid.NewGuid(),
+                name = request.name,
+                abbreviation = request.abbreviation,
+                description = request.description,
+                allowed = request.allowed,
+                created_at = DateTime.UtcNow
+            };
 
-                if (request.GetType() != typeof(new_partyDto)) throw new Exception("Invalid request format");
+            await _votingDbContext.party.AddAsync(newParty);
+            await _votingDbContext.SaveChangesAsync();
 
-
-                Party new_party = new Party
-                {
-                    party_id = Guid.NewGuid(),
-                    party_name = request.party_name,
-                    party_description = request.party_description,
-                    status = false
-                };
-
-                //add and save changes
-                await _votingDbContext.party.AddAsync(new_party);
-                await _votingDbContext.SaveChangesAsync();
-
-                return new_party;
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Could not create the Party. error: {ex.Message}");
-            }
-
-
+            return newParty;
         }
 
         //update election status and party status
@@ -143,7 +131,7 @@ namespace votingBackend3.Services
                 if (party == null) throw new Exception("Party not found");
 
                 //update
-                party.status = data.status;
+                party.allowed = data.status;
 
                 //save changes
                 await _votingDbContext.SaveChangesAsync();
@@ -194,9 +182,10 @@ namespace votingBackend3.Services
                 if (party == null) throw new Exception("Party not found");
 
                 //update
-                party.party_name = request.party_name;
-                party.party_description = request.party_description;
-                party.status = request.status;
+                party.name = request.name;
+                party.description = request.description;
+                party.abbreviation = request.abbreviation;
+                party.allowed = request.allowed;
 
                 //save changes
                 await _votingDbContext.SaveChangesAsync();
@@ -218,11 +207,11 @@ namespace votingBackend3.Services
 
             var electionResults = await _votingDbContext.vote
                 .Where(v => v.election_id == election_id)
-                .GroupBy(v => new { v.party_id, v.Party.party_name })
+                .GroupBy(v => new { v.party_id, v.Party.name })
                 .Select(g => new ElectionResultsDTO
                 {
                     party_id = g.Key.party_id,
-                    party_name = g.Key.party_name,
+                    party_name = g.Key.name,
                     votes = g.Count(),
                     percentage = totalVotes == 0 ? 0 : (double)g.Count() / totalVotes * 100
                 })
@@ -258,11 +247,11 @@ namespace votingBackend3.Services
             var totalVotes = await _votingDbContext.vote.CountAsync(v => v.election_id == election_id);
             var electionResults = await _votingDbContext.vote
                 .Where(v => v.election_id == election_id)
-                .GroupBy(v => new { v.party_id, v.Party.party_name })
+                .GroupBy(v => new { v.party_id, v.Party.name })
                 .Select(g => new ElectionResultsDTO
                 {
                     party_id = g.Key.party_id,
-                    party_name = g.Key.party_name,
+                    party_name = g.Key.name,
                     votes = g.Count(),
                     percentage = totalVotes == 0 ? 0 : (double)g.Count() / totalVotes * 100
                 })
@@ -273,6 +262,59 @@ namespace votingBackend3.Services
 
             return electionResults.First();
         }
+
+
+        //allow the specified party to partisipate in an election
+        public async Task<ElectionParty> AssignPartyToElection(
+    AssignPartyToElectionDto request)
+        {
+            var election = await _votingDbContext.election.FindAsync(request.election_id);
+
+            if (election == null)throw new Exception("Election not found.");
+
+            var party = await _votingDbContext.party.FindAsync(request.party_id);
+
+            if (party == null) throw new Exception("Party not found.");
+
+            if (!party.allowed)throw new Exception("This party is disabled.");
+
+            var existingAssignment = await _votingDbContext.election_party
+                .AnyAsync(ep =>
+                    ep.election_id == request.election_id &&
+                    ep.party_id == request.party_id);
+
+            if (existingAssignment) throw new Exception("This party is already assigned to this election.");
+
+            var assignment = new ElectionParty
+            {
+                election_id = request.election_id,
+                party_id = request.party_id
+            };
+
+            _votingDbContext.election_party.Add(assignment);
+
+            await _votingDbContext.SaveChangesAsync();
+
+            return assignment;
+        }
+
+
+        //get all the election parties
+        public async Task<List<Party>> GetElectionParties(Guid election_id)
+        {
+            var electionExists = await _votingDbContext.election.AnyAsync(e => e.election_id == election_id);
+
+            if (!electionExists)throw new KeyNotFoundException("Election not found.");
+
+            var parties = await _votingDbContext.party
+                .Where(p => _votingDbContext.election_party.Any(ep =>
+                    ep.party_id == p.party_id &&
+                    ep.election_id == election_id))
+                .ToListAsync();
+
+            return parties;
+        }
+
 
 
 
@@ -576,21 +618,24 @@ namespace votingBackend3.Services
 
 
 
-        public async Task<List<GetAdminDetailsBasicDTO>> GetAllAdmins()
+        public async Task<List<GetAdminDetailsDTO>> GetAllAdmins()
         {
             var admins = await (
                 from a in _votingDbContext.auth
                 join v in _votingDbContext.voter
                     on a.voter_id equals v.voter_id
                 where a.role == "Admin"
-                select new GetAdminDetailsBasicDTO
+                select new GetAdminDetailsDTO
                 {
                     user_id = a.voter_id,
                     firstname = v.firstname,
                     lastname = v.lastname,
                     role = a.role,
                     allowed = a.allowed,
-                    created_at = a.created_at
+                    created_at = a.created_at,
+                    province = v.province,
+                    city = v.city,
+                    postal = v.postal
                 }
             ).ToListAsync();
 

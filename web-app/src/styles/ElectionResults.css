@@ -1,0 +1,682 @@
+
+/* ========================================
+   PAGE LAYOUT
+======================================== */
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    align-items: stretch;
+}
+
+.election-results-page {
+    flex: 1;
+    min-width: 0;
+    width: 0;
+    box-sizing: border-box;
+}
+
+.election-results-container {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 30px;
+    box-sizing: border-box;
+    color: #1f2937;
+}
+
+/* ========================================
+   PAGE HEADER
+======================================== */
+
+.election-results-container .page-header {
+    margin-bottom: 28px;
+}
+
+.election-results-container .page-eyebrow {
+    margin: 0 0 8px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.election-results-container .page-header h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.election-results-container .page-description {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ========================================
+   CARDS
+======================================== */
+
+.results-filter-card,
+.results-section,
+.summary-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.results-filter-card {
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.filter-heading,
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.filter-heading h2,
+.section-heading h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 17px;
+    font-weight: 650;
+}
+
+.filter-heading p,
+.section-heading p {
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* ========================================
+   ELECTION SELECTOR
+======================================== */
+
+.results-filter-card label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.results-filter-card select {
+    display: block;
+    width: 100%;
+    max-width: 620px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+    font-size: 14px;
+}
+
+.results-filter-card select:focus {
+    outline: 2px solid #93c5fd;
+    outline-offset: 2px;
+    border-color: #2563eb;
+}
+
+.results-filter-card select:disabled {
+    background: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.selected-election-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+    align-items: baseline;
+}
+
+.info-label {
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.election-id {
+    color: #475569;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.results-muted {
+    margin: 12px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* ========================================
+   ALERTS AND LOADING
+======================================== */
+
+.results-alert {
+    margin-bottom: 20px;
+    padding: 13px 16px;
+    border: 1px solid;
+    border-radius: 7px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.results-alert.error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.results-alert.success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.results-loading {
+    padding: 30px 16px;
+    color: #64748b;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* ========================================
+   SUMMARY CARDS
+======================================== */
+
+.results-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+    padding: 22px;
+}
+
+.summary-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 9px;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.votes-icon {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.parties-icon {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.winner-icon {
+    background: #fefce8;
+    color: #a16207;
+}
+
+.summary-card p {
+    margin: 0 0 7px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.summary-card h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.summary-card .winner-name {
+    font-size: 17px;
+}
+
+/* ========================================
+   RESULTS SECTIONS
+======================================== */
+
+.results-section {
+    min-width: 0;
+    margin-bottom: 24px;
+    padding: 24px;
+}
+
+/* ========================================
+   VOTE DISTRIBUTION
+======================================== */
+
+.distribution-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.distribution-item {
+    min-width: 0;
+}
+
+.distribution-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+.party-label,
+.party-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.party-label {
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.party-name {
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.party-stats {
+    flex-shrink: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.party-stats strong {
+    color: #111827;
+    font-weight: 650;
+}
+
+.progress-track {
+    height: 9px;
+    width: 100%;
+    overflow: hidden;
+    background: #f1f5f9;
+    border-radius: 20px;
+}
+
+.progress-fill {
+    height: 100%;
+    min-width: 0;
+    background: #94a3b8;
+    border-radius: inherit;
+    transition: width 0.3s ease;
+}
+
+.progress-fill.winner-fill {
+    background: #2563eb;
+}
+
+.winner-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 5px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+/* ========================================
+   RESULTS TABLE
+======================================== */
+
+.results-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 13px;
+}
+
+.results-table th,
+.results-table td {
+    padding: 15px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.results-table thead th {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.results-table tbody td {
+    color: #475569;
+}
+
+.results-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.results-table .table-party-name {
+    color: #111827;
+    font-weight: 600;
+}
+
+.results-table .numeric-cell {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.results-table tfoot th {
+    background: #f8fafc;
+    color: #111827;
+    font-weight: 700;
+    border-bottom: none;
+}
+
+.outcome-muted {
+    color: #9ca3af;
+}
+
+/* ========================================
+   EMPTY RESULTS
+======================================== */
+
+.results-empty {
+    padding: 48px 24px;
+    border: 1px dashed #d1d5db;
+    border-radius: 10px;
+    background: #ffffff;
+    text-align: center;
+}
+
+.results-empty h2 {
+    margin: 0 0 10px;
+    color: #111827;
+    font-size: 18px;
+}
+
+.results-empty p {
+    max-width: 500px;
+    margin: 0 auto;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* ========================================
+   RESPONSIVE LAYOUT
+======================================== */
+
+@media (max-width: 1000px) {
+    .results-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .summary-card:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 650px) {
+    .election-results-container {
+        padding: 20px 14px;
+    }
+
+    .election-results-container .page-header h1 {
+        font-size: 24px;
+    }
+
+    .results-filter-card,
+    .results-section {
+        padding: 18px 14px;
+    }
+
+    .results-summary {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .summary-card:last-child {
+        grid-column: auto;
+    }
+
+    .summary-card {
+        padding: 18px;
+    }
+
+    .summary-card h2 {
+        font-size: 22px;
+    }
+
+    .distribution-labels {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .party-stats {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 12px 10px;
+    }
+}
+
+
+
+
+/* Position election results beside the fixed sidebar */
+.admin-layout > .election-results-page {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    margin-left: 252px;
+    box-sizing: border-box;
+}
+
+/* Match the existing responsive sidebar width */
+@media (max-width: 1000px) {
+    .admin-layout > .election-results-page {
+        margin-left: 215px;
+    }
+}
+
+/* Match the compact sidebar on mobile */
+@media (max-width: 768px) {
+    .admin-layout > .election-results-page {
+        margin-left: 76px;
+    }
+}
+
+
+
+
+/* Blockchain integrity check */
+.blockchain-check {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 22px 24px;
+    margin: 24px 0;
+    background: #ffffff;
+    border: 1px solid var(--line, #e8edf4);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(16, 29, 53, 0.04);
+}
+
+.blockchain-check h3 {
+    margin: 0 0 6px;
+    color: var(--ink, #17243b);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.blockchain-check p {
+    margin: 0;
+    color: var(--muted, #718096);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.blockchain-check button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: var(--blue, #3568e8);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.blockchain-check button:hover:not(:disabled) {
+    background: #2855c7;
+    box-shadow: 0 4px 10px rgba(53, 104, 232, 0.2);
+    transform: translateY(-1px);
+}
+
+.blockchain-check button:focus-visible {
+    outline: 3px solid rgba(53, 104, 232, 0.3);
+    outline-offset: 3px;
+}
+
+.blockchain-check button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Verification result */
+.blockchain-check [role="status"] {
+    flex-basis: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--line, #e8edf4);
+    border-radius: 8px;
+    background: #f5f7fb;
+    color: var(--ink, #17243b);
+    font-size: 13px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+/* Smaller screens */
+@media (max-width: 600px) {
+    .blockchain-check {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 18px;
+        gap: 14px;
+    }
+
+    .blockchain-check button {
+        width: 100%;
+    }
+}
+
+
+
+.blockchain-check-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.blockchain-status {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex-basis: 100%;
+    padding: 14px 16px;
+    border: 1px solid;
+    border-radius: 10px;
+}
+
+.blockchain-status.valid {
+    background: #ecfdf3;
+    border-color: #a7f3c0;
+    color: #166534;
+}
+
+.blockchain-status.invalid {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.blockchain-status-icon {
+    display: flex;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: currentColor;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.blockchain-status strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.blockchain-status p {
+    color: inherit;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}

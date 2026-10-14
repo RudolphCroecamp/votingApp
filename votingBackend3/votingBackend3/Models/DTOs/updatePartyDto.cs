@@ -1,15 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 
 namespace votingBackend3.Models.DTOs
 {
     public class updatePartyDto
     {
-        [NotNull, Required]
-        public string party_name { get; set; } = string.Empty;
-        [NotNull, Required]
-        public string party_description { get; set; } = string.Empty;
-        [NotNull, Required]
-        public bool status { get; set; } = false;//allowed in current election or not
+        [Required, MaxLength(150)]
+        public string name { get; set; } = string.Empty;
+
+        [MaxLength(20)]
+        public string abbreviation { get; set; }
+
+        [Required, MaxLength(500)]
+        public string description { get; set; } = string.Empty;
+
+        public bool allowed { get; set; } = true;
     }
 }

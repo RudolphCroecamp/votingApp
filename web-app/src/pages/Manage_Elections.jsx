@@ -472,10 +472,11 @@ export default function Elections() {
                         </div>
                     </div>
                 </div>
+                <footer className="page-footer">
+                    <span>BallotAdmin · Election Management</span>
+                    <span>Secure access for authorised personal only</span>
+                </footer>
             </main>
         </div>
-
-
-
     );
 }

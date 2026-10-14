@@ -553,7 +553,7 @@ export default function ElectionVoterManagement() {
 
                                                     <td>
                                                         <span className={`evm-voted ${record.voted ? "evm-voted-yes" : ""}`}>
-                                                            {record.voted? "Voted" : "Not voted"}
+                                                            {record.voted ? "Voted" : "Not voted"}
                                                         </span>
                                                     </td>
 
@@ -575,7 +575,7 @@ export default function ElectionVoterManagement() {
                                                                 aria-label={`Update status for ${voter.firstname} ${voter.lastname}`}
                                                                 value={Number.isFinite(status) ? status : STATUS.PENDING}
                                                                 disabled={updating || Boolean(record.voted)}
-                                                                onChange={(event) =>updateRequest(record, Number(event.target.value))}
+                                                                onChange={(event) => updateRequest(record, Number(event.target.value))}
                                                             >
                                                                 <option value={STATUS.PENDING}>Pending</option>
                                                                 <option value={STATUS.APPROVED}>Approve</option>
@@ -600,8 +600,14 @@ export default function ElectionVoterManagement() {
                         <footer className="evm-table-footer">
                             Showing {filteredRecords.length} of {records.length} requests
                         </footer>
+
                     </section>
                 </div>
+
+                <footer className="page-footer">
+                    <span>BallotAdmin · Election Voter Management</span>
+                    <span>Secure access for authorised personal only</span>
+                </footer>
             </main>
 
             {selectedVoter && (

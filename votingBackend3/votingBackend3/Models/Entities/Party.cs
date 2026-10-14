@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 
 namespace votingBackend3.Models.Entities
 {
@@ -7,15 +6,20 @@ namespace votingBackend3.Models.Entities
     {
         [Key]
         public Guid party_id { get; set; } = Guid.NewGuid();
-        [NotNull, Required]
-        public string party_name { get; set; } = string.Empty;
-        [NotNull, Required]
-        public string party_description { get; set; } = string.Empty;
-        [NotNull, Required]
-        public bool status { get; set; } = false;//allowed in current election or not
 
+        [Required, MaxLength(150)]
+        public string name { get; set; } = string.Empty;
 
+        [MaxLength(20)]
+        public string abbreviation { get; set; }
 
-        public ICollection<ElectionParty> ElectionParties { get; set; } = new List<ElectionParty>();
+        [Required, MaxLength(500)]
+        public string description { get; set; } = string.Empty;
+
+        public bool allowed { get; set; } = true;
+
+        public DateTime created_at { get; set; } = DateTime.UtcNow;
+
+        public ICollection<ElectionParty> ElectionParties { get; set; }= new List<ElectionParty>();
     }
 }

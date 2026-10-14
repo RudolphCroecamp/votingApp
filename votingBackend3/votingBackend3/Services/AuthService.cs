@@ -42,8 +42,8 @@ namespace votingBackend3.Services
                 //block admin request
                 if(user.role == "Admin") throw new UnauthorizedAccessException("User does not have access to these services");
 
-                // Stop if the account is inactive
-                if (!user.is_active) throw new Exception("Account is inactive");
+                // Stop if the account is blocked
+                if (!user.allowed) throw new Exception("Account is blocked");
 
                 // Embeddings must have equal lengths to be compared.
                 if (user.face_embedding.Length != creds.face_embedding.Length) throw new UnauthorizedAccessException("Invalid face embedding");
@@ -287,7 +287,7 @@ namespace votingBackend3.Services
 
             // Inactive accounts invalidate all their sessions, regardless of session state.
             var accountIsActive = await _votingDbContext.auth
-                .AnyAsync(user => user.voter_id == voterId && user.is_active);
+                .AnyAsync(user => user.voter_id == voterId && user.allowed);
 
             if (!accountIsActive) return false;
 

@@ -62,9 +62,6 @@ async function checkNodesHealth() {
 
 import { useCallback, useEffect, useState } from 'react'
 
-// Keep fetchHealth, checkDatabaseHealth and checkServerHealth
-// from the previous section in this same file.
-
 function StatusPill({ service }) {
     if (!service) {
         return <span className="pill pill-neutral">Checking...</span>
@@ -235,8 +232,8 @@ export default function HealthMonitor() {
                 </div>
 
                 {/* Health statistics */}
-                <div className="row g-3 mb-4">
-                    <div className="col-sm-6 col-xl-3">
+                <div className="row g-0 mb-4">
+                    <div className="col-sm-6 col-xl-3 panel">
                         <div className="stat-card">
                             <div className="stat-label">API status</div>
                             <div className="stat-number fs-4 mt-3">
@@ -250,7 +247,7 @@ export default function HealthMonitor() {
                         </div>
                     </div>
 
-                    <div className="col-sm-6 col-xl-3">
+                    <div className="col-sm-6 col-xl-3 panel">
                         <div className="stat-card">
                             <div className="stat-label">Database</div>
                             <div className="stat-number fs-4 mt-3">
@@ -262,7 +259,7 @@ export default function HealthMonitor() {
                         </div>
                     </div>
 
-                    <div className="col-sm-6 col-xl-3">
+                    <div className="col-sm-6 col-xl-3 panel">
                         <div className="stat-card">
                             <div className="stat-label">API response time</div>
                             <div className="stat-number fs-4 mt-3">
@@ -274,7 +271,7 @@ export default function HealthMonitor() {
                         </div>
                     </div>
 
-                    <div className="col-sm-6 col-xl-3">
+                    <div className="col-sm-6 col-xl-3 panel">
                         <div className="stat-card">
                             <div className="stat-label">API uptime</div>
                             <div className="stat-number fs-4 mt-3">
