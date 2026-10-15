@@ -228,7 +228,7 @@ export default function Elections() {
 
             <main className="admin-content">
                 <div className="container-fluid p-0">
-                    <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 panel p-3">
                         <div>
                             <h2 className="fw-bold mb-1">Election Management</h2>
                             <p className="text-secondary mb-0">

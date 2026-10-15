@@ -16,6 +16,7 @@ export default function VoterDirectory() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [updatingId, setUpdatingId] = useState(null);
+    const [selectedVoter, setSelectedVoter] = useState(null);
 
     const fetchVoters = useCallback(async () => {
         setLoading(true);
@@ -186,7 +187,7 @@ export default function VoterDirectory() {
 
             <main className="admin-content">
                 <div className="voter-directory">
-                    <header className="voter-page-header">
+                    <header className="voter-page-header panel p-3">
                         <div>
                             <span className="voter-eyebrow">
                                 VOTER MANAGEMENT
@@ -329,10 +330,10 @@ export default function VoterDirectory() {
                                                     <td>
                                                         <span
                                                             className={`pill ${isAllowed === true
-                                                                    ? "pill-success"
-                                                                    : isAllowed === false
-                                                                        ? "pill-neutral"
-                                                                        : "pill-warning"
+                                                                ? "pill-success"
+                                                                : isAllowed === false
+                                                                    ? "pill-neutral"
+                                                                    : "pill-warning"
                                                                 }`}
                                                         >
                                                             {isAllowed === true
@@ -344,27 +345,35 @@ export default function VoterDirectory() {
                                                     </td>
 
                                                     <td>
-                                                        <button
-                                                            type="button"
-                                                            className={`btn btn-sm ${isAllowed
+                                                        <div className="voter-action-buttons">
+                                                            <button
+                                                                type="button"
+                                                                className="voter-view-btn"
+                                                                onClick={() => setSelectedVoter(voter)}
+                                                            >
+                                                                View information
+                                                            </button>
+
+                                                            <button
+                                                                type="button"
+                                                                className={`btn btn-sm ${isAllowed
                                                                     ? "btn-outline-danger"
                                                                     : "btn-outline-success"
-                                                                }`}
-                                                            disabled={
-                                                                isUpdating ||
-                                                                isAllowed === null ||
-                                                                updatingId !== null
-                                                            }
-                                                            onClick={() =>
-                                                                toggleVoterAccess(voter)
-                                                            }
-                                                        >
-                                                            {isUpdating
-                                                                ? "Updating..."
-                                                                : isAllowed
-                                                                    ? "Revoke access"
-                                                                    : "Restore access"}
-                                                        </button>
+                                                                    }`}
+                                                                disabled={
+                                                                    isUpdating ||
+                                                                    isAllowed === null ||
+                                                                    updatingId !== null
+                                                                }
+                                                                onClick={() => toggleVoterAccess(voter)}
+                                                            >
+                                                                {isUpdating
+                                                                    ? "Updating..."
+                                                                    : isAllowed
+                                                                        ? "Revoke access"
+                                                                        : "Restore access"}
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             );
@@ -414,6 +423,227 @@ export default function VoterDirectory() {
                     </footer>
                 </div>
             </main>
+
+
+            {selectedVoter && (
+                <div
+                    className="voter-modal-overlay"
+                    onClick={() => setSelectedVoter(null)}
+                    onKeyDown={(event) => {
+                        if (event.key === "Escape") {
+                            setSelectedVoter(null);
+                        }
+                    }}
+                >
+                    <section
+                        className="voter-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="voter-modal-title"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <header className="voter-modal-header">
+                            <div>
+                                <span className="voter-eyebrow">
+                                    VOTER MANAGEMENT
+                                </span>
+                                <h2 id="voter-modal-title">
+                                    Voter information
+                                </h2>
+                                <p>
+                                    Registered voter details and ID documents.
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="voter-modal-close"
+                                aria-label="Close voter information"
+                                onClick={() => setSelectedVoter(null)}
+                            >
+                                &times;
+                            </button>
+                        </header>
+
+                        <div
+                            className={`voter-access-banner ${selectedVoter.allowed === true
+                                    ? "access-enabled"
+                                    : selectedVoter.allowed === false
+                                        ? "access-revoked"
+                                        : "access-unknown"
+                                }`}
+                        >
+                            <div className="voter-access-icon">
+                                {selectedVoter.allowed === true
+                                    ? "✓"
+                                    : selectedVoter.allowed === false
+                                        ? "!"
+                                        : "?"}
+                            </div>
+
+                            <div className="voter-access-message">
+                                <strong>
+                                    {selectedVoter.allowed === true
+                                        ? "Account access enabled"
+                                        : selectedVoter.allowed === false
+                                            ? "Account access revoked"
+                                            : "Access status unknown"}
+                                </strong>
+
+                                <span>
+                                    {selectedVoter.allowed === true
+                                        ? "This voter currently has access to permitted services."
+                                        : selectedVoter.allowed === false
+                                            ? "This voter cannot access protected services."
+                                            : "The current access status could not be determined."}
+                                </span>
+                            </div>
+
+                            <span className="voter-access-label">
+                                {selectedVoter.allowed === true
+                                    ? "ACTIVE"
+                                    : selectedVoter.allowed === false
+                                        ? "REVOKED"
+                                        : "UNKNOWN"}
+                            </span>
+                        </div>
+
+
+                        <div className="voter-modal-body">
+                            <section className="voter-details-section">
+                                <h3>Personal information</h3>
+
+                                <div className="voter-details-grid">
+                                    <div className="voter-detail">
+                                        <span>Voter ID</span>
+                                        <strong className="voter-modal-id">
+                                            {selectedVoter.voter_id || "—"}
+                                        </strong>
+                                    </div>
+
+                                    <div className="voter-detail">
+                                        <span>First name</span>
+                                        <strong>
+                                            {selectedVoter.firstname || "—"}
+                                        </strong>
+                                    </div>
+
+                                    <div className="voter-detail">
+                                        <span>Last name</span>
+                                        <strong>
+                                            {selectedVoter.lastname || "—"}
+                                        </strong>
+                                    </div>
+
+                                    <div className="voter-detail">
+                                        <span>Province</span>
+                                        <strong>
+                                            {selectedVoter.province || "—"}
+                                        </strong>
+                                    </div>
+
+                                    <div className="voter-detail">
+                                        <span>City</span>
+                                        <strong>
+                                            {selectedVoter.city || "—"}
+                                        </strong>
+                                    </div>
+
+                                    <div className="voter-detail">
+                                        <span>Street</span>
+                                        <strong>
+                                            {selectedVoter.street || "—"}
+                                        </strong>
+                                    </div>
+
+                                    <div className="voter-detail">
+                                        <span>Postal code</span>
+                                        <strong>
+                                            {selectedVoter.postal || "—"}
+                                        </strong>
+                                    </div>
+
+                                    <div className="voter-detail">
+                                        <span>Account access</span>
+                                        <strong>
+                                            {typeof selectedVoter.allowed === "boolean"
+                                                ? selectedVoter.allowed
+                                                    ? "Allowed"
+                                                    : "Revoked"
+                                                : "Unknown"}
+                                        </strong>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section className="voter-details-section">
+                                <h3>South African ID document</h3>
+
+                                <p className="voter-id-description">
+                                    Front and back images associated with this voter.
+                                </p>
+
+                                <div className="voter-id-images">
+                                    <div className="voter-id-image-card">
+                                        <h4>Front of ID</h4>
+
+                                        <img
+                                            src={`http://localhost:5000/VotingDocuments/${encodeURIComponent(
+                                                selectedVoter.voter_id
+                                            )}/ID_Front`}
+                                            alt="Front of voter's ID document"
+                                            onError={(event) => {
+                                                event.currentTarget.style.display = "none";
+                                                event.currentTarget.nextElementSibling.style.display = "flex";
+                                            }}
+                                        />
+
+                                        <div
+                                            className="voter-id-image-placeholder"
+                                            style={{ display: "none" }}
+                                        >
+                                            ID front image unavailable
+                                        </div>
+                                    </div>
+
+                                    <div className="voter-id-image-card">
+                                        <h4>Back of ID</h4>
+
+                                        <img
+                                            src={`http://localhost:5000/VotingDocuments/${encodeURIComponent(
+                                                selectedVoter.voter_id
+                                            )}/ID_Back`}
+                                            alt="Back of voter's ID document"
+                                            onError={(event) => {
+                                                event.currentTarget.style.display = "none";
+                                                event.currentTarget.nextElementSibling.style.display = "flex";
+                                            }}
+                                        />
+
+                                        <div
+                                            className="voter-id-image-placeholder"
+                                            style={{ display: "none" }}
+                                        >
+                                            ID back image unavailable
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                        <footer className="voter-modal-footer">
+                            <button
+                                type="button"
+                                className="voter-modal-done"
+                                onClick={() => setSelectedVoter(null)}
+                            >
+                                Close
+                            </button>
+                        </footer>
+                    </section>
+                </div>
+            )}
+
         </div>
     );
 }

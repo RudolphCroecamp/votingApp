@@ -272,5 +272,9 @@ app.Run();
 //FIX register we need to add the user's facial image, also return link with voterInformationDTO so admin can review on website and user on mobile device
 //FIX do we need voter street address
 //FIX should we automatically allow all users or should they request access and an admin needs to allow them to participate in the election
-//FIX admin users should not be added to the election_voter table
 
+
+
+//FIX we should be able to remove users and parties form assigned election
+
+//FIX add an enpoint so voters can request access to an election
