@@ -32,25 +32,50 @@ namespace votingBackend3.Services
         }
 
         //return true if the user has already voted in this election, false if they still need to vote, error when not registered for the election
-        public async Task<bool> HasUserVoted(Guid voter_id, Guid election_id)
+        //public async Task<bool> HasUserVoted(Guid voter_id, Guid election_id)
+        //{
+        //    var electionVoter = await _votingDbContext.election_voter
+        //        .FirstOrDefaultAsync(ev =>
+        //            ev.voter_id == voter_id &&
+        //            ev.election_id == election_id);
+
+        //    if (electionVoter == null)
+        //    {
+        //        throw new Exception("Voter is not registered for this election");
+        //    }
+
+        //    if(electionVoter.has_voted == true)
+        //    {
+        //        throw new Exception("Voter has already voted in this election");
+        //    }
+
+        //    return false;
+        //}
+
+
+    // Checks whether the voter is eligible to vote in the specified election.
+    public async Task<bool> IsUserEligibleToVote(Guid voter_id, Guid election_id)
         {
             var electionVoter = await _votingDbContext.election_voter
                 .FirstOrDefaultAsync(ev =>
                     ev.voter_id == voter_id &&
                     ev.election_id == election_id);
 
-            if (electionVoter == null)
-            {
-                throw new Exception("Voter is not registered for this election");
-            }
+            // Check whether the voter is registered for the election.
+            if (electionVoter == null) throw new UnauthorizedAccessException("Voter is not registered for this election.");
+            
 
-            if(electionVoter.has_voted == true)
-            {
-                throw new Exception("Voter has already voted in this election");
-            }
+            // Check whether the voter has been approved.
+            if (electionVoter.status != ElectionVoterStatus.Approved) throw new UnauthorizedAccessException("Voter is not approved to vote in this election.");
+            
 
-            return false;
+            // Check whether the voter has already voted.
+            if (electionVoter.has_voted) throw new InvalidOperationException("Voter has already voted in this election.");
+            
+
+            return true;
         }
+
 
 
         public async Task<VoteTokenDto> CreateVoteToken(Guid voter_id, Guid election_id) {
@@ -63,7 +88,7 @@ namespace votingBackend3.Services
 
 
                 //check if the user has already voted in this election, if so, do not allow them to vote again
-                bool hasvoted = await HasUserVoted(voter_id, election_id);
+                bool hasvoted = await IsUserEligibleToVote(voter_id, election_id);
                 if (hasvoted) throw new Exception("Voter has already voted in this election");
 
                 //create the token

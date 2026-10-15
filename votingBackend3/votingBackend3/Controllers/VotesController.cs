@@ -31,8 +31,8 @@ namespace votingBackend3.Controllers
 
         //first check if the user has voted before they can access the election
         [HttpGet]
-        [Route("hasUserVoted/{election_id}")]
-        public async Task<IActionResult> HasUserVoted([FromRoute] Guid election_id)
+        [Route("IsUserEligibleToVote/{election_id}")]
+        public async Task<IActionResult> IsUserEligibleToVote([FromRoute] Guid election_id)
         {
             if (election_id == Guid.Empty)
             {
@@ -44,12 +44,12 @@ namespace votingBackend3.Controllers
 
             try
             {
-                bool hasVoted = await _voteService.HasUserVoted(voter_id, election_id);
+                bool eligible = await _voteService.IsUserEligibleToVote(voter_id, election_id);
 
                 return Ok(new
                 {
-                    message = "Success",
-                    hasVoted = hasVoted
+                    message = "Success, The user is allowed to vote in this election",
+                    eligible = eligible
                 });
             }
             catch (Exception ex)

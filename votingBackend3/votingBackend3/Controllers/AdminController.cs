@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
 using votingBackend3.Services;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace votingBackend3.Controllers
@@ -501,18 +503,26 @@ namespace votingBackend3.Controllers
         [HttpPatch]
         [Route("Update_voter_access")]
         public async Task<IActionResult> Update_voter_access(updateStatusDto request) {
-            var user = await _adminService.Update_voter_access(request);
-
-            if (user == null) return BadRequest(new
+            try
             {
-                message = "User not found"
-            });
+                var user = await _adminService.Update_voter_access(request);
 
-            return Ok(new
-            {
-                message = "Successfully updated user status",
-                user = user
-            });
+                if (user == null) throw new KeyNotFoundException("User not found");
+
+                return Ok(new
+                {
+                    message = "Successfully updated user status",
+                    user = user
+                });
+                
+            }
+            catch (Exception ex) {
+                return BadRequest(new
+                {
+                    message = $"Failed to update user status: {ex.Message}"
+                });
+            }
+            
 
         }
 

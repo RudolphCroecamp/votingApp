@@ -269,24 +269,8 @@ app.Run();
 
 
 
-//FIX register we need to add the user's facial image
+//FIX register we need to add the user's facial image, also return link with voterInformationDTO so admin can review on website and user on mobile device
 //FIX do we need voter street address
 //FIX should we automatically allow all users or should they request access and an admin needs to allow them to participate in the election
 //FIX admin users should not be added to the election_voter table
-//FIX check if user has status = 'approved' before they can cast a vote
-//example
-/*
- var eligible = await _votingDbContext.ElectionVoter
-    .AnyAsync(ev =>
-        ev.election_id == electionId &&
-        ev.voter_id == voterId &&
-        ev.status == ElectionVoterStatus.Approved &&
-        !ev.has_voted);
 
-if (!eligible)
-{
-    throw new UnauthorizedAccessException(
-        "You are not eligible to vote in this election.");
-}
- 
- */
