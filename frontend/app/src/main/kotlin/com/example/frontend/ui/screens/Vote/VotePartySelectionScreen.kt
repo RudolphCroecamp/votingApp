@@ -51,7 +51,8 @@ fun VotePartySelectionScreen(
     parties: List<Party> = SampleParties,
     selectedTab: BottomTab = BottomTab.Vote,
     onTabSelected: (BottomTab) -> Unit = {},
-    backgroundColor: Color = PageBackground
+    backgroundColor: Color = PageBackground,
+    onManifestoClick: ((Party) -> Unit)? = null
 ) {
     val entered by rememberEntranceTrigger()
     var selectedId by remember { mutableStateOf<String?>(null) }
@@ -61,7 +62,7 @@ fun VotePartySelectionScreen(
         modifier = modifier,
         containerColor = backgroundColor,
         topBar = { AppTopBar(
-                title = "National Election",
+                title = ballot.title,
                 subtitle = "Choose your party",
                 onBackClick = onBackClick
             ) },
@@ -91,6 +92,7 @@ fun VotePartySelectionScreen(
                     party = party,
                     selected = party.id == selectedId,
                     onClick = { selectedId = party.id },
+                    onInfoClick = onManifestoClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .entrance(entered, index = index + 2)
