@@ -35,13 +35,13 @@ non-issue automatically.
 
 Lint reports 14 unused resources.
 
-- [ ] `drawable-nodpi/` holds 18 party logos; `SampleParties` references 5
+- [x] `drawable-nodpi/` holds 18 party logos; `SampleParties` references 5
       (`anc`, `da`, `eff`, `ifp`, `actionsa`). Either finish the party list or delete
       the other 13
-- [ ] `drawable/success_check.jpg` is referenced nowhere — delete
-- [ ] `IconLocation` warning: a bitmap sitting in density-independent `drawable/`
+- [x] `drawable/success_check.jpg` is referenced nowhere — delete
+- [x] `IconLocation` warning: a bitmap sitting in density-independent `drawable/`
       (same file, so deleting it clears this too)
-- [ ] `IconXmlAndPng` warning: `ic_launcher` exists as both `.xml` and `.webp`
+- [x] `IconXmlAndPng` warning: `ic_launcher` exists as both `.xml` and `.webp`
       in `mipmap-xxxhdpi` — pick one
 
 ## 3. Extract hardcoded strings
