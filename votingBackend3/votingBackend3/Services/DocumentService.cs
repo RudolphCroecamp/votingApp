@@ -41,7 +41,7 @@ namespace votingBackend3.Services
         //return an list of links to the images
         public async Task<List<DocumentInfo>> GetFiles(Guid voter_id)
         {
-            voter_id = Guid.Parse("53c1ee50-7a6a-4efe-95e2-ee291ebaed85");
+            voter_id = Guid.Parse("53c1ee50-7a6a-4efe-95e2-ee291ebaed85");//FIX remove this on producton
 
             try
             {
