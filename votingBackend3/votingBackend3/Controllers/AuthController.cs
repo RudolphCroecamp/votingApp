@@ -103,35 +103,54 @@ namespace votingBackend3.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] register_request request)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Register([FromForm] register_request request)
         {
             try
             {
                 var success = await _authService.Register(request);
 
-                if (success == false)
+                if (!success)
                 {
                     return BadRequest(new
                     {
-                        message = "Registration failed",
+                        message = "Registration failed"
                     });
                 }
 
                 return Ok(new
                 {
-                    message = "Registration success",
+                    message = "Registration successful"
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new
+                {
+                    message = ex.Message
                 });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                // Log the full exception on the server.
+                Console.WriteLine(ex);
 
-                return BadRequest(new
+                return StatusCode(500, new
                 {
-                    message = $"Registration Error: {ex.Message}",
+                    message = "An unexpected error occurred during registration."
                 });
             }
         }
+
+
+
 
         [HttpPost]
         [Route("validate")]

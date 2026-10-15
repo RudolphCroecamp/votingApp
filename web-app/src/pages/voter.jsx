@@ -4,6 +4,7 @@ import Sidebar from "../components/sidebar";
 import "../styles/voter.css";
 
 const API_BASE = "http://localhost:5000/api/Admin";
+const DOCUMENTS_API = "http://localhost:5000/api/documents";
 const PAGE_SIZE = 10;
 
 export default function VoterDirectory() {
@@ -18,6 +19,14 @@ export default function VoterDirectory() {
     const [updatingId, setUpdatingId] = useState(null);
     const [selectedVoter, setSelectedVoter] = useState(null);
 
+    const [idFrontUrl, setIdFrontUrl] = useState(null);
+    const [idBackUrl, setIdBackUrl] = useState(null);
+    const [loadingIdImages, setLoadingIdImages] = useState(false);
+    const [idImageError, setIdImageError] = useState("");
+
+    const [updatingAccess, setUpdatingAccess] = useState(false);
+    const [accessError, setAccessError] = useState("");
+
     const fetchVoters = useCallback(async () => {
         setLoading(true);
         setError("");
@@ -26,7 +35,9 @@ export default function VoterDirectory() {
             const token = sessionStorage.getItem("JWTToken");
 
             if (!token) {
-                throw new Error("Your session has expired. Please log in again.");
+                throw new Error(
+                    "Your session has expired. Please log in again."
+                );
             }
 
             const response = await fetch(
@@ -59,7 +70,9 @@ export default function VoterDirectory() {
                 ? result.voters
                 : [];
 
-            const count = Number(result?.voterCount ?? voterList.length);
+            const count = Number(
+                result?.voterCount ?? voterList.length
+            );
 
             setVoters(voterList);
             setTotalVoters(count);
@@ -98,6 +111,7 @@ export default function VoterDirectory() {
         );
     }, [voters, search]);
 
+
     async function toggleVoterAccess(voter) {
         const currentlyAllowed = voter.allowed;
 
@@ -126,7 +140,9 @@ export default function VoterDirectory() {
             const token = sessionStorage.getItem("JWTToken");
 
             if (!token) {
-                throw new Error("Your session has expired. Please log in again.");
+                throw new Error(
+                    "Your session has expired. Please log in again."
+                );
             }
 
             const response = await fetch(
@@ -155,16 +171,23 @@ export default function VoterDirectory() {
                 const message = await response.text();
 
                 throw new Error(
-                    message || `Failed to update access (HTTP ${response.status}).`
+                    message ||
+                    `Failed to update access (HTTP ${response.status}).`
                 );
             }
+
+            // Update the selected voter in the open modal.
+            setSelectedVoter((current) =>
+                current?.voter_id === voter.voter_id
+                    ? { ...current, allowed: newStatus }
+                    : current
+            );
 
             setSuccess(
                 `Access ${newStatus ? "restored" : "revoked"} for ` +
                 `${voter.firstname} ${voter.lastname}.`
             );
 
-            // Reload the current page to retrieve the updated status.
             await fetchVoters();
         } catch (err) {
             setError(err.message || "Could not update voter access.");
@@ -173,6 +196,7 @@ export default function VoterDirectory() {
         }
     }
 
+
     function changePage(nextPage) {
         if (nextPage < 1 || nextPage > totalPages) return;
 
@@ -180,6 +204,198 @@ export default function VoterDirectory() {
         setSearch("");
         setSuccess("");
     }
+
+    // Fetch document metadata first, then fetch both images.
+    useEffect(() => {
+        let cancelled = false;
+        let frontObjectUrl = null;
+        let backObjectUrl = null;
+
+        async function loadIdImages() {
+            setIdFrontUrl(null);
+            setIdBackUrl(null);
+            setIdImageError("");
+
+            if (!selectedVoter?.voter_id) {
+                setLoadingIdImages(false);
+                return;
+            }
+
+            setLoadingIdImages(true);
+
+            try {
+                const token = sessionStorage.getItem("JWTToken");
+
+                if (!token) {
+                    throw new Error(
+                        "Your admin session has expired. Please log in again."
+                    );
+                }
+
+                // Step 1: Get this voter's document metadata.
+                const metadataResponse = await fetch(
+                    `${DOCUMENTS_API}/voters/${selectedVoter.voter_id}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Accept: "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                if (!metadataResponse.ok) {
+                    throw new Error(
+                        `Failed to load document information ` +
+                        `(HTTP ${metadataResponse.status}).`
+                    );
+                }
+
+                const documents = await metadataResponse.json();
+
+                if (cancelled) return;
+
+                if (!Array.isArray(documents)) {
+                    throw new Error(
+                        "The document API did not return a list of documents."
+                    );
+                }
+
+                console.log("Voter documents:", documents);
+
+                // Support both camelCase and PascalCase JSON properties.
+                const frontDocument = documents.find((doc) => {
+                    const name = doc.fileName ?? doc.FileName;
+                    return name?.toLowerCase() === "id_front";
+                });
+
+                const backDocument = documents.find((doc) => {
+                    const name = doc.fileName ?? doc.FileName;
+                    return name?.toLowerCase() === "id_back";
+                });
+
+                const frontFileId =
+                    frontDocument?.fileId ?? frontDocument?.FileId;
+
+                const backFileId =
+                    backDocument?.fileId ?? backDocument?.FileId;
+
+                console.log("Front file ID:", frontFileId);
+                console.log("Back file ID:", backFileId);
+
+                if (!frontFileId || !backFileId) {
+                    throw new Error(
+                        "The front or back ID document could not be found " +
+                        "in the document records."
+                    );
+                }
+
+                // Step 2: Download an image using its database file ID.
+                const fetchImage = async (fileId) => {
+                    const response = await fetch(
+                        `${DOCUMENTS_API}/voters/` +
+                        `${selectedVoter.voter_id}/${fileId}`,
+                        {
+                            method: "GET",
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `Failed to load document ${fileId} ` +
+                            `(HTTP ${response.status}).`
+                        );
+                    }
+
+                    const blob = await response.blob();
+
+                    if (!blob.type.startsWith("image/")) {
+                        throw new Error(
+                            `Document ${fileId} was not returned as an image.`
+                        );
+                    }
+
+                    return URL.createObjectURL(blob);
+                };
+
+                // Load both images concurrently.
+                const results = await Promise.allSettled([
+                    fetchImage(frontFileId),
+                    fetchImage(backFileId),
+                ]);
+
+                // Release any successfully downloaded image if the other fails.
+                if (cancelled) {
+                    results.forEach((result) => {
+                        if (result.status === "fulfilled") {
+                            URL.revokeObjectURL(result.value);
+                        }
+                    });
+                    return;
+                }
+
+                const frontResult = results[0];
+                const backResult = results[1];
+
+                if (
+                    frontResult.status === "rejected" ||
+                    backResult.status === "rejected"
+                ) {
+                    if (frontResult.status === "fulfilled") {
+                        URL.revokeObjectURL(frontResult.value);
+                    }
+
+                    if (backResult.status === "fulfilled") {
+                        URL.revokeObjectURL(backResult.value);
+                    }
+
+                    throw (
+                        frontResult.status === "rejected"
+                            ? frontResult.reason
+                            : backResult.reason
+                    );
+                }
+
+                frontObjectUrl = frontResult.value;
+                backObjectUrl = backResult.value;
+
+                setIdFrontUrl(frontObjectUrl);
+                setIdBackUrl(backObjectUrl);
+            } catch (err) {
+                if (!cancelled) {
+                    console.error(
+                        "Error loading voter ID images:",
+                        err
+                    );
+
+                    setIdImageError(
+                        err.message || "Could not load the ID images."
+                    );
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoadingIdImages(false);
+                }
+            }
+        }
+
+        loadIdImages();
+
+        return () => {
+            cancelled = true;
+
+            if (frontObjectUrl) {
+                URL.revokeObjectURL(frontObjectUrl);
+            }
+
+            if (backObjectUrl) {
+                URL.revokeObjectURL(backObjectUrl);
+            }
+        };
+    }, [selectedVoter?.voter_id]);
 
     return (
         <div className="admin-layout">
@@ -254,7 +470,10 @@ export default function VoterDirectory() {
                         )}
 
                         {success && (
-                            <div className="alert alert-success mx-3" role="status">
+                            <div
+                                className="alert alert-success mx-3"
+                                role="status"
+                            >
                                 {success}
                             </div>
                         )}
@@ -271,7 +490,7 @@ export default function VoterDirectory() {
                                         <th>Street</th>
                                         <th>Postal code</th>
                                         <th>Access status</th>
-                                        <th>Actions</th>
+                                        <th className="text-center">Actions</th>
                                     </tr>
                                 </thead>
 
@@ -344,7 +563,7 @@ export default function VoterDirectory() {
                                                         </span>
                                                     </td>
 
-                                                    <td>
+                                                    <td className="text-center align-middle">
                                                         <div className="voter-action-buttons">
                                                             <button
                                                                 type="button"
@@ -353,8 +572,10 @@ export default function VoterDirectory() {
                                                             >
                                                                 View information
                                                             </button>
+                                                        </div>
+                                                    </td>
 
-                                                            <button
+                                                    {/* <button
                                                                 type="button"
                                                                 className={`btn btn-sm ${isAllowed
                                                                     ? "btn-outline-danger"
@@ -365,16 +586,16 @@ export default function VoterDirectory() {
                                                                     isAllowed === null ||
                                                                     updatingId !== null
                                                                 }
-                                                                onClick={() => toggleVoterAccess(voter)}
+                                                                onClick={() =>
+                                                                    toggleVoterAccess(voter)
+                                                                }
                                                             >
                                                                 {isUpdating
                                                                     ? "Updating..."
                                                                     : isAllowed
                                                                         ? "Revoke access"
                                                                         : "Restore access"}
-                                                            </button>
-                                                        </div>
-                                                    </td>
+                                                            </button> */}
                                                 </tr>
                                             );
                                         })
@@ -419,11 +640,10 @@ export default function VoterDirectory() {
 
                     <footer className="page-footer">
                         <span>BallotAdmin · Voter Management</span>
-                        <span>Secure access for authorised personal only</span>
+                        <span>Secure access for authorised personnel only</span>
                     </footer>
                 </div>
-            </main>
-
+            </main >
 
             {selectedVoter && (
                 <div
@@ -467,10 +687,10 @@ export default function VoterDirectory() {
 
                         <div
                             className={`voter-access-banner ${selectedVoter.allowed === true
-                                    ? "access-enabled"
-                                    : selectedVoter.allowed === false
-                                        ? "access-revoked"
-                                        : "access-unknown"
+                                ? "access-enabled"
+                                : selectedVoter.allowed === false
+                                    ? "access-revoked"
+                                    : "access-unknown"
                                 }`}
                         >
                             <div className="voter-access-icon">
@@ -499,15 +719,39 @@ export default function VoterDirectory() {
                                 </span>
                             </div>
 
-                            <span className="voter-access-label">
-                                {selectedVoter.allowed === true
-                                    ? "ACTIVE"
-                                    : selectedVoter.allowed === false
-                                        ? "REVOKED"
-                                        : "UNKNOWN"}
-                            </span>
-                        </div>
 
+
+                            <div className="voter-access-actions">
+                                <span className="voter-access-label">
+                                    {selectedVoter.allowed === true
+                                        ? "ACTIVE"
+                                        : selectedVoter.allowed === false
+                                            ? "REVOKED"
+                                            : "UNKNOWN"}
+                                </span>
+
+                                <button
+                                    type="button"
+                                    className={`voter-access-action ${selectedVoter.allowed === true
+                                        ? "revoke-access"
+                                        : "allow-access"
+                                        }`}
+                                    onClick={() => toggleVoterAccess(selectedVoter)}
+                                    disabled={
+                                        updatingId === selectedVoter.voter_id ||
+                                        typeof selectedVoter.allowed !== "boolean"
+                                    }
+                                >
+                                    {updatingId === selectedVoter.voter_id
+                                        ? "Updating..."
+                                        : selectedVoter.allowed === true
+                                            ? "Revoke access"
+                                            : "Allow access"}
+                                </button>
+                            </div>
+
+
+                        </div>
 
                         <div className="voter-modal-body">
                             <section className="voter-details-section">
@@ -583,49 +827,45 @@ export default function VoterDirectory() {
                                     Front and back images associated with this voter.
                                 </p>
 
+                                {idImageError && (
+                                    <div className="voter-error" role="alert">
+                                        {idImageError}
+                                    </div>
+                                )}
+
                                 <div className="voter-id-images">
                                     <div className="voter-id-image-card">
                                         <h4>Front of ID</h4>
 
-                                        <img
-                                            src={`http://localhost:5000/VotingDocuments/${encodeURIComponent(
-                                                selectedVoter.voter_id
-                                            )}/ID_Front`}
-                                            alt="Front of voter's ID document"
-                                            onError={(event) => {
-                                                event.currentTarget.style.display = "none";
-                                                event.currentTarget.nextElementSibling.style.display = "flex";
-                                            }}
-                                        />
-
-                                        <div
-                                            className="voter-id-image-placeholder"
-                                            style={{ display: "none" }}
-                                        >
-                                            ID front image unavailable
-                                        </div>
+                                        {idFrontUrl ? (
+                                            <img
+                                                src={idFrontUrl}
+                                                alt="Front of voter's ID document"
+                                            />
+                                        ) : (
+                                            <div className="voter-id-image-placeholder">
+                                                {loadingIdImages
+                                                    ? "Loading ID front..."
+                                                    : "ID front image unavailable"}
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="voter-id-image-card">
                                         <h4>Back of ID</h4>
 
-                                        <img
-                                            src={`http://localhost:5000/VotingDocuments/${encodeURIComponent(
-                                                selectedVoter.voter_id
-                                            )}/ID_Back`}
-                                            alt="Back of voter's ID document"
-                                            onError={(event) => {
-                                                event.currentTarget.style.display = "none";
-                                                event.currentTarget.nextElementSibling.style.display = "flex";
-                                            }}
-                                        />
-
-                                        <div
-                                            className="voter-id-image-placeholder"
-                                            style={{ display: "none" }}
-                                        >
-                                            ID back image unavailable
-                                        </div>
+                                        {idBackUrl ? (
+                                            <img
+                                                src={idBackUrl}
+                                                alt="Back of voter's ID document"
+                                            />
+                                        ) : (
+                                            <div className="voter-id-image-placeholder">
+                                                {loadingIdImages
+                                                    ? "Loading ID back..."
+                                                    : "ID back image unavailable"}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </section>
@@ -642,8 +882,8 @@ export default function VoterDirectory() {
                         </footer>
                     </section>
                 </div>
-            )}
-
-        </div>
+            )
+            }
+        </div >
     );
 }
