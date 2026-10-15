@@ -25,9 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
@@ -57,7 +59,7 @@ fun ElectionClosedScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Voting has closed", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = stringResource(R.string.closed_title), onBackClick = onBackClick) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -83,9 +85,8 @@ fun ElectionClosedScreen(
             }
 
             SectionHeading(
-                title = "This ballot is closed",
-                description = "Voting has ended, so no more ballots can be cast. " +
-                    "Any vote you already sent still counts.",
+                title = stringResource(R.string.closed_heading),
+                description = stringResource(R.string.closed_description),
                 textAlign = TextAlign.Center
             )
 
@@ -96,19 +97,19 @@ fun ElectionClosedScreen(
             )
 
             StatusLabel(
-                message = if (resultsPublished) {
-                    "The results are out. You can see the count for every ballot."
-                } else {
-                    resultsExpected?.let { "Results are expected $it." }
-                        ?: "Results are being counted. They appear here once the Electoral " +
-                        "Commission publishes them."
+                message = when {
+                    resultsPublished -> stringResource(R.string.closed_results_out)
+                    resultsExpected != null -> stringResource(R.string.closed_results_expected, resultsExpected)
+                    else -> stringResource(R.string.closed_results_counting)
                 },
                 type = if (resultsPublished) StatusType.Success else StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
 
             SimpleButton(
-                label = if (resultsPublished) "View results" else "Results not published yet",
+                label = stringResource(
+                    if (resultsPublished) R.string.closed_view_results else R.string.closed_results_not_published
+                ),
                 onClick = onViewResults,
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary,
@@ -118,8 +119,7 @@ fun ElectionClosedScreen(
             )
 
             DescriptionLabel(
-                text = "If you voted, keep your receipt code. You can still check that your " +
-                    "ballot was counted after the results are published.",
+                text = stringResource(R.string.closed_keep_receipt),
                 modifier = Modifier.fillMaxWidth(),
                 color = MutedText,
                 textAlign = TextAlign.Center
@@ -155,13 +155,15 @@ private fun ClosedElectionCard(
             }
 
             DescriptionLabel(
-                text = if (closedOn == null) "Voting is closed" else "Voting closed on",
+                text = stringResource(
+                    if (closedOn == null) R.string.closed_voting_is_closed else R.string.closed_voting_closed_on
+                ),
                 color = MutedText,
                 textAlign = TextAlign.Center
             )
 
             Text(
-                text = closedOn ?: "No more votes are being accepted",
+                text = closedOn ?: stringResource(R.string.closed_no_more_votes),
                 style = if (closedOn == null) {
                     MaterialTheme.typography.titleSmall
                 } else {

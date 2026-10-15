@@ -1,5 +1,6 @@
 package com.example.frontend.ui.screens.Auth
 
+import com.example.frontend.R
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -75,9 +76,9 @@ class LoginFaceStateTest {
 
     @Test
     fun `a capture problem stops the check without spending an attempt`() {
-        val problem = state().checking().withCaptureProblem("Too dark - move somewhere brighter")
+        val problem = state().checking().withCaptureProblem(R.string.camera_problem_too_dark)
 
-        assertEquals("Too dark - move somewhere brighter", problem.captureProblem)
+        assertEquals(R.string.camera_problem_too_dark, problem.captureProblem)
         assertFalse(problem.isChecking)
         assertEquals(FACE_MAX_ATTEMPTS, problem.attemptsLeft)
         assertNull(problem.retried().captureProblem)

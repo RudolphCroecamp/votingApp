@@ -1,6 +1,7 @@
 package com.example.frontend.ui.Components.Camera
 
 import android.graphics.Bitmap
+import com.example.frontend.R
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
@@ -55,11 +56,11 @@ suspend fun evaluateFaceCapture(photo: Bitmap): CaptureState {
     val faces = try {
         createFaceDetector(accurate = true).use { it.detect(photo) }
     } catch (e: Exception) {
-        return CaptureState.Problem("Couldn't check the photo - try again")
+        return CaptureState.Problem(R.string.camera_problem_check_failed)
     }
     return when {
-        faces.isEmpty() -> CaptureState.Problem("No face found - try again")
-        faces.size > 1 -> CaptureState.Problem("Only one person should be in the photo")
+        faces.isEmpty() -> CaptureState.Problem(R.string.camera_problem_no_face)
+        faces.size > 1 -> CaptureState.Problem(R.string.camera_problem_multiple_faces)
         else -> basic
     }
 }

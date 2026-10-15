@@ -51,5 +51,8 @@ sealed interface Screen {
     data object Settings : Screen
     @Serializable
     data object Profile : Screen
-
+    @Serializable
+    data object Manifestos : Screen
+    @Serializable
+    data class PartyDetail(val partyId: String) : Screen
 }

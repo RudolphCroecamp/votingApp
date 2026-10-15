@@ -35,13 +35,13 @@ non-issue automatically.
 
 Lint reports 14 unused resources.
 
-- [ ] `drawable-nodpi/` holds 18 party logos; `SampleParties` references 5
+- [x] `drawable-nodpi/` holds 18 party logos; `SampleParties` references 5
       (`anc`, `da`, `eff`, `ifp`, `actionsa`). Either finish the party list or delete
       the other 13
-- [ ] `drawable/success_check.jpg` is referenced nowhere — delete
-- [ ] `IconLocation` warning: a bitmap sitting in density-independent `drawable/`
+- [x] `drawable/success_check.jpg` is referenced nowhere — delete
+- [x] `IconLocation` warning: a bitmap sitting in density-independent `drawable/`
       (same file, so deleting it clears this too)
-- [ ] `IconXmlAndPng` warning: `ic_launcher` exists as both `.xml` and `.webp`
+- [x] `IconXmlAndPng` warning: `ic_launcher` exists as both `.xml` and `.webp`
       in `mipmap-xxxhdpi` — pick one
 
 ## 3. Extract hardcoded strings
@@ -49,21 +49,23 @@ Lint reports 14 unused resources.
 `res/values/strings.xml` has 2 entries; every other piece of UI copy is inline in
 Kotlin.
 
-- [ ] Move user-facing text to `strings.xml`
+- [x] Move user-facing text to `strings.xml` (Manifestos and Results screens still pending, in progress on their own branches)
 - [ ] **The language pill in `HomeHeader` currently promises something the app
       cannot do** — "EN ⌄" implies a language picker, but with hardcoded strings
       there is nothing to switch to. Either wire up real locales
       (`values-af/`, `values-zu/`, `values-xh/`) or drop the pill until it works
-- [ ] Add `tools:locale` and check RTL layout — `supportsRtl="true"` is already
+- [x] Add `tools:locale` and check RTL layout — `supportsRtl="true"` is already
       set in the manifest, so it is claimed but untested
+      Checked (KAN-39): RtlLayoutTest, plus a manual run on an emulator with an RTL locale.
+      tools:locale ships with the translations PR (KAN-38).
 
 ## 4. Replace the test stubs
 
 `app/src/test` and `app/src/androidTest` contain only generated examples.
 
-- [ ] Unit tests: `RegistrationViewModel` state transitions, `sampleLookup`
+- [x] Unit tests: `RegistrationViewModel` state transitions, `sampleLookup`
       receipt matching
-- [ ] UI tests worth having: registration back navigation, the three `HeroState`
+- [x] UI tests worth having: registration back navigation, the three `HeroState`
       renders on home, party selection → review passing the right party
 
 ## 5. Build a real Settings screen
@@ -78,9 +80,11 @@ advertises it as its own destination.
 
 Lint flags these; none are urgent and each risks churn.
 
-- [ ] `coreKtx` 1.10.1 — well behind
-- [ ] AGP and Gradle wrapper versions flagged as obsolete
-- [ ] Check before upgrading whether anything depends on current behaviour
+- [x] `coreKtx` 1.10.1 → 1.19.1 (also declared directly now; CameraView uses it)
+- [x] Gradle wrapper 9.8.0 → 9.8.1; Kotlin 2.4.21, splashscreen 1.2.0,
+      kotlinx-serialization 1.11.0, CameraX 1.6.2. AGP 9.4.1 is already current
+- [x] Checked: unit tests, lint (no dependency warnings left) and the face-check
+      camera screen on the emulator
 
 ---
 
@@ -88,7 +92,7 @@ Lint flags these; none are urgent and each risks churn.
 
 - [ ] `ui/Components/` uses a capital-C directory name while every other package
       is lowercase — inconsistent, and an IDE rename is cheap
-- [ ] `AppFontFamily` in `ui/theme/Type.kt` is `FontFamily.SansSerif`. Dropping a
+- [x] `AppFontFamily` in `ui/theme/Type.kt` was `FontFamily.SansSerif` (now Inter, KAN-46). Dropping a
       `.ttf` into `res/font/` and changing that one line moves the whole app onto
       a brand typeface
 - [ ] `Screen.Review` is a `data object`, with the selected party held in graph

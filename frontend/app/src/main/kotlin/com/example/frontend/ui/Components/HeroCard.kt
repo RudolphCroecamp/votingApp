@@ -30,10 +30,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.frontend.R
 import com.example.frontend.ui.theme.BrandNavy
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.GoldAccent
@@ -119,9 +121,9 @@ fun HeroCard(
 @Composable
 private fun HeroStatusChip(state: HeroState, modifier: Modifier = Modifier) {
     val (label, container, content) = when (state) {
-        HeroState.VotingOpen -> Triple("VOTING OPEN", SuccessContainer, SuccessContent)
-        HeroState.VoteCast -> Triple("VOTE CAST", GoldContainer, GoldContent)
-        HeroState.ComingUp -> Triple("COMING UP", GoldContainer, GoldContent)
+        HeroState.VotingOpen -> Triple(stringResource(R.string.hero_status_voting_open), SuccessContainer, SuccessContent)
+        HeroState.VoteCast -> Triple(stringResource(R.string.hero_status_vote_cast), GoldContainer, GoldContent)
+        HeroState.ComingUp -> Triple(stringResource(R.string.hero_status_coming_up), GoldContainer, GoldContent)
     }
     Surface(modifier = modifier, shape = CircleShape, color = container, contentColor = content) {
         Row(

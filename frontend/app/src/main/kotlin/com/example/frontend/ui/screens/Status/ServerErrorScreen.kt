@@ -30,10 +30,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
@@ -75,7 +77,7 @@ fun ServerErrorScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Something went wrong", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = stringResource(R.string.server_error_title), onBackClick = onBackClick) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -101,9 +103,8 @@ fun ServerErrorScreen(
             }
 
             SectionHeading(
-                title = "The service is not responding",
-                description = "This is a problem on our side, not yours. Your phone and your " +
-                    "connection are fine.",
+                title = stringResource(R.string.server_error_heading),
+                description = stringResource(R.string.server_error_description),
                 textAlign = TextAlign.Center
             )
 
@@ -121,12 +122,12 @@ fun ServerErrorScreen(
             )
 
             if (isRetrying) {
-                IndeterminateLinearIndicator(label = "Trying the Electoral Commission again…")
+                IndeterminateLinearIndicator(label = stringResource(R.string.server_error_retrying))
             }
 
             if (onVerifyReceipt != null && outcome != VoteSubmissionOutcome.NOT_RECORDED) {
                 SimpleButton(
-                    label = "Check with my receipt",
+                    label = stringResource(R.string.server_error_check_receipt),
                     onClick = onVerifyReceipt,
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Secondary,
@@ -137,7 +138,7 @@ fun ServerErrorScreen(
 
             if (errorReference != null) {
                 DescriptionLabel(
-                    text = "Reference $errorReference — quote this if you call the helpline.",
+                    text = stringResource(R.string.server_error_reference, errorReference),
                     modifier = Modifier.fillMaxWidth(),
                     color = MutedText,
                     style = MaterialTheme.typography.bodySmall,
@@ -146,8 +147,7 @@ fun ServerErrorScreen(
             }
 
             DescriptionLabel(
-                text = "If this keeps happening, wait a few minutes and try again, or vote at " +
-                    "your voting station.",
+                text = stringResource(R.string.server_error_keeps_happening),
                 modifier = Modifier.fillMaxWidth(),
                 color = MutedText,
                 textAlign = TextAlign.Center
@@ -156,10 +156,11 @@ fun ServerErrorScreen(
     }
 }
 
+@Composable
 private fun retryLabel(outcome: VoteSubmissionOutcome?, isRetrying: Boolean): String = when {
-    isRetrying -> "Trying again…"
-    outcome == VoteSubmissionOutcome.RECORDED -> "Reload"
-    else -> "Try again"
+    isRetrying -> stringResource(R.string.status_trying_again)
+    outcome == VoteSubmissionOutcome.RECORDED -> stringResource(R.string.action_reload)
+    else -> stringResource(R.string.action_try_again)
 }
 
 @Composable
@@ -174,22 +175,20 @@ private fun VoteOutcomeCard(outcome: VoteSubmissionOutcome, modifier: Modifier =
         VoteSubmissionOutcome.RECORDED -> Icons.Default.CheckCircle
         VoteSubmissionOutcome.UNKNOWN -> Icons.AutoMirrored.Filled.HelpOutline
     }
-    val title = when (outcome) {
-        VoteSubmissionOutcome.NOT_RECORDED -> "Your vote was NOT recorded"
-        VoteSubmissionOutcome.RECORDED -> "Your vote WAS recorded"
-        VoteSubmissionOutcome.UNKNOWN -> "We cannot tell yet if your vote went through"
-    }
-    val body = when (outcome) {
-        VoteSubmissionOutcome.NOT_RECORDED ->
-            "The ballot was never accepted, so nothing was counted. You still have your vote, " +
-                "and you can try again."
-        VoteSubmissionOutcome.RECORDED ->
-            "Your ballot was accepted and counted. The error happened after that, while we were " +
-                "loading your receipt. Do not vote again."
-        VoteSubmissionOutcome.UNKNOWN ->
-            "The connection dropped while your ballot was being sent. Do not assume it failed. " +
-                "Check your receipt before you try to vote again, so you do not vote twice."
-    }
+    val title = stringResource(
+        when (outcome) {
+            VoteSubmissionOutcome.NOT_RECORDED -> R.string.vote_not_recorded
+            VoteSubmissionOutcome.RECORDED -> R.string.vote_was_recorded
+            VoteSubmissionOutcome.UNKNOWN -> R.string.vote_outcome_unknown
+        }
+    )
+    val body = stringResource(
+        when (outcome) {
+            VoteSubmissionOutcome.NOT_RECORDED -> R.string.server_error_not_recorded_detail
+            VoteSubmissionOutcome.RECORDED -> R.string.server_error_recorded_detail
+            VoteSubmissionOutcome.UNKNOWN -> R.string.server_error_unknown_detail
+        }
+    )
 
     Surface(
         modifier = modifier,

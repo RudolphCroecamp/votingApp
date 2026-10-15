@@ -1,5 +1,7 @@
 package com.example.frontend.ui.screens.Auth
 
+import androidx.annotation.StringRes
+
 const val FACE_MAX_ATTEMPTS = 3
 const val FACE_LOCKOUT_SECONDS = 15 * 60
 
@@ -10,7 +12,7 @@ data class LoginFaceUiState(
     val attemptsUsed: Int = 0,
     val lockSecondsRemaining: Int = 0,
     val didNotMatch: Boolean = false,
-    val captureProblem: String? = null
+    @param:StringRes val captureProblem: Int? = null
 ) {
     val isLocked: Boolean
         get() = lockSecondsRemaining > 0
@@ -42,8 +44,8 @@ fun LoginFaceUiState.rejected(): LoginFaceUiState {
     )
 }
 
-fun LoginFaceUiState.withCaptureProblem(message: String): LoginFaceUiState =
-    copy(isChecking = false, captureProblem = message)
+fun LoginFaceUiState.withCaptureProblem(@StringRes messageRes: Int): LoginFaceUiState =
+    copy(isChecking = false, captureProblem = messageRes)
 
 fun LoginFaceUiState.retried(): LoginFaceUiState =
     if (isLocked) this else copy(didNotMatch = false, captureProblem = null)
@@ -60,6 +62,6 @@ fun LoginFaceUiState.ticked(): LoginFaceUiState {
 
 sealed interface LoginFaceUiEvent {
     data class OnFaceCaptured(val imagePath: String) : LoginFaceUiEvent
-    data class OnCaptureProblem(val message: String) : LoginFaceUiEvent
+    data class OnCaptureProblem(@param:StringRes val messageRes: Int) : LoginFaceUiEvent
     data object OnRetry : LoginFaceUiEvent
 }

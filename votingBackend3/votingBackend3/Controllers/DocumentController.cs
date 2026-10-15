@@ -1,76 +1,58 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata;
-using votingBackend3.Data;
-using votingBackend3.Models.Entities;
+using System.Security.Claims;
 using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class DocumentController : ControllerBase
+    [Route("api/documents")]
+    public class DocumentsController : ControllerBase
     {
-        private readonly DocumentService _DocumentService;
+        private readonly DocumentService _documentService;
 
-        public DocumentController(DocumentService documentService)
+        public DocumentsController(DocumentService documentService)
         {
-            _DocumentService = documentService;
+            _documentService = documentService;
         }
 
-
-        [HttpPost]
-        [Route("uploadFiles")]
-        public async Task<IActionResult> UploadFiles(List<IFormFile> files)
+        // A voter can retrieve only their own document.
+        [Authorize(Roles = "Voter")]
+        [HttpGet("me/{fileId:guid}")]
+        public async Task<IActionResult> GetMyDocument(Guid fileId)
         {
-            try
-            {
-                if (files == null || files.Count == 0) return BadRequest("No file was uploaded.");
+            var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                List<DocumentInfo> documents = await _DocumentService.uploadFiles(files);
+            if (!Guid.TryParse(claim, out var voterId)) return Unauthorized();
 
-                return Ok(new
-                {
-                    message = "Document uploaded successfully",
-                    documents = documents
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return BadRequest("Failed to upload document. Try again later.");
-            }
+            var document = await _documentService.GetFile(voterId, fileId);
 
+            if (document == null) return NotFound("No documents found for this user");
 
+            return File(document.Content, document.ContentType);
         }
 
-
-        [HttpGet]
-        [Route("getFiles/{voter_id}")]
-        public async Task<IActionResult> GetFile(Guid voter_id)
+        // An admin can retrieve a document belonging to a voter.
+        [Authorize(Roles = "Admin")]
+        [HttpGet("voters/{voterId:guid}/{fileId:guid}")]
+        public async Task<IActionResult> GetVoterDocument(Guid voterId, Guid fileId)
         {
-            try
-            {
-                var files = await _DocumentService.GetFiles(voter_id);
+            var document = await _documentService.GetFile(voterId, fileId);
 
-                if (files == null) return NotFound("Files not found");
+            if (document == null) return NotFound("No documents found for this user");
 
-
-                return Ok(new
-                {
-                    message = "The following id photos are related to this user",
-                    documents = files
-                });
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return BadRequest("Request failed");
-            }
-
+            return File(document.Content, document.ContentType);
         }
 
+        // An admin can retrieve a voter's document metadata.
+        [Authorize(Roles = "Admin")]
+        [HttpGet("voters/{voterId:guid}")]
+        public async Task<IActionResult> GetVoterDocuments(Guid voterId)
+        {
+            var documents = await _documentService.GetFiles(voterId);
+
+            return Ok(documents);
+        }
     }
 }
-

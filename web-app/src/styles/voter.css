@@ -587,3 +587,105 @@
         margin-left: 52px;
     }
 }
+
+
+
+/* Voter access action button */
+.voter-access-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 125px;
+    padding: 9px 15px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+/* Allow access */
+.voter-access-action.allow-access {
+    background-color: #198754;
+    border-color: #198754;
+    color: #fff;
+}
+
+.voter-access-action.allow-access:hover:not(:disabled) {
+    background-color: #157347;
+    border-color: #146c43;
+    box-shadow: 0 3px 8px rgba(25, 135, 84, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Revoke access */
+.voter-access-action.revoke-access {
+    background-color: #fff;
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.voter-access-action.revoke-access:hover:not(:disabled) {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+    box-shadow: 0 3px 8px rgba(220, 53, 69, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Keyboard accessibility */
+.voter-access-action:focus-visible {
+    outline: 3px solid rgba(13, 110, 253, 0.35);
+    outline-offset: 3px;
+}
+
+/* Disabled / updating state */
+.voter-access-action:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Keep actions aligned in the access banner */
+.voter-access-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+    .voter-access-actions {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .voter-access-action {
+        min-width: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .voter-access-action {
+        transition: none;
+    }
+}
+
+
+.voter-action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}

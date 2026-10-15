@@ -36,9 +36,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.BrandHeader
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
@@ -86,14 +88,14 @@ fun WelcomeScreen(
                 Spacer(modifier = Modifier.weight(1f))
 
                 BrandHeader(
-                    title = "South Africa\nNational Voting App",
+                    title = stringResource(R.string.brand_title),
                     logoSize = 120.dp
                 )
 
                 Spacer(modifier = Modifier.height(Spacing.small))
 
                 DescriptionLabel(
-                    text = "Your vote. Your voice.\nA stronger South Africa.",
+                    text = stringResource(R.string.welcome_tagline),
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodyLarge,
@@ -103,7 +105,7 @@ fun WelcomeScreen(
                 Spacer(modifier = Modifier.height(Spacing.section * 2))
 
                 SimpleButton(
-                    label = "Get Started",
+                    label = stringResource(R.string.welcome_get_started),
                     onClick = onGetStarted,
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Tertiary

@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.frontend.R
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.InfoContainer
 import com.example.frontend.ui.theme.LinkText
@@ -36,8 +38,8 @@ import com.example.frontend.ui.theme.MutedText
 fun PrivacyNote(
     onLinkClick: () -> Unit,
     modifier: Modifier = Modifier,
-    message: String = "Your vote is secret.",
-    linkLabel: String = "How we protect your data"
+    message: String = stringResource(R.string.privacy_note_message),
+    linkLabel: String = stringResource(R.string.privacy_note_link)
 ) {
     Surface(
         modifier = modifier

@@ -2,6 +2,8 @@
 {
     public class DocumentResponse
     {
-        public string fileId { get; set; }
+        public Guid fileId { get; set; }
+        public string FileName { get; set; } = string.Empty;
+        public string fileType { get; set; } = string.Empty;
     }
 }
