@@ -498,29 +498,6 @@ namespace votingBackend3.Controllers
                 voter = voter
             });
         }
-        //Retrieves non-voters for notificiation system(Optional)
-        //[HttpGet]
-        //[Route("GetNonVoters/{election_id:guid}")]
-        //public async Task<IActionResult> GetNonVoters(Guid election_id, int limit = 100, int skip = 0)
-        //{
-          //  try
-            //{
-                //var voters = await _adminService.GetNonVoters(election_id, limit, skip);
-                //return Ok(new
-               // {
-                  //  message = "Non-voters retrieved successfully.",
-                  //  non_voters = voters
-                //});
-
-          //  }
-          //  catch (Exception ex) 
-          //  {
-            //    return BadRequest(new
-             //   {
-               //     message = ex.Message,
-             //   });
-           // }
-       // }
 
 
         [HttpPatch]
