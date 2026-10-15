@@ -47,9 +47,7 @@ import com.example.frontend.ui.theme.Spacing
 fun VoteReceiptScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    receiptCode: String = "AB7F-92K4-6ZP1-3QX8",
-    ballotTitle: String = "National Assembly",
-    castAt: String = "2026-05-27 09:42",
+    receipts: List<BallotReceipt> = SampleReceipts,
     electionName: String = "2026 National Election",
     status: String = "Valid",
     selectedTab: BottomTab = BottomTab.Vote,
@@ -59,7 +57,10 @@ fun VoteReceiptScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Voting Receipt", onBackClick = onBackClick) },
+        topBar = { AppTopBar(
+                title = if (receipts.size > 1) "Voting Receipts" else "Voting Receipt",
+                onBackClick = onBackClick
+            ) },
         bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
     ) { innerPadding ->
         Column(
@@ -71,13 +72,15 @@ fun VoteReceiptScreen(
             verticalArrangement = Arrangement.spacedBy(Spacing.item),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ReceiptDetailsCard(
-                receiptCode = receiptCode,
-                ballotTitle = ballotTitle,
-                castAt = castAt,
-                electionName = electionName,
-                status = status
-            )
+            receipts.forEach { receipt ->
+                ReceiptDetailsCard(
+                    receiptCode = receipt.code,
+                    ballotTitle = receipt.ballot.title,
+                    castAt = receipt.castAt,
+                    electionName = electionName,
+                    status = status
+                )
+            }
         }
     }
 }

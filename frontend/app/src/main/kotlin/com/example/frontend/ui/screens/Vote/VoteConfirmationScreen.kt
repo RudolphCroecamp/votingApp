@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -41,7 +43,7 @@ import kotlinx.coroutines.launch
 fun VoteConfirmationScreen(
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
-    receiptCode: String = "AB7F-92K4-6ZP1-3QX8",
+    receipts: List<BallotReceipt> = SampleReceipts,
     onViewReceipt: () -> Unit = {},
     onPrivacy: () -> Unit = {},
     selectedTab: BottomTab = BottomTab.Vote,
@@ -62,45 +64,54 @@ fun VoteConfirmationScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .statusBarsPadding()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = Spacing.screen, vertical = Spacing.card),
             verticalArrangement = Arrangement.spacedBy(Spacing.item),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.weight(1f))
-
             SuccessCheckmarkBadge()
 
             Spacer(modifier = Modifier.height(Spacing.tight))
 
             SectionHeading(
                 title = "You made your mark!",
-                description = "Your vote has been recorded.",
+                description = if (receipts.size > 1) {
+                    "All ${receipts.size} of your votes have been recorded."
+                } else {
+                    "Your vote has been recorded."
+                },
                 textAlign = TextAlign.Center,
                 modifier = Modifier.entrance(entered, index = 1)
             )
 
             Spacer(modifier = Modifier.height(Spacing.tight))
 
-            ReceiptCodeBox(
-                receiptCode = receiptCode,
-                onCopyClick = {
-                    scope.launch { clipboard.setPlainText("Voting receipt", receiptCode) }
-                },
-                modifier = Modifier.entrance(entered, index = 2)
-            )
+            // One receipt per ballot (KAN-18).
+            receipts.forEach { receipt ->
+                ReceiptCodeBox(
+                    receiptCode = receipt.code,
+                    label = "${receipt.ballot.shortLabel} ballot receipt:",
+                    onCopyClick = {
+                        scope.launch {
+                            clipboard.setPlainText("${receipt.ballot.shortLabel} voting receipt", receipt.code)
+                        }
+                    },
+                    modifier = Modifier.entrance(entered, index = 2)
+                )
+            }
 
             PrivacyNote(
                 onLinkClick = onPrivacy,
                 modifier = Modifier
                     .fillMaxWidth()
                     .entrance(entered, index = 3),
-                message = "Keep this receipt. It never shows who you voted for."
+                message = "Keep these receipts. They never show who you voted for."
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(Spacing.small))
 
             TextButton(onClick = onViewReceipt) {
-                Text(text = "View receipt", style = MaterialTheme.typography.labelLarge)
+                Text(text = if (receipts.size > 1) "View receipts" else "View receipt", style = MaterialTheme.typography.labelLarge)
             }
             SimpleButton(
                 label = "Done",

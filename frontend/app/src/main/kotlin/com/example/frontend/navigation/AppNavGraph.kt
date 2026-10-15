@@ -22,8 +22,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
+import com.example.frontend.ui.Components.Ballot
 import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.screens.Auth.LoginFaceScreen
 import com.example.frontend.ui.screens.Auth.LoginFaceViewModel
@@ -40,7 +40,13 @@ import com.example.frontend.ui.screens.Registration.screens.RegisterIdentityScre
 import com.example.frontend.ui.screens.Registration.screens.RegisterOtpScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterScreen
 import com.example.frontend.ui.screens.Splash.SplashScreen
+import com.example.frontend.ui.screens.Vote.SampleReceipts
 import com.example.frontend.ui.screens.Vote.VoteConfirmationScreen
+import com.example.frontend.ui.screens.Vote.VoteFaceCheckScreen
+import com.example.frontend.ui.screens.Vote.VoteFaceCheckViewModel
+import com.example.frontend.ui.screens.Vote.VoteFlowViewModel
+import com.example.frontend.ui.screens.Vote.nextBallotAfter
+import com.example.frontend.ui.screens.Vote.resolveParties
 import com.example.frontend.ui.screens.Vote.VotePartySelectionScreen
 import com.example.frontend.ui.screens.Vote.VoteReceiptScreen
 import com.example.frontend.ui.screens.Vote.VoteReviewScreen
@@ -50,11 +56,13 @@ import com.example.frontend.ui.screens.home.HomeScreen
 import com.example.frontend.ui.theme.MotionDurations
 import com.example.frontend.ui.theme.StandardEasing
 import com.example.frontend.ui.theme.motionDuration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /** Which [Screen] each bottom-bar tab opens. */
 private fun screenFor(tab: BottomTab): Screen = when (tab) {
     BottomTab.Home -> Screen.Home
-    BottomTab.Vote -> Screen.PartySelection
+    BottomTab.Vote -> Screen.PartySelection()
     BottomTab.Info -> Screen.Info
     BottomTab.Settings -> Screen.Settings
 }
@@ -72,11 +80,12 @@ private fun tabFor(destination: NavDestination?): BottomTab = when {
 fun AppNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    registrationViewModel: RegistrationViewModel = viewModel()
+    registrationViewModel: RegistrationViewModel = viewModel(),
+    // Activity-scoped so all three ballots, Review and the face check share it (KAN-17).
+    voteFlowViewModel: VoteFlowViewModel = viewModel()
 ) {
     // Flow state that outlives a single destination. Anything a later screen
     // needs but cannot be derived from its own route lives here.
-    var selectedParty by remember { mutableStateOf<Party?>(null) }
     var registeredName by remember { mutableStateOf("Thandi Nkosi") }
     var registeredIdNumber by remember { mutableStateOf("9201185082089") }
     var registeredPhone by remember { mutableStateOf("0821234567") }
@@ -86,13 +95,28 @@ fun AppNavGraph(
     var registeredPostalCode by remember { mutableStateOf("2001") }
 
     val registrationState by registrationViewModel.uiState.collectAsState()
+    val voteState by voteFlowViewModel.state.collectAsState()
+
+    /** Resume where the voter left off; after voting, show the receipts instead. */
+    fun startVoting() {
+        val target = when {
+            voteState.hasVoted -> Screen.Receipt
+            voteState.isComplete -> Screen.Review
+            else -> Screen.PartySelection(voteState.firstUnfilledBallot ?: Ballot.National)
+        }
+        navController.navigate(target)
+    }
 
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     val currentTab = tabFor(currentDestination)
 
     fun openTab(tab: BottomTab) {
-        val target = screenFor(tab)
         if (tabFor(currentDestination) == tab) return
+        if (tab == BottomTab.Vote) {
+            startVoting()
+            return
+        }
+        val target = screenFor(tab)
         navController.navigate(target) {
             // Keep one entry per tab instead of stacking them up.
             popUpTo<Screen.Home> {
@@ -277,7 +301,7 @@ fun AppNavGraph(
 
         composable<Screen.Home> {
             HomeScreen(
-                onVoteNow = { navController.navigate(Screen.PartySelection) },
+                onVoteNow = { startVoting() },
                 voterName = registeredName,
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) },
@@ -294,13 +318,26 @@ fun AppNavGraph(
             )
         }
 
-        composable<Screen.PartySelection> {
+        composable<Screen.PartySelection> { entry ->
+            val route = entry.toRoute<Screen.PartySelection>()
+            val next = nextBallotAfter(route.ballot)
             VotePartySelectionScreen(
-                onBackClick = { navController.popBackStack() },
-                onContinue = { party ->
-                    selectedParty = party
-                    navController.navigate(Screen.Review)
+                ballot = route.ballot,
+                selectedPartyId = voteState.selectionFor(route.ballot),
+                onPartySelected = { party -> voteFlowViewModel.select(route.ballot, party.id) },
+                continueLabel = when {
+                    route.editing -> "Back to review"
+                    next != null -> "Next: ${next.shortLabel} ballot"
+                    else -> "Review my votes"
                 },
+                onContinue = {
+                    when {
+                        route.editing -> navController.popBackStack()
+                        next != null -> navController.navigate(Screen.PartySelection(next))
+                        else -> navController.navigate(Screen.Review)
+                    }
+                },
+                onBackClick = { navController.popBackStack() },
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) }
             )
@@ -308,17 +345,58 @@ fun AppNavGraph(
 
         composable<Screen.Review> {
             VoteReviewScreen(
-                party = selectedParty ?: SampleParties.first(),
-                onChangeSelection = { navController.popBackStack() },
-                onConfirmVote = { navController.navigate(Screen.Confirmation) },
+                selections = voteState.selections.resolveParties(SampleParties),
+                errorMessage = voteState.reviewError,
+                confirmEnabled = voteState.isComplete && !voteState.isFaceLocked,
+                onChangeBallot = { ballot ->
+                    voteFlowViewModel.clearReviewError()
+                    navController.navigate(Screen.PartySelection(ballot, editing = true))
+                },
+                onConfirmVote = {
+                    voteFlowViewModel.clearReviewError()
+                    navController.navigate(Screen.VoteFaceCheck)
+                },
+                onBackClick = { navController.popBackStack() },
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) }
             )
         }
 
+        composable<Screen.VoteFaceCheck> {
+            val faceViewModel: VoteFaceCheckViewModel = viewModel()
+            val faceState by faceViewModel.uiState.collectAsState()
+
+            LaunchedEffect(registeredIdNumber) { faceViewModel.start(registeredIdNumber) }
+
+            VoteFaceCheckScreen(
+                uiState = faceState,
+                onEvent = faceViewModel::onEvent,
+                onBackClick = { navController.popBackStack() },
+                onVerified = {
+                    voteFlowViewModel.onFaceCheckPassed(
+                        castAt = LocalDateTime.now().format(RECEIPT_TIME_FORMAT)
+                    )
+                    navController.navigate(Screen.Confirmation) {
+                        // The vote is cast: Back must never re-open the ballots or the scan.
+                        popUpTo<Screen.Home> { inclusive = false }
+                    }
+                },
+                onFailed = {
+                    voteFlowViewModel.onFaceCheckFailed()
+                    navController.popBackStack()
+                }
+            )
+        }
+
         composable<Screen.Confirmation> {
             VoteConfirmationScreen(
-                onDone = { navController.navigate(Screen.Home) },
+                receipts = voteState.receipts.ifEmpty { SampleReceipts },
+                onDone = {
+                    navController.navigate(Screen.Home) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
                 onViewReceipt = { navController.navigate(Screen.Receipt) },
                 onPrivacy = { navController.navigate(Screen.Info) },
                 selectedTab = currentTab,
@@ -328,6 +406,7 @@ fun AppNavGraph(
 
         composable<Screen.Receipt> {
             VoteReceiptScreen(
+                receipts = voteState.receipts.ifEmpty { SampleReceipts },
                 onBackClick = { navController.popBackStack() },
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) }
@@ -388,3 +467,5 @@ fun AppNavGraph(
         }
     }
 }
+
+private val RECEIPT_TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")

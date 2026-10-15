@@ -13,6 +13,7 @@ lifecycle = "2.11.0"
 kotlinxSerialization = "1.9.0"
 camerax = "1.5.0"
 mlkitFaceDetection = "16.1.7"
+robolectric = "4.17"
 
 [libraries]
 camerax-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
@@ -25,6 +26,7 @@ mlkit-face-detection = { group = "com.google.mlkit", name = "face-detection", ve
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
