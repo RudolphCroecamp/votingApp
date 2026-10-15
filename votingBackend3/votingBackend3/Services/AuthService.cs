@@ -8,6 +8,7 @@ using System.Text;
 using votingBackend3.Data;
 using votingBackend3.Models.DTOs;
 using votingBackend3.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace votingBackend3.Services
 {
@@ -15,13 +16,15 @@ namespace votingBackend3.Services
     {
         private readonly IConfiguration _configuration;
         private readonly VotingDbContext _votingDbContext;
+        private readonly DocumentService _documentService;
 
         private readonly double SIMULARITYSCORE = 0.90;
 
-        public AuthService(IConfiguration configuration, VotingDbContext votingDbContext)
+        public AuthService(IConfiguration configuration, VotingDbContext votingDbContext, DocumentService documentService)
         {
             _configuration = configuration;
             _votingDbContext = votingDbContext;
+            _documentService = documentService;;
         }
 
 
@@ -203,67 +206,157 @@ namespace votingBackend3.Services
             return dotProduct / (Math.Sqrt(magnitudeA) * Math.Sqrt(magnitudeB));
         }
 
-
-
-
-
-
+        //updated register endpoint
         public async Task<bool> Register(register_request request)
         {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            // Validate the registration details.
+            if (string.IsNullOrWhiteSpace(request.id_number)) throw new ArgumentException("ID number is required.");
+
+            if (request.face_embedding == null || request.face_embedding.Length == 0) throw new ArgumentException("Face embedding is required.");
+
+            if (request.face_embedding.Any( x => double.IsNaN(x) || double.IsInfinity(x))) throw new ArgumentException("Face embedding contains invalid values.");
+
+            if (string.IsNullOrWhiteSpace(request.firstname)) throw new ArgumentException("First name is required.");
+
+            if (string.IsNullOrWhiteSpace(request.lastname)) throw new ArgumentException("Last name is required.");
+
+            if (string.IsNullOrWhiteSpace(request.province)) throw new ArgumentException("Province is required.");
+
+            if (string.IsNullOrWhiteSpace(request.city)) throw new ArgumentException("City is required.");
+
+            if (string.IsNullOrWhiteSpace(request.street)) throw new ArgumentException("Street is required.");
+
+            if (request.postal <= 0) throw new ArgumentException("Postal code is required.");
+
+            if (request.id_front == null || request.id_front.Length == 0) throw new ArgumentException("Front ID picture is required.");
+
+            if (request.id_back == null || request.id_back.Length == 0) throw new ArgumentException("Back ID picture is required.");
+
+            // Prevent duplicate accounts.
+            var existingUser = await _votingDbContext.auth.AnyAsync(a => a.id_number == request.id_number);
+
+            if (existingUser) throw new InvalidOperationException("User already exists.");
+
+            // Generate the shared voter ID.
+            var voterId = Guid.NewGuid();
+
+            var newVoter = new Voter
+            {
+                voter_id = voterId,
+                firstname = request.firstname,
+                lastname = request.lastname,
+                province = request.province,
+                city = request.city,
+                street = request.street,
+                postal = request.postal
+            };
+
+            var newUser = new Auth
+            {
+                voter_id = voterId,
+                id_number = request.id_number,
+                role = "Voter",
+                face_embedding = request.face_embedding,
+                allowed = true,
+                created_at = DateTime.UtcNow
+            };
+
+            // Save all database changes within one transaction.
+            await using var transaction = await _votingDbContext.Database.BeginTransactionAsync();
+
             try
             {
-                // Require authentication data and the voter profile fields needed by the database.
-                if (string.IsNullOrWhiteSpace(request.id_number)) throw new Exception("Id number is required");
-                if (request.face_embedding == null || request.face_embedding.Length == 0) throw new Exception("Face embedding is required");
-                if (string.IsNullOrWhiteSpace(request.firstname)) throw new Exception("First name is required");
-                if (string.IsNullOrWhiteSpace(request.lastname)) throw new Exception("Last name is required");
-                if (string.IsNullOrWhiteSpace(request.province)) throw new Exception("Province is required");
-                if (string.IsNullOrWhiteSpace(request.city)) throw new Exception("City is required");
-                if (request.postal <= 0) throw new Exception("Postal code is required");
-
-                // Do not create a second account with the same ID number.
-                var existingUser = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.id_number == request.id_number);
-
-                if (existingUser != null) throw new Exception("User already exists");
-
-                // Use one ID to link the voter profile to its authentication record.
-                var voterId = Guid.NewGuid();
-
-                // Build the voter's profile from the submitted personal details.
-                var newVoter = new Voter
-                {
-                    voter_id = voterId,
-                    firstname = request.firstname,
-                    lastname = request.lastname,
-                    province = request.province,
-                    city = request.city,
-                    street = request.street,
-                    postal = request.postal
-                };
-
-                // Build the active authentication record using the same voter ID.
-                var newUser = new Auth
-                {
-                    voter_id = voterId,
-                    id_number = request.id_number,
-                    role = "Voter",
-                    face_embedding = request.face_embedding,
-                    allowed = true,//NOTE voters should probably be checked out before allowing them
-                    created_at = DateTime.UtcNow
-                };
-
-                // Save both related records in the same database operation.
                 await _votingDbContext.voter.AddAsync(newVoter);
                 await _votingDbContext.auth.AddAsync(newUser);
+
                 await _votingDbContext.SaveChangesAsync();
+
+                // Save both ID pictures and their metadata.
+                await _documentService.UploadFiles(
+                    voterId,
+                    new List<IFormFile>
+                    {
+                        request.id_front,
+                        request.id_back
+                    });
+
+                // Commit only after both images and their metadata are saved.
+                await transaction.CommitAsync();
 
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception(ex.Message);
+                await transaction.RollbackAsync();
+
+                // Preserve the original exception and stack trace.
+                throw;
             }
         }
+
+
+
+
+
+
+        //public async Task<bool> Register([FromForm] register_request request)
+        //{
+        //    try
+        //    {
+        //        // Require authentication data and the voter profile fields needed by the database.
+        //        if (string.IsNullOrWhiteSpace(request.id_number)) throw new Exception("Id number is required");
+        //        if (request.face_embedding == null || request.face_embedding.Length == 0) throw new Exception("Face embedding is required");
+        //        if (string.IsNullOrWhiteSpace(request.firstname)) throw new Exception("First name is required");
+        //        if (string.IsNullOrWhiteSpace(request.lastname)) throw new Exception("Last name is required");
+        //        if (string.IsNullOrWhiteSpace(request.province)) throw new Exception("Province is required");
+        //        if (string.IsNullOrWhiteSpace(request.city)) throw new Exception("City is required");
+        //        if (request.postal <= 0) throw new Exception("Postal code is required");
+
+        //        // Do not create a second account with the same ID number.
+        //        var existingUser = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.id_number == request.id_number);
+
+        //        if (existingUser != null) throw new Exception("User already exists");
+
+        //        // Use one ID to link the voter profile to its authentication record.
+        //        var voterId = Guid.NewGuid();
+
+        //        // Build the voter's profile from the submitted personal details.
+        //        var newVoter = new Voter
+        //        {
+        //            voter_id = voterId,
+        //            firstname = request.firstname,
+        //            lastname = request.lastname,
+        //            province = request.province,
+        //            city = request.city,
+        //            street = request.street,
+        //            postal = request.postal
+        //        };
+
+        //        // Build the active authentication record using the same voter ID.
+        //        var newUser = new Auth
+        //        {
+        //            voter_id = voterId,
+        //            id_number = request.id_number,
+        //            role = "Voter",
+        //            face_embedding = request.face_embedding,
+        //            allowed = true,//NOTE voters should probably be checked out before allowing them
+        //            created_at = DateTime.UtcNow
+        //        };
+
+        //        // Save both related records in the same database operation.
+        //        await _votingDbContext.voter.AddAsync(newVoter);
+        //        await _votingDbContext.auth.AddAsync(newUser);
+        //        await _votingDbContext.SaveChangesAsync();
+
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
 
         public async Task<bool> ValidateToken(string token)
         {
