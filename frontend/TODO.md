@@ -61,9 +61,9 @@ Kotlin.
 
 `app/src/test` and `app/src/androidTest` contain only generated examples.
 
-- [ ] Unit tests: `RegistrationViewModel` state transitions, `sampleLookup`
+- [x] Unit tests: `RegistrationViewModel` state transitions, `sampleLookup`
       receipt matching
-- [ ] UI tests worth having: registration back navigation, the three `HeroState`
+- [x] UI tests worth having: registration back navigation, the three `HeroState`
       renders on home, party selection → review passing the right party
 
 ## 5. Build a real Settings screen
