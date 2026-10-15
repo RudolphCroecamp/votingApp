@@ -12,8 +12,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -42,7 +46,8 @@ fun PartyOption(
     party: Party,
     selected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onInfoClick: ((Party) -> Unit)? = null
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     // The border grows into the selection rather than snapping, which reads as
@@ -101,6 +106,16 @@ fun PartyOption(
                     color = MutedText,
                     style = MaterialTheme.typography.bodySmall
                 )
+            }
+            if (onInfoClick != null) {
+                IconButton(onClick = { onInfoClick(party) }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                        contentDescription = "Read manifesto for ${party.name}",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }

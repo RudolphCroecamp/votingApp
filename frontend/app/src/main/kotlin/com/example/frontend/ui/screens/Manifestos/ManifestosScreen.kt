@@ -32,16 +32,14 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
 import com.example.frontend.effects.pressScale
+import com.example.frontend.ui.Components.AppBottomBar
 import com.example.frontend.ui.Components.AppTopBar
+import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.LeaderAvatar
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.Spacing
-
-// TODO: Add Screen.Manifestos to Screen.kt and a composable<Screen.Manifestos> in AppNavGraph.
-// TODO: Add a Manifestos slot to AppBottomBar (requirement V-07, N-07).
-// TODO: Load parties from the backend once the network layer exists.
 
 /** Manifestos tab: every party on the ballot, tap one for its full manifesto (V-07). */
 @Composable
@@ -49,12 +47,14 @@ fun ManifestosScreen(
     onPartyClick: (Party) -> Unit,
     modifier: Modifier = Modifier,
     onBackClick: (() -> Unit)? = null, // null when shown as a bottom-bar tab
-
-    parties: List<Party> = SampleParties
+    parties: List<Party> = SampleParties,
+    selectedTab: BottomTab = BottomTab.Manifestos,
+    onTabSelected: (BottomTab) -> Unit = {}
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { AppTopBar(title = "Manifestos", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = "Manifestos", onBackClick = onBackClick) },
+        bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
     ) { innerPadding ->
         // Page 1: LazyColumn only composes the rows on screen.
         LazyColumn(

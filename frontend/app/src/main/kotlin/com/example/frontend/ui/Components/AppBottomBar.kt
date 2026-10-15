@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.HowToVote
 import androidx.compose.material.icons.filled.Info
@@ -43,6 +44,7 @@ import com.example.frontend.ui.theme.pressSpring
 enum class BottomTab(val label: String, val icon: ImageVector) {
     Home("Home", Icons.Default.Home),
     Vote("Vote", Icons.Default.HowToVote),
+    Manifestos("Manifestos", Icons.AutoMirrored.Filled.MenuBook),
     Info("Info", Icons.Default.Info),
     Settings("Settings", Icons.Default.Settings)
 }
