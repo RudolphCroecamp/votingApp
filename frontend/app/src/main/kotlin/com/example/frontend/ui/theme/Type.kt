@@ -2,15 +2,25 @@ package com.example.frontend.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.frontend.R
 
 /**
- * Single place the app's typeface is chosen. Swap this for a bundled
- * `FontFamily(Font(R.font.<name>))` to move the whole app onto a brand font.
+ * Single place the app's typeface is chosen (KAN-46).
+ *
+ * Inter (SIL Open Font License, see frontend/licenses/Inter-OFL.txt): designed for
+ * screens, very readable at small sizes, and clear digits for ID numbers and receipt
+ * codes. Only the four weights the app uses are bundled.
  */
-val AppFontFamily = FontFamily.SansSerif
+val AppFontFamily = FontFamily(
+    Font(R.font.inter_regular, FontWeight.Normal),
+    Font(R.font.inter_medium, FontWeight.Medium),
+    Font(R.font.inter_semibold, FontWeight.SemiBold),
+    Font(R.font.inter_bold, FontWeight.Bold)
+)
 
 private fun appTextStyle(
     size: Int,
