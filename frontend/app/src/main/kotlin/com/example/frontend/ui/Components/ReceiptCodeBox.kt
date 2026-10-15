@@ -16,8 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.Spacing
@@ -28,7 +30,7 @@ import com.example.frontend.ui.theme.MutedText
 fun ReceiptCodeBox(
     receiptCode: String,
     modifier: Modifier = Modifier,
-    label: String = "Your voting receipt:",
+    label: String = stringResource(R.string.receipt_label_default),
     onCopyClick: (() -> Unit)? = null
 ) {
     val shape = MaterialTheme.shapes.medium
@@ -60,7 +62,7 @@ fun ReceiptCodeBox(
             IconButton(onClick = onCopyClick) {
                 Icon(
                     imageVector = Icons.Default.ContentCopy,
-                    contentDescription = "Copy receipt code",
+                    contentDescription = stringResource(R.string.receipt_copy_code),
                     tint = MutedText
                 )
             }

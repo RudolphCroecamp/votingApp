@@ -35,13 +35,13 @@ non-issue automatically.
 
 Lint reports 14 unused resources.
 
-- [ ] `drawable-nodpi/` holds 18 party logos; `SampleParties` references 5
+- [x] `drawable-nodpi/` holds 18 party logos; `SampleParties` references 5
       (`anc`, `da`, `eff`, `ifp`, `actionsa`). Either finish the party list or delete
       the other 13
-- [ ] `drawable/success_check.jpg` is referenced nowhere — delete
-- [ ] `IconLocation` warning: a bitmap sitting in density-independent `drawable/`
+- [x] `drawable/success_check.jpg` is referenced nowhere — delete
+- [x] `IconLocation` warning: a bitmap sitting in density-independent `drawable/`
       (same file, so deleting it clears this too)
-- [ ] `IconXmlAndPng` warning: `ic_launcher` exists as both `.xml` and `.webp`
+- [x] `IconXmlAndPng` warning: `ic_launcher` exists as both `.xml` and `.webp`
       in `mipmap-xxxhdpi` — pick one
 
 ## 3. Extract hardcoded strings
@@ -49,21 +49,23 @@ Lint reports 14 unused resources.
 `res/values/strings.xml` has 2 entries; every other piece of UI copy is inline in
 Kotlin.
 
-- [ ] Move user-facing text to `strings.xml`
+- [x] Move user-facing text to `strings.xml` (Manifestos and Results screens still pending, in progress on their own branches)
 - [ ] **The language pill in `HomeHeader` currently promises something the app
       cannot do** — "EN ⌄" implies a language picker, but with hardcoded strings
       there is nothing to switch to. Either wire up real locales
       (`values-af/`, `values-zu/`, `values-xh/`) or drop the pill until it works
-- [ ] Add `tools:locale` and check RTL layout — `supportsRtl="true"` is already
+- [x] Add `tools:locale` and check RTL layout — `supportsRtl="true"` is already
       set in the manifest, so it is claimed but untested
+      Checked (KAN-39): RtlLayoutTest, plus a manual run on an emulator with an RTL locale.
+      tools:locale ships with the translations PR (KAN-38).
 
 ## 4. Replace the test stubs
 
 `app/src/test` and `app/src/androidTest` contain only generated examples.
 
-- [ ] Unit tests: `RegistrationViewModel` state transitions, `sampleLookup`
+- [x] Unit tests: `RegistrationViewModel` state transitions, `sampleLookup`
       receipt matching
-- [ ] UI tests worth having: registration back navigation, the three `HeroState`
+- [x] UI tests worth having: registration back navigation, the three `HeroState`
       renders on home, party selection → review passing the right party
 
 ## 5. Build a real Settings screen

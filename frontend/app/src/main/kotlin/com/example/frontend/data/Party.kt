@@ -7,7 +7,7 @@ data class Party(
     val id: String,
     val name: String,
     val slogan: String,
-    @DrawableRes val logo: Int,
+    @DrawableRes val logo: Int = R.drawable.party_logo_placeholder,
     // New fields default to empty so existing callers keep compiling.
     val leaderName: String = "",
     @DrawableRes val leaderPhoto: Int? = null, // null -> initials avatar
@@ -85,7 +85,7 @@ val SampleParties = listOf(
         id = "actionsa",
         name = "ActionSA",
         slogan = "Greater Together",
-        logo = R.drawable.party_actionsa,
+        logo = R.drawable.party_logo_placeholder,
         leaderName = "Herman Mashaba",
         leaderPhoto = R.drawable.party_actionsa_leader,
         manifestoPoints = listOf(
@@ -145,5 +145,3 @@ val SampleParties = listOf(
         )
     ),
 )
-
-

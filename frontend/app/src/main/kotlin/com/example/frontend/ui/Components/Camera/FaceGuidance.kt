@@ -1,20 +1,22 @@
 package com.example.frontend.ui.Components.Camera
 
+import androidx.annotation.StringRes
+import com.example.frontend.R
 import kotlin.math.abs
 
 /**
  * What the voter should do next, shown under the face oval while the camera is live.
  * Order matters: framing problems are reported before liveness.
  */
-enum class FaceGuidance(val message: String) {
-    NO_FACE("Fit your face in the oval"),
-    MULTIPLE_FACES("Make sure only you are in the frame"),
-    MOVE_CLOSER("Move a little closer"),
-    MOVE_BACK("Move back a little"),
-    CENTRE("Centre your face in the oval"),
-    LOOK_STRAIGHT("Look straight at the camera"),
-    BLINK("Blink slowly"),
-    READY("Hold still")
+enum class FaceGuidance(@param:StringRes val messageRes: Int) {
+    NO_FACE(R.string.face_guidance_no_face),
+    MULTIPLE_FACES(R.string.face_guidance_multiple_faces),
+    MOVE_CLOSER(R.string.face_guidance_move_closer),
+    MOVE_BACK(R.string.face_guidance_move_back),
+    CENTRE(R.string.face_guidance_centre),
+    LOOK_STRAIGHT(R.string.face_guidance_look_straight),
+    BLINK(R.string.face_guidance_blink),
+    READY(R.string.face_guidance_ready)
 }
 
 /**

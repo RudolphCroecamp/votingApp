@@ -340,7 +340,7 @@ export default function ManageParties() {
             >
                 <div className="container-fluid py-4 px-3 px-lg-4">
                     {/* Page heading */}
-                    <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 panel p-3">
                         <div>
                             <h2 className="fw-bold mb-1">
                                 Manage Parties

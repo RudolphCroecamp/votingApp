@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using votingBackend3.Data;
@@ -428,25 +429,43 @@ namespace votingBackend3.Services
 
 
         //allow and block them from the services
-        public async Task<Auth> Update_voter_access(updateStatusDto request)
+        public async Task<AuthStatusUpdateDTO> Update_voter_access(updateStatusDto request)
         {
             var user = await _votingDbContext.auth.FirstOrDefaultAsync(au => au.voter_id == request.ID);
 
-            if (user == null) throw new Exception("User not found");
+            if (user == null) throw new KeyNotFoundException("User not found");
 
             user.allowed = request.status;
 
             await _votingDbContext.SaveChangesAsync();
 
-            return user;
+            AuthStatusUpdateDTO authStatusUpdateDTO = new AuthStatusUpdateDTO
+            {
+                voter_id = user.voter_id,
+                allowed = user.allowed,
+                role = user.role
+            };
+
+            return authStatusUpdateDTO;
         }
 
 
-        //approve the user so they can vote in the election - only 'voter' users will be returned
-        public async Task<ElectionVoterDto> AssignVoterToElection(AssignElectionVoterDTO request)
+
+    // Approve or update an election assignment only for users with the voter role.
+    public async Task<ElectionVoterDto> AssignVoterToElection(AssignElectionVoterDTO request)
         {
             // Validate the requested status.
-            if (!Enum.IsDefined(typeof(ElectionVoterStatus), request.status)) throw new ArgumentException("Invalid election voter status.");
+            if (!Enum.IsDefined(typeof(ElectionVoterStatus), request.status))throw new ArgumentException("Invalid election voter status.");
+            
+
+            // Ensure the user exists in auth and has the voter role.
+            var isVoter = await _votingDbContext.auth
+                .AnyAsync(a =>
+                    a.voter_id == request.voter_id &&
+                    a.role == "voter");
+
+            if (!isVoter) throw new UnauthorizedAccessException("User does not exist or does not have the voter role.");
+            
 
             // Find the existing election-voter assignment.
             var assignment = await _votingDbContext.election_voter
@@ -455,13 +474,14 @@ namespace votingBackend3.Services
                     ev.voter_id == request.voter_id);
 
             if (assignment == null) throw new KeyNotFoundException("This voter is not assigned to this election.");
+            
 
-            // Update only the status.
+            // Update the assignment status.
             assignment.status = request.status;
 
             await _votingDbContext.SaveChangesAsync();
 
-            // Return the updated status and voting information.
+            // Return the updated election-voter information.
             return new ElectionVoterDto
             {
                 election_id = assignment.election_id,
@@ -470,6 +490,7 @@ namespace votingBackend3.Services
                 status = assignment.status
             };
         }
+
 
 
 

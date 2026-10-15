@@ -29,21 +29,22 @@ namespace votingBackend3.Controllers
             {
                 var token = await _authService.Login(request);
 
-                if (token == null || token.ToString().Length <= 0)
-                {
-
-                    return Unauthorized(new
-                    {
-                        message = "Invalid credentials",
-                        status = false
-                    });
-                }
+                if (token == null || token.ToString().Length <= 0) throw new Exception("Something went wrong try again later");
 
                 return Ok(new
                 {
                     message = "Login success",
-                    status = true,
                     token = token
+                });
+
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return BadRequest(new
+                {
+                    message = $"Login Error: {ex.Message}",
                 });
 
             }
@@ -52,7 +53,6 @@ namespace votingBackend3.Controllers
 
                 return BadRequest(new {
                     message = $"Login Error: {ex.Message}",
-                    status = false
                 });
             
             }
@@ -70,23 +70,20 @@ namespace votingBackend3.Controllers
             {
                 var token = await _authService.AdminLogin(creds);
 
-                if (token == null || token.ToString().Length <= 0)
-                {
-
-                    return Unauthorized(new
-                    {
-                        message = "Invalid credentials",
-                        status = false
-                    });
-                }
+                if (token == null || token.ToString().Length <= 0) throw new Exception("Something went wrong try again later");
 
                 return Ok(new
                 {
                     message = "Login success",
-                    status = true,
                     token = token
                 });
 
+            }
+            catch (UnauthorizedAccessException ex) {
+                return Unauthorized(new
+                {
+                    message = $"Login Error: {ex.Message}",
+                });
             }
             catch (Exception ex)
             {
@@ -95,7 +92,6 @@ namespace votingBackend3.Controllers
                 return BadRequest(new
                 {
                     message = $"Login Error: {ex.Message}",
-                    status = false
                 });
 
             }
@@ -113,19 +109,17 @@ namespace votingBackend3.Controllers
             {
                 var success = await _authService.Register(request);
 
-                if (!success)
+                if (success == false)
                 {
                     return BadRequest(new
                     {
                         message = "Registration failed",
-                        status = false
                     });
                 }
 
                 return Ok(new
                 {
                     message = "Registration success",
-                    status = true
                 });
             }
             catch (Exception ex)
@@ -135,7 +129,6 @@ namespace votingBackend3.Controllers
                 return BadRequest(new
                 {
                     message = $"Registration Error: {ex.Message}",
-                    status = false
                 });
             }
         }
@@ -153,14 +146,12 @@ namespace votingBackend3.Controllers
                     return Unauthorized(new
                     {
                         message = "Token is invalid or expired",
-                        status = false
                     });
                 }
 
                 return Ok(new
                 {
                     message = "Token valid",
-                    status = true
                 });
             }
             catch (Exception ex)
@@ -170,7 +161,6 @@ namespace votingBackend3.Controllers
                 return BadRequest(new
                 {
                     message = $"Validation Error: {ex.Message}",
-                    status = false
                 });
             }
         }
@@ -188,14 +178,12 @@ namespace votingBackend3.Controllers
                     return Unauthorized(new
                     {
                         message = "Token is invalid, expired, or its account is inactive",
-                        status = false
                     });
                 }
 
                 return Ok(new
                 {
                     message = "Token refreshed",
-                    status = true,
                     token = token
                 });
             }
@@ -206,7 +194,6 @@ namespace votingBackend3.Controllers
                 return BadRequest(new
                 {
                     message = $"Token refresh error: {ex.Message}",
-                    status = false
                 });
             }
         }
@@ -224,7 +211,6 @@ namespace votingBackend3.Controllers
                     return BadRequest(new
                     {
                         message = "Logout failed",
-                        status = false
                     });
                 }
 
@@ -232,7 +218,6 @@ namespace votingBackend3.Controllers
                 return Ok(new
                 {
                     message = "Logout success",
-                    status = true
                 });
             }
             catch (Exception ex)
@@ -242,7 +227,6 @@ namespace votingBackend3.Controllers
                 return BadRequest(new
                 {
                     message = $"Logout Error: {ex.Message}",
-                    status = false
                 });
             }
         }

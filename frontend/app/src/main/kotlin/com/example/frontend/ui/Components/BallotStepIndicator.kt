@@ -21,10 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.theme.DividerColor
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MotionDurations
@@ -35,10 +38,10 @@ import com.example.frontend.ui.theme.motionDuration
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class Ballot(val title: String, val shortLabel: String) {
-    National("National Assembly", "National"),
-    Regional("Regional Assembly", "Regional"),
-    Provincial("Provincial Legislature", "Provincial")
+enum class Ballot(@param:StringRes val titleRes: Int, @param:StringRes val shortLabelRes: Int) {
+    National(R.string.ballot_national_title, R.string.ballot_national_short),
+    Regional(R.string.ballot_regional_title, R.string.ballot_regional_short),
+    Provincial(R.string.ballot_provincial_title, R.string.ballot_provincial_short)
 }
 
 val BALLOT_ORDER: List<Ballot> = Ballot.entries
@@ -54,12 +57,14 @@ fun BallotStepIndicator(
     val position = (ballots.indexOf(ballot) + 1).coerceAtLeast(1)
     val total = ballots.size
     val accent = MaterialTheme.colorScheme.primary
+    val shortLabel = stringResource(ballot.shortLabelRes)
+    val stepDescription = stringResource(R.string.ballot_step_description, position, total, shortLabel)
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .semantics {
-                contentDescription = "Ballot $position of $total, ${ballot.shortLabel}"
+                contentDescription = stepDescription
             },
         verticalArrangement = Arrangement.spacedBy(Spacing.small)
     ) {
@@ -68,7 +73,7 @@ fun BallotStepIndicator(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Ballot $position of $total",
+                text = stringResource(R.string.ballot_step_count, position, total),
                 style = MaterialTheme.typography.labelMedium,
                 color = MutedText
             )
@@ -78,7 +83,7 @@ fun BallotStepIndicator(
                 color = MutedText
             )
             Text(
-                text = ballot.shortLabel,
+                text = shortLabel,
                 style = MaterialTheme.typography.labelLarge,
                 color = accent
             )

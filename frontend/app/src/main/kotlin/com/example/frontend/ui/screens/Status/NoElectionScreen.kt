@@ -25,9 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
@@ -57,7 +59,7 @@ fun NoElectionScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "No election open", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = stringResource(R.string.no_election_title), onBackClick = onBackClick) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -83,9 +85,8 @@ fun NoElectionScreen(
             }
 
             SectionHeading(
-                title = "Nothing to vote on right now",
-                description = "There is no election open at the moment. Your registration stays " +
-                    "active, so you do not need to sign up again.",
+                title = stringResource(R.string.no_election_heading),
+                description = stringResource(R.string.no_election_description),
                 textAlign = TextAlign.Center
             )
 
@@ -96,18 +97,15 @@ fun NoElectionScreen(
             )
 
             StatusLabel(
-                message = if (dateKnown) {
-                    "You will be able to vote from this app on the day. We will remind you closer " +
-                        "to the time."
-                } else {
-                    "We will tell you as soon as a date is announced."
-                },
+                message = stringResource(
+                    if (dateKnown) R.string.no_election_date_known else R.string.no_election_date_unknown
+                ),
                 type = StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
 
             SimpleButton(
-                label = "Voting information",
+                label = stringResource(R.string.no_election_voting_info),
                 onClick = onVotingInformation,
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary,
@@ -115,8 +113,7 @@ fun NoElectionScreen(
             )
 
             DescriptionLabel(
-                text = "Check your voting district, what each ballot decides, and how your vote " +
-                    "stays anonymous.",
+                text = stringResource(R.string.no_election_info_hint),
                 modifier = Modifier.fillMaxWidth(),
                 color = MutedText,
                 textAlign = TextAlign.Center
@@ -152,13 +149,15 @@ private fun NextElectionCard(
             )
 
             DescriptionLabel(
-                text = if (date == null) "Next election" else "Next election opens",
+                text = stringResource(
+                    if (date == null) R.string.no_election_next else R.string.no_election_next_opens
+                ),
                 color = MutedText,
                 textAlign = TextAlign.Center
             )
 
             Text(
-                text = date ?: "Date not announced yet",
+                text = date ?: stringResource(R.string.no_election_date_not_announced),
                 style = if (date == null) {
                     MaterialTheme.typography.titleMedium
                 } else {

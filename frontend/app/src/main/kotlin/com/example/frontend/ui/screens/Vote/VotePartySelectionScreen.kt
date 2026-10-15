@@ -14,12 +14,11 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import androidx.compose.ui.unit.dp
@@ -44,26 +43,26 @@ import com.example.frontend.ui.theme.PageBackground
 @Composable
 fun VotePartySelectionScreen(
     onBackClick: () -> Unit,
-    onContinue: (Party) -> Unit,
+    onPartySelected: (Party) -> Unit,
+    onContinue: () -> Unit,
     modifier: Modifier = Modifier,
     ballot: Ballot = Ballot.National,
-    ballotTitle: String = ballot.title,
+    selectedPartyId: String? = null,
+    continueLabel: String = stringResource(R.string.action_continue),
+    ballotTitle: String = stringResource(ballot.titleRes),
     parties: List<Party> = SampleParties,
     selectedTab: BottomTab = BottomTab.Vote,
     onTabSelected: (BottomTab) -> Unit = {},
-    backgroundColor: Color = PageBackground,
-    onManifestoClick: ((Party) -> Unit)? = null
+    backgroundColor: Color = PageBackground
 ) {
     val entered by rememberEntranceTrigger()
-    var selectedId by remember { mutableStateOf<String?>(null) }
-    val selectedParty = parties.firstOrNull { it.id == selectedId }
 
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
         topBar = { AppTopBar(
-                title = ballot.title,
-                subtitle = "Choose your party",
+                title = stringResource(ballot.titleRes),
+                subtitle = stringResource(R.string.vote_choose_party),
                 onBackClick = onBackClick
             ) },
         bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
@@ -83,16 +82,15 @@ fun VotePartySelectionScreen(
 
             SectionHeading(
                 title = ballotTitle,
-                description = "Select ONE party",
+                description = stringResource(R.string.vote_select_one_party),
                 modifier = Modifier.entrance(entered, index = 1)
             )
 
             parties.forEachIndexed { index, party ->
                 PartyOption(
                     party = party,
-                    selected = party.id == selectedId,
-                    onClick = { selectedId = party.id },
-                    onInfoClick = onManifestoClick,
+                    selected = party.id == selectedPartyId,
+                    onClick = { onPartySelected(party) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .entrance(entered, index = index + 2)
@@ -102,9 +100,10 @@ fun VotePartySelectionScreen(
             Spacer(modifier = Modifier.height(Spacing.tight))
 
             SimpleButton(
-                label = "Continue",
-                onClick = { selectedParty?.let(onContinue) },
+                label = continueLabel,
+                onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
+                enabled = parties.any { it.id == selectedPartyId },
                 variant = ButtonVariant.Tertiary,
                 trailingIcon = Icons.AutoMirrored.Filled.ArrowForward
             )
@@ -116,6 +115,12 @@ fun VotePartySelectionScreen(
 @Composable
 private fun VotePartySelectionScreenPreview() {
     FrontendTheme {
-        VotePartySelectionScreen(onBackClick = {}, onContinue = {})
+        VotePartySelectionScreen(
+            onBackClick = {},
+            onPartySelected = {},
+            onContinue = {},
+            ballot = Ballot.Regional,
+            selectedPartyId = SampleParties.first().id
+        )
     }
 }

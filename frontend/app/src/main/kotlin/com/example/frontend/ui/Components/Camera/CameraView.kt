@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -62,6 +63,7 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.frontend.R
 import kotlin.math.abs
 
 @Composable
@@ -72,7 +74,7 @@ fun CameraView(
     onRetake: () -> Unit,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
-    onError: (String) -> Unit = {},
+    onError: (messageRes: Int) -> Unit = {},
     // FACE mode only: require a real blink, then capture automatically (login + vote checks).
     requireLiveness: Boolean = false
 ) {
@@ -155,7 +157,7 @@ fun CameraView(
             // Frozen photo instead of live preview
             Image(
                 bitmap = state.photo.asImageBitmap(),
-                contentDescription = "Captured photo",
+                contentDescription = stringResource(R.string.camera_captured_photo),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -181,7 +183,7 @@ fun CameraView(
             when (state) {
                 CaptureState.Framing -> if (mode == CameraCaptureStates.FACE) {
                     Text(
-                        guidance.message,
+                        stringResource(guidance.messageRes),
                         color = Color.White,
                         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite } // TalkBack reads hints
                     )
@@ -194,21 +196,21 @@ fun CameraView(
                             }
                     }
                 } else {
-                    Text("Fit your ID in the frame", color = Color.White)
+                    Text(stringResource(R.string.camera_fit_id), color = Color.White)
                     ShutterButton { takePhoto(context, controller, onPhotoTaken, onError) }
                 }
                 CaptureState.Capturing -> CircularProgressIndicator(color = Color.White)
                 is CaptureState.Problem -> {
-                    Text(state.message, color = Color.White)
-                    Button(onClick = onRetake) { Text("Try again") }
+                    Text(stringResource(state.messageRes), color = Color.White)
+                    Button(onClick = onRetake) { Text(stringResource(R.string.action_try_again)) }
                 }
                 is CaptureState.Captured -> Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedButton(onClick = onRetake) { Text("Retake") }
-                    Button(onClick = onConfirm) { Text("Use photo") }
+                    OutlinedButton(onClick = onRetake) { Text(stringResource(R.string.camera_retake)) }
+                    Button(onClick = onConfirm) { Text(stringResource(R.string.camera_use_photo)) }
                 }
                 CaptureState.Uploading -> {
                     CircularProgressIndicator(color = Color.White)
-                    Text("Uploading…", color = Color.White)
+                    Text(stringResource(R.string.camera_uploading), color = Color.White)
                 }
             }
         }
@@ -220,7 +222,7 @@ private fun takePhoto(
     context: Context,
     controller: LifecycleCameraController,
     onPhotoTaken: (Bitmap) -> Unit,
-    onFailure: (String) -> Unit
+    onFailure: (messageRes: Int) -> Unit
 ) {
     controller.takePicture(
         ContextCompat.getMainExecutor(context),
@@ -234,7 +236,8 @@ private fun takePhoto(
             }
 
             override fun onError(exception: ImageCaptureException) {
-                onFailure(exception.message ?: "Could not take the photo. Try again.")
+                // CameraX's exception text is technical and English-only; show our own message.
+                onFailure(R.string.camera_problem_capture_failed)
             }
         }
     )
@@ -275,11 +278,12 @@ private fun FramingGuide(mode: CameraCaptureStates) {
 
 @Composable
 private fun ShutterButton(enabled: Boolean = true, onClick: () -> Unit) {
+    val clickLabel = stringResource(R.string.camera_take_photo)
     Box(
         Modifier.size(72.dp).clip(CircleShape)
             .background(Color.White.copy(alpha = if (enabled) 1f else 0.35f)) // dimmed until face is ready
             .border(4.dp, Color.White.copy(alpha = 0.5f), CircleShape)
-            .clickable(enabled = enabled, onClickLabel = "Take photo", onClick = onClick)
+            .clickable(enabled = enabled, onClickLabel = clickLabel, onClick = onClick)
     )
 }
 fun Bitmap.brightness(): Double {
@@ -303,7 +307,7 @@ fun Bitmap.sharpness(): Double {
 }
 /** Grades a fresh capture. The caller owns the state, so this just reports the verdict. */
 fun evaluateCapture(photo: Bitmap): CaptureState = when {
-    photo.brightness() < 60 -> CaptureState.Problem("Too dark - move somewhere brighter")
-    photo.sharpness() < 6 -> CaptureState.Problem("Blurry - hold the phone still")
+    photo.brightness() < 60 -> CaptureState.Problem(R.string.camera_problem_too_dark)
+    photo.sharpness() < 6 -> CaptureState.Problem(R.string.camera_problem_blurry)
     else -> CaptureState.Captured(photo)
 }

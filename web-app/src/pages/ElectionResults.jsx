@@ -254,7 +254,9 @@ export default function ElectionResults() {
                                         }`}
                                     role="status"
                                 >
-                                    <span className="blockchain-status-icon">
+                                    <span
+                                        className={`blockchain-status-icon ${blockchainValid ? "bg-success" : "bg-danger"}`}
+                                    >
                                         {blockchainValid ? "✓" : "!"}
                                     </span>
 
@@ -283,7 +285,7 @@ export default function ElectionResults() {
                                 </div>
                             )}
                         </div>
-                        <div>
+                        <div className="panel p-3">
                             <p className="page-eyebrow">ADMINISTRATION</p>
                             <h1>Election Results</h1>
                             <p className="page-description">

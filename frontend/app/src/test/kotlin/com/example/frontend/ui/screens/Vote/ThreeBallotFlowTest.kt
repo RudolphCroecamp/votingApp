@@ -113,7 +113,7 @@ class ThreeBallotFlowTest {
         assertEquals(1, failed.faceAttemptsUsed)
         assertEquals(FACE_MAX_ATTEMPTS - 1, failed.faceAttemptsLeft)
         assertNotNull(failed.reviewError)
-        assertTrue(failed.reviewError!!.contains("NOT submitted"))
+        assertEquals(ReviewError.FaceMismatch, failed.reviewError)
         assertTrue("picks survive a failed check", failed.isComplete)
         assertFalse(failed.hasVoted)
     }
@@ -124,7 +124,7 @@ class ThreeBallotFlowTest {
         repeat(FACE_MAX_ATTEMPTS) { state = state.faceCheckFailed() }
 
         assertTrue(state.isFaceLocked)
-        assertTrue(state.reviewError!!.contains("locked"))
+        assertEquals(ReviewError.FaceLocked, state.reviewError)
     }
 
     @Test

@@ -1,4 +1,434 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">frontend</string>
     <string name="sa_voting_location_text">Voting stations open 07:00 – 21:00 on election day.</string>
+
+    <!-- Common actions and states -->
+    <string name="action_back">Back</string>
+    <string name="action_help">Help</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_done">Done</string>
+    <string name="action_try_again">Try again</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_reload">Reload</string>
+    <string name="status_checking">Checking…</string>
+    <string name="status_trying_again">Trying again…</string>
+    <string name="voter_fallback_name">Voter</string>
+    <string name="brand_title">South Africa\nNational Voting App</string>
+    <string name="brand_tagline">Secure  ·  Anonymous  ·  Verifiable</string>
+    <string name="menu_help_support">Help &amp; Support</string>
+    <string name="menu_log_out">Log Out</string>
+    <string name="vote_not_recorded">Your vote was NOT recorded</string>
+    <string name="vote_was_recorded">Your vote WAS recorded</string>
+    <string name="vote_outcome_unknown">We cannot tell yet if your vote went through</string>
+
+    <!-- Ballots -->
+    <string name="ballot_national_title">National Assembly</string>
+    <string name="ballot_national_short">National</string>
+    <string name="ballot_regional_title">Regional Assembly</string>
+    <string name="ballot_regional_short">Regional</string>
+    <string name="ballot_provincial_title">Provincial Legislature</string>
+    <string name="ballot_provincial_short">Provincial</string>
+    <string name="ballot_step_count">Ballot %1$d of %2$d</string>
+    <string name="ballot_step_description">Ballot %1$d of %2$d, %3$s</string>
+
+    <!-- Shared components -->
+    <string name="tab_home">Home</string>
+    <string name="tab_vote">Vote</string>
+    <string name="tab_manifestos">Manifestos</string>
+    <string name="tab_info">Info</string>
+    <string name="tab_settings">Settings</string>
+    <string name="leader_photo_of">Photo of %1$s</string>
+    <string name="privacy_note_message">Your vote is secret.</string>
+    <string name="privacy_note_link">How we protect your data</string>
+    <string name="receipt_label_default">Your voting receipt:</string>
+    <string name="receipt_copy_code">Copy receipt code</string>
+    <string name="password_show">Show password</string>
+    <string name="password_hide">Hide password</string>
+    <string name="hero_status_voting_open">VOTING OPEN</string>
+    <string name="hero_status_vote_cast">VOTE CAST</string>
+    <string name="hero_status_coming_up">COMING UP</string>
+    <string name="home_verified_voter">Verified voter</string>
+    <string name="language_change">Change language</string>
+
+    <!-- SMS code (OTP) -->
+    <string name="otp_verify_code">Verify code</string>
+    <string name="otp_code_confirmed">Code confirmed.</string>
+    <string name="otp_destination_fallback">your cellphone</string>
+    <string name="otp_sent_to" tools:ignore="PluralsCandidate">We sent a %1$d digit code to %2$s.</string>
+    <string name="otp_expires_in">This code expires in %1$s.</string>
+    <string name="otp_checking">Checking your code…</string>
+    <string name="otp_did_not_get_it">Did not get it?</string>
+    <string name="otp_resend_locked">Resend locked</string>
+    <string name="otp_resend_in">Resend in %1$s</string>
+    <string name="otp_resend_code">Resend code</string>
+    <string name="otp_input_description" tools:ignore="PluralsCandidate">Enter the %1$d digit code</string>
+    <plurals name="otp_error_wrong_code">
+        <item quantity="one">That code is not right. %1$d try left before we lock the step.</item>
+        <item quantity="other">That code is not right. %1$d tries left before we lock the step.</item>
+    </plurals>
+    <string name="otp_error_expired">That code has expired. Tap resend to get a new one.</string>
+    <string name="otp_error_too_many">Too many wrong codes. Try again in %1$s.</string>
+
+    <!-- Camera -->
+    <string name="camera_captured_photo">Captured photo</string>
+    <string name="camera_fit_id">Fit your ID in the frame</string>
+    <string name="camera_retake">Retake</string>
+    <string name="camera_use_photo">Use photo</string>
+    <string name="camera_uploading">Uploading…</string>
+    <string name="camera_take_photo">Take photo</string>
+    <string name="camera_allow_access">Allow Camera Access</string>
+    <string name="camera_needed_face">We need the camera to check your face. Nothing is sent until the check runs.</string>
+    <string name="camera_needed_confirm">We need the camera to confirm it is you. Nothing is sent until the check runs.</string>
+    <string name="camera_problem_capture_failed">Could not take the photo. Try again.</string>
+    <string name="camera_problem_check_failed">Couldn\'t check the photo - try again</string>
+    <string name="camera_problem_no_face">No face found - try again</string>
+    <string name="camera_problem_multiple_faces">Only one person should be in the photo</string>
+    <string name="camera_problem_too_dark">Too dark - move somewhere brighter</string>
+    <string name="camera_problem_blurry">Blurry - hold the phone still</string>
+    <string name="face_guidance_no_face">Fit your face in the oval</string>
+    <string name="face_guidance_multiple_faces">Make sure only you are in the frame</string>
+    <string name="face_guidance_move_closer">Move a little closer</string>
+    <string name="face_guidance_move_back">Move back a little</string>
+    <string name="face_guidance_centre">Centre your face in the oval</string>
+    <string name="face_guidance_look_straight">Look straight at the camera</string>
+    <string name="face_guidance_blink">Blink slowly</string>
+    <string name="face_guidance_ready">Hold still</string>
+
+    <!-- Sign in: face check -->
+    <string name="login_face_title">Face check</string>
+    <string name="login_face_heading">Prove it is you</string>
+    <string name="login_face_description">Look straight at the camera and blink slowly when asked. A photo of you will not pass this check.</string>
+    <string name="login_back_to_sign_in">Back to sign in</string>
+    <string name="login_face_privacy">The scan is matched against your registration photo and is never shared with anyone else.</string>
+    <string name="login_face_matched">Face matched. Signing you in…</string>
+    <string name="login_face_locked" tools:ignore="PluralsCandidate">Account locked after %1$d failed checks. Try again in %2$s.</string>
+    <plurals name="login_face_no_match">
+        <item quantity="one">Face didn\'t match, try again. %1$d try left before we lock the account.</item>
+        <item quantity="other">Face didn\'t match, try again. %1$d tries left before we lock the account.</item>
+    </plurals>
+    <string name="login_face_hint">Keep your face in the oval and blink slowly when asked.</string>
+
+    <!-- Voting: party selection and review -->
+    <string name="vote_choose_party">Choose your party</string>
+    <string name="vote_select_one_party">Select ONE party</string>
+    <string name="vote_back_to_review">Back to review</string>
+    <string name="vote_next_ballot">Next: %1$s ballot</string>
+    <string name="vote_review_my_votes">Review my votes</string>
+    <string name="review_title">Review your vote</string>
+    <string name="review_subtitle" tools:ignore="PluralsCandidate">Check all %1$d ballots</string>
+    <string name="review_final_warning">Your votes cannot be changed after confirmation. You will scan your face once more to cast them.</string>
+    <string name="review_confirm_vote">Confirm Vote</string>
+    <string name="review_choose">Choose</string>
+    <string name="review_change">Change</string>
+    <string name="review_not_chosen">Not chosen yet</string>
+    <plurals name="review_error_face_mismatch">
+        <item quantity="one">Face didn\'t match. Your vote was NOT submitted. %1$d try left.</item>
+        <item quantity="other">Face didn\'t match. Your vote was NOT submitted. %1$d tries left.</item>
+    </plurals>
+    <string name="review_error_face_locked">Face didn\'t match. Your vote was NOT submitted and voting is locked. Contact the IEC helpline.</string>
+
+    <!-- Voting: face check -->
+    <string name="vote_face_title">Confirm it is you</string>
+    <string name="vote_face_subtitle">Last step</string>
+    <string name="vote_face_heading">Scan your face to cast your vote</string>
+    <string name="vote_face_description">Look straight at the camera and blink slowly when asked. Your votes are only sent once the scan matches.</string>
+    <string name="vote_face_privacy">The scan only proves you are the registered voter. It is never linked to your choices.</string>
+    <string name="vote_face_matched">Face matched. Casting your vote…</string>
+
+    <!-- Voting: confirmation and receipts -->
+    <string name="confirmation_title">You made your mark!</string>
+    <string name="confirmation_all_recorded">All %1$d of your votes have been recorded.</string>
+    <string name="confirmation_one_recorded">Your vote has been recorded.</string>
+    <string name="confirmation_receipt_label">%1$s ballot receipt:</string>
+    <string name="confirmation_clip_label">%1$s voting receipt</string>
+    <string name="confirmation_keep_receipts">Keep these receipts. They never show who you voted for.</string>
+    <string name="confirmation_view_receipts">View receipts</string>
+    <string name="confirmation_view_receipt">View receipt</string>
+    <string name="election_name_sample">2026 National Election</string>
+    <string name="receipt_status_valid">Valid</string>
+    <string name="receipt_title">Voting Receipt</string>
+    <string name="receipt_title_plural">Voting Receipts</string>
+    <string name="receipt_field_election">Election</string>
+    <string name="receipt_field_id">Receipt ID</string>
+    <string name="receipt_field_status">Status</string>
+    <string name="receipt_field_ballot">Ballot</string>
+    <string name="receipt_field_recorded">Recorded</string>
+    <string name="receipt_explainer">This receipt can be used to verify that your vote was recorded, but it does not reveal who you voted for.</string>
+
+    <!-- Verify receipt -->
+    <string name="verify_title">Verify Your Vote</string>
+    <string name="verify_heading">Confirm your vote</string>
+    <string name="verify_description">Enter the receipt code you were given after voting to check that your ballot was recorded.</string>
+    <string name="verify_placeholder">Receipt Code (AB7F-92K4-6ZP1-3QX8)</string>
+    <string name="verify_button">Verify Receipt</string>
+    <string name="verify_paste">Paste from Clipboard</string>
+    <string name="verify_idle_info">Your receipt proves your ballot was counted. It never reveals who you voted for.</string>
+    <string name="verify_not_found">No vote matches that receipt code. Check the code and try again.</string>
+    <string name="verify_found">This vote was recorded and counted.</string>
+
+    <!-- Splash and welcome -->
+    <string name="splash_title">Your Voice. Your Vote.\nThe Future Together.</string>
+    <string name="splash_subtitle">A fundamental right that sustains our democracy.</string>
+    <string name="welcome_tagline">Your vote. Your voice.\nA stronger South Africa.</string>
+    <string name="welcome_get_started">Get Started</string>
+
+    <!-- Sign in -->
+    <string name="login_title">Sign in</string>
+    <string name="login_description">Enter your South African ID or passport number, then verify your face to sign in.</string>
+    <string name="login_with_face">Sign in with Face Verification</string>
+    <string name="login_face_info">Your face is matched against your registration scan. No password is needed.</string>
+    <string name="login_no_account">Don\'t have an account?</string>
+    <string name="login_register">Register</string>
+
+    <!-- Form fields -->
+    <string name="field_full_name">Full Name</string>
+    <string name="field_id_or_passport">ID Number / Passport Number</string>
+    <string name="field_id_number">ID Number</string>
+    <string name="field_passport_number">Passport Number</string>
+    <string name="field_cellphone">Cellphone Number</string>
+    <string name="field_email_optional">Email Address (Optional)</string>
+
+    <!-- Provinces -->
+    <string name="province_eastern_cape">Eastern Cape</string>
+    <string name="province_free_state">Free State</string>
+    <string name="province_gauteng">Gauteng</string>
+    <string name="province_kwazulu_natal">KwaZulu-Natal</string>
+    <string name="province_limpopo">Limpopo</string>
+    <string name="province_mpumalanga">Mpumalanga</string>
+    <string name="province_northern_cape">Northern Cape</string>
+    <string name="province_north_west">North West</string>
+    <string name="province_western_cape">Western Cape</string>
+
+    <!-- Registration -->
+    <string name="register_step_of">Step %1$d of %2$d</string>
+    <string name="register_title">Create your account</string>
+    <string name="register_details_heading">Your Details</string>
+    <string name="register_details_description">Register with your South African ID or passport to get your ballot.</string>
+    <string name="register_next_steps_info">Next you will capture your ID document, then scan your face. That scan replaces a password when you sign in.</string>
+    <string name="register_details_privacy">Your details are used only to confirm you are on the voters\' roll. Your ballot stays anonymous.</string>
+    <string name="register_have_account">Already have an account?</string>
+    <string name="register_sign_in">Sign In</string>
+    <string name="register_verifying">Verifying…</string>
+    <string name="register_verify_continue">Verify &amp; Continue</string>
+    <string name="address_heading">Your address</string>
+    <string name="address_street">Street Address</string>
+    <string name="address_city">City or Town</string>
+    <string name="address_postal_code">Postal Code</string>
+    <string name="address_province">Province</string>
+    <string name="address_province_hint">Your province decides which provincial and regional ballots you get, so it has to be right.</string>
+    <string name="register_otp_title">Confirm your cellphone</string>
+    <string name="register_otp_heading">Enter your code</string>
+    <string name="register_otp_description">This proves the cellphone number you gave us belongs to you.</string>
+    <string name="register_otp_submit">Verify and continue</string>
+    <string name="register_otp_success">Cellphone number confirmed.</string>
+    <string name="register_otp_rates">Standard network rates apply. We only use this number to confirm it is you.</string>
+    <string name="register_identity_title">Verify Identity</string>
+    <string name="register_identity_heading">Identity Document</string>
+    <string name="register_identity_description">Pick your document type and capture a clear photo of the front.</string>
+    <string name="register_document_type">Document Type</string>
+    <string name="register_document_national_id">National ID</string>
+    <string name="register_document_passport">Passport</string>
+    <string name="register_document_photo">Document Photo</string>
+    <string name="register_document_captured_retake">Document captured. Tap it again to retake the photo.</string>
+    <string name="register_document_hint">Lay the document flat, fill the frame, and avoid glare on the photo page.</string>
+    <string name="register_save_verify_identity">Save &amp; Verify Identity</string>
+    <string name="register_document_captured">Document captured</string>
+    <string name="register_document_tap_capture">Tap to capture front of document</string>
+    <string name="register_face_title">Face Registration</string>
+    <string name="register_face_heading">Scan Your Face</string>
+    <string name="register_face_description">Hold your phone at eye level and keep your face inside the frame.</string>
+    <string name="register_face_retake">Retake Scan</string>
+    <string name="register_face_captured">Face captured. Retake it if your face was not clearly inside the frame.</string>
+    <string name="register_face_camera_needed">We need the camera to scan your face. Nothing is recorded until you tap the shutter.</string>
+    <string name="register_face_hint">Find a well-lit spot, remove hats and sunglasses, and look straight ahead.</string>
+    <string name="register_done_heading">You\'re Registered</string>
+    <string name="register_done_description">Your details, ID document and face scan have been submitted for verification.</string>
+    <string name="register_done_welcome">Welcome, %1$s</string>
+    <string name="register_done_sign_in_hint">You can now sign in with your ID number and a face scan.</string>
+    <string name="register_done_privacy_title">Your privacy is protected</string>
+    <string name="register_done_privacy_description">Your identity is secure and your vote stays anonymous.</string>
+    <string name="register_done_one_vote_title">One person. One vote.</string>
+    <string name="register_done_one_vote_description">You can only vote once in each election.</string>
+    <string name="register_done_keep_id">Keep your ID number handy. You will need it every time you sign in.</string>
+    <string name="register_done_continue">Continue to App</string>
+
+    <!-- Privacy consent (POPIA) -->
+    <string name="consent_title">Privacy and consent</string>
+    <string name="consent_heading">What we collect and why</string>
+    <string name="consent_description">South Africa\'s privacy law (POPIA) says we must tell you this and get your agreement before we collect anything.</string>
+    <string name="consent_no_photos_yet">No photos are taken and no face is scanned until you agree below.</string>
+    <string name="consent_never_sell">We never sell your information and we never share who you voted for. Your ballot is stored separately from your identity, so no one can link the two. You may withdraw your agreement or ask us to delete your data at any time in Settings, though you cannot vote without it.</string>
+    <string name="consent_tick_to_continue">Tick the box above to continue.</string>
+    <string name="consent_how_long">How long we keep it: %1$s</string>
+    <string name="consent_statement">I have read the above and I agree to the Electoral Commission collecting and using my personal information for voter registration and voting.</string>
+    <string name="consent_retention_registered">Kept while you stay registered to vote.</string>
+    <string name="consent_retention_30_days">Deleted once your registration is approved, within 30 days.</string>
+    <string name="consent_id_label">Your ID number</string>
+    <string name="consent_id_purpose">To check you are on the voters\' roll and that you only vote once.</string>
+    <string name="consent_id_photo_label">A photo of your ID or passport</string>
+    <string name="consent_id_photo_purpose">To confirm the ID number you gave us belongs to a real document.</string>
+    <string name="consent_face_label">A scan of your face</string>
+    <string name="consent_face_purpose">To match your face to your ID photo, and to sign you in instead of a password.</string>
+    <string name="consent_address_label">Your home address</string>
+    <string name="consent_address_purpose">To place you in the right voting district, which decides your ballots.</string>
+    <string name="consent_phone_label">Your cellphone number</string>
+    <string name="consent_phone_purpose">To send the one-time code that confirms it is you signing in.</string>
+
+    <!-- Home -->
+    <string name="home_greeting">Hi, %1$s</string>
+    <string name="home_sample_election">2026 Local Government Election</string>
+    <string name="home_sample_closing">Closes today at 21:00. Make your mark!</string>
+    <string name="home_sample_opening">Voting opens in 2 days · 07:00. Get ready!</string>
+    <string name="home_sample_receipt_summary">Recorded at 10:42 · Receipt ID 7F3A-92KD</string>
+    <string name="home_vote_now">Vote now</string>
+    <string name="home_made_your_mark">You made your mark, %1$s!</string>
+    <string name="home_view_receipt">View vote receipt</string>
+    <string name="home_receipt_footnote">Your receipt proves you voted. It never shows who for.</string>
+    <string name="home_remind_me">Remind me</string>
+    <string name="home_action_station_title">Find my voting station</string>
+    <string name="home_action_station_description">Address, hours and directions</string>
+    <string name="home_action_info_title">Election info and your rights</string>
+    <string name="home_action_info_description">How voting works, step by step</string>
+    <string name="home_action_registration_title">Check my registration</string>
+    <string name="home_action_registration_description">Confirm your details are correct</string>
+    <string name="home_action_report_title">Report a problem</string>
+    <string name="home_action_report_description">Something wrong with your vote?</string>
+
+    <!-- Info -->
+    <string name="info_title">Information</string>
+    <string name="info_subtitle">Everything you need before you vote</string>
+    <string name="info_heading">How voting works</string>
+    <string name="info_description">Short guides covering the ballot, your rights and your privacy.</string>
+    <string name="info_rights_description">The election, your ballots and what you may expect</string>
+    <string name="info_privacy_title">Your privacy</string>
+    <string name="info_privacy_description">How your vote stays anonymous and separate from you</string>
+    <string name="info_help_title">Help and support</string>
+    <string name="info_help_description">Signing in, voting and verifying your receipt</string>
+
+    <!-- Status screens -->
+    <string name="already_voted_title">Already voted</string>
+    <string name="already_voted_heading">You have already voted</string>
+    <string name="already_voted_description">Your ballot is in. Everyone gets one vote per election, so this ballot cannot be opened again.</string>
+    <string name="already_voted_clip_label">Voting receipt</string>
+    <string name="already_voted_receipt_info">Your receipt proves your ballot was counted. It does not show anyone who you voted for.</string>
+    <string name="already_voted_view_receipt">View my receipt</string>
+    <string name="already_voted_not_you">If you did not cast this vote, call the Electoral Commission helpline straight away.</string>
+    <string name="already_voted_cast_at">Vote cast %1$s</string>
+    <string name="closed_title">Voting has closed</string>
+    <string name="closed_heading">This ballot is closed</string>
+    <string name="closed_description">Voting has ended, so no more ballots can be cast. Any vote you already sent still counts.</string>
+    <string name="closed_results_out">The results are out. You can see the count for every ballot.</string>
+    <string name="closed_results_expected">Results are expected %1$s.</string>
+    <string name="closed_results_counting">Results are being counted. They appear here once the Electoral Commission publishes them.</string>
+    <string name="closed_view_results">View results</string>
+    <string name="closed_results_not_published">Results not published yet</string>
+    <string name="closed_keep_receipt">If you voted, keep your receipt code. You can still check that your ballot was counted after the results are published.</string>
+    <string name="closed_voting_is_closed">Voting is closed</string>
+    <string name="closed_voting_closed_on">Voting closed on</string>
+    <string name="closed_no_more_votes">No more votes are being accepted</string>
+    <string name="no_election_title">No election open</string>
+    <string name="no_election_heading">Nothing to vote on right now</string>
+    <string name="no_election_description">There is no election open at the moment. Your registration stays active, so you do not need to sign up again.</string>
+    <string name="no_election_date_known">You will be able to vote from this app on the day. We will remind you closer to the time.</string>
+    <string name="no_election_date_unknown">We will tell you as soon as a date is announced.</string>
+    <string name="no_election_voting_info">Voting information</string>
+    <string name="no_election_info_hint">Check your voting district, what each ballot decides, and how your vote stays anonymous.</string>
+    <string name="no_election_next">Next election</string>
+    <string name="no_election_next_opens">Next election opens</string>
+    <string name="no_election_date_not_announced">Date not announced yet</string>
+    <string name="offline_title">No internet connection</string>
+    <string name="offline_heading">You are offline</string>
+    <string name="offline_description">We could not reach the Electoral Commission. Check your Wi-Fi or mobile data and try again.</string>
+    <string name="offline_looking">Looking for a connection…</string>
+    <string name="offline_hint_casting">When you are back online, open the ballot again and make your mark. Nothing you picked was sent.</string>
+    <string name="offline_hint_reading">You can keep reading the voting information offline. Voting needs a connection.</string>
+    <string name="offline_still_stuck">Still stuck? Move somewhere with better signal, turn flight mode off, or try again on Wi-Fi.</string>
+    <string name="offline_not_recorded_detail">The ballot never reached us, so nothing was counted and nothing was used up. You still have your vote.</string>
+    <string name="server_error_title">Something went wrong</string>
+    <string name="server_error_heading">The service is not responding</string>
+    <string name="server_error_description">This is a problem on our side, not yours. Your phone and your connection are fine.</string>
+    <string name="server_error_retrying">Trying the Electoral Commission again…</string>
+    <string name="server_error_check_receipt">Check with my receipt</string>
+    <string name="server_error_reference">Reference %1$s — quote this if you call the helpline.</string>
+    <string name="server_error_keeps_happening">If this keeps happening, wait a few minutes and try again, or vote at your voting station.</string>
+    <string name="server_error_not_recorded_detail">The ballot was never accepted, so nothing was counted. You still have your vote, and you can try again.</string>
+    <string name="server_error_recorded_detail">Your ballot was accepted and counted. The error happened after that, while we were loading your receipt. Do not vote again.</string>
+    <string name="server_error_unknown_detail">The connection dropped while your ballot was being sent. Do not assume it failed. Check your receipt before you try to vote again, so you do not vote twice.</string>
+
+    <!-- Settings -->
+    <string name="settings_subtitle">Preferences, account &amp; app configuration</string>
+    <string name="settings_account_title">Account &amp; Voter Profile</string>
+    <string name="settings_account_description">Manage your registration and voter details</string>
+    <string name="settings_profile_title">Voter Profile</string>
+    <string name="settings_profile_description">View personal details and registered address</string>
+    <string name="settings_registration_title">Check Registration Status</string>
+    <string name="settings_registration_description">Confirm your status and voting district</string>
+    <string name="settings_preferences_title">App Preferences</string>
+    <string name="settings_preferences_description">Customize language and notification reminders</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_description">Select your preferred official language</string>
+    <string name="settings_language_dialog_title">Select Language</string>
+    <string name="settings_reminders_title">Election Reminders</string>
+    <string name="settings_reminders_description">Receive voting day reminders and official alerts</string>
+    <string name="settings_security_title">Security &amp; Privacy</string>
+    <string name="settings_security_description">Biometrics and ballot privacy settings</string>
+    <string name="settings_face_title">Face Verification</string>
+    <string name="settings_face_description">Require facial scan check before voting</string>
+    <string name="settings_privacy_title">Privacy &amp; Data Protection</string>
+    <string name="settings_privacy_description">How your vote stays encrypted and anonymous</string>
+    <string name="settings_help_section_title">Help &amp; Information</string>
+    <string name="settings_help_section_description">Guides, support and reporting issues</string>
+    <string name="settings_help_description">Voting guides and answers to common questions</string>
+    <string name="settings_election_info_title">Election Information</string>
+    <string name="settings_election_info_description">Ballot process, rules and voter rights</string>
+    <string name="settings_report_title">Report a Problem</string>
+    <string name="settings_report_description">Log technical issues or voter concerns</string>
+    <string name="settings_logout_description">Sign out of your voter account</string>
+    <string name="settings_logout_confirm_title">Log Out?</string>
+    <string name="settings_logout_confirm_body">Are you sure you want to log out of your voter account on this device?</string>
+    <string name="settings_footer_iec">Electoral Commission of South Africa (IEC)</string>
+    <string name="settings_footer_version">Version 1.0.0 • Build 2026.1 • Secure E-Voting System</string>
+
+    <!-- Profile -->
+    <string name="profile_subtitle">View and manage your registered details</string>
+    <string name="profile_verified_voter">Verified Registered Voter</string>
+    <string name="profile_identity_title">Verified Identity Information</string>
+    <string name="profile_identity_description">Full legal names and South African ID / Passport Number</string>
+    <string name="profile_full_names">Full Names</string>
+    <string name="profile_id_or_passport">National ID / Passport Number</string>
+    <string name="profile_district_status">Voting District Status</string>
+    <string name="profile_district_value">Active • District %1$s (%2$s)</string>
+    <string name="profile_full_legal_names">Full Legal Names</string>
+    <string name="profile_full_legal_names_hint">Full Legal Names (e.g. Thandi Nkosi)</string>
+    <string name="profile_id_hint">13-Digit SA ID Number</string>
+    <string name="profile_identity_face_warning">Biometric Face Recognition required: Updating your legal name or ID number triggers a face scan verification.</string>
+    <string name="profile_contact_title">Contact Information</string>
+    <string name="profile_contact_description">Your registered cellphone number for SMS notifications</string>
+    <string name="profile_phone_hint">Cellphone number (e.g. 082 123 4567)</string>
+    <string name="profile_phone_otp_warning">Changing your cellphone number requires a 6-digit SMS OTP code.</string>
+    <string name="profile_address_title">Residential Address</string>
+    <string name="profile_address_description">Determines your provincial and regional ballot allocation</string>
+    <string name="profile_select_province">Select province</string>
+    <string name="profile_city_hint">City / Town (e.g. Johannesburg)</string>
+    <string name="profile_street_hint">Street Address (e.g. 124 Market Street)</string>
+    <string name="profile_postal_hint">Postal Code (e.g. 2001)</string>
+    <string name="profile_verify_face_save">Verify Face &amp; Save Changes</string>
+    <string name="profile_save_changes">Save Profile Changes</string>
+    <string name="profile_snackbar_address_updated">Residential address updated successfully</string>
+    <string name="profile_snackbar_identity_updated">Identity verified. Full Name and ID Number updated!</string>
+    <string name="profile_snackbar_phone_updated">Cellphone number &amp; profile updated successfully</string>
+    <string name="profile_face_required_title">Face Verification Required</string>
+    <string name="profile_face_required_body">To update your legal name or ID number, please complete a biometric face scan to verify your identity.</string>
+    <string name="profile_face_matching">Matching biometric face template…</string>
+    <string name="profile_face_hint">Hold device at eye level and position your face in the oval.</string>
+    <string name="profile_scanning">Scanning…</string>
+    <string name="profile_verify_face_and_save">Verify Face &amp; Save</string>
+    <string name="profile_otp_title">Verify Cellphone Change</string>
+    <string name="profile_otp_body">A 6-digit SMS OTP code was sent to %1$s. Enter it below to confirm your phone number change.</string>
+    <string name="profile_otp_not_received">Didn\'t receive code?</string>
+    <string name="profile_otp_resend_sms">Resend SMS</string>
+    <string name="profile_verify_and_save">Verify &amp; Save</string>
+    <string name="profile_otp_incomplete">Please enter the full 6-digit OTP code</string>
+    <string name="profile_read_only">Read only</string>
 </resources>

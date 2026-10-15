@@ -31,12 +31,21 @@ data class BallotReceipt(
     val castAt: String
 )
 
+/** Why Review is showing an error. The screen turns this into translated text. */
+@Serializable
+enum class ReviewError {
+    /** Face check failed; the voter still has attempts left. */
+    FaceMismatch,
+    /** Face check failed too many times; confirming is blocked. */
+    FaceLocked
+}
+
 @Serializable
 data class VoteFlowState(
     val selections: Map<Ballot, String> = emptyMap(),
     val receipts: List<BallotReceipt> = emptyList(),
     val faceAttemptsUsed: Int = 0,
-    val reviewError: String? = null
+    val reviewError: ReviewError? = null
 ) {
     /** True once every ballot has a party picked. */
     val isComplete: Boolean
@@ -69,12 +78,8 @@ fun VoteFlowState.select(ballot: Ballot, partyId: String): VoteFlowState =
 fun VoteFlowState.faceCheckFailed(): VoteFlowState {
     val used = faceAttemptsUsed + 1
     val left = (FACE_MAX_ATTEMPTS - used).coerceAtLeast(0)
-    val message = if (left == 0) {
-        "Face didn't match. Your vote was NOT submitted and voting is locked. Contact the IEC helpline."
-    } else {
-        "Face didn't match. Your vote was NOT submitted. $left ${if (left == 1) "try" else "tries"} left."
-    }
-    return copy(faceAttemptsUsed = used, reviewError = message)
+    val error = if (left == 0) ReviewError.FaceLocked else ReviewError.FaceMismatch
+    return copy(faceAttemptsUsed = used, reviewError = error)
 }
 
 /**

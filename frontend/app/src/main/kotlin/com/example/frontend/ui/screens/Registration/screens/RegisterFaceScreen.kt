@@ -42,8 +42,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.Camera.CameraCaptureStates
@@ -93,7 +95,7 @@ fun RegisterFaceScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Face Registration", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = stringResource(R.string.register_face_title), onBackClick = onBackClick) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -106,8 +108,8 @@ fun RegisterFaceScreen(
         ) {
             RegisterStepHeader(
                 step = 5,
-                heading = "Scan Your Face",
-                description = "Hold your phone at eye level and keep your face inside the frame."
+                heading = stringResource(R.string.register_face_heading),
+                description = stringResource(R.string.register_face_description)
             )
 
             Spacer(modifier = Modifier.height(Spacing.small))
@@ -139,7 +141,7 @@ fun RegisterFaceScreen(
                                 }
                             }
                         },
-                        onError = { message -> capture = CaptureState.Problem(message) }
+                        onError = { messageRes -> capture = CaptureState.Problem(messageRes) }
                     )
                 }
             }
@@ -152,7 +154,9 @@ fun RegisterFaceScreen(
 
             if (captured) {
                 SimpleButton(
-                    label = if (uiState.isLoading) "Verifying…" else "Verify & Continue",
+                    label = stringResource(
+                        if (uiState.isLoading) R.string.register_verifying else R.string.register_verify_continue
+                    ),
                     onClick = {
                         onEvent(RegistrationUiEvent.OnVerifyFaceSubmitted)
                         onContinue()
@@ -162,7 +166,7 @@ fun RegisterFaceScreen(
                     enabled = uiState.canSubmitFace
                 )
                 SimpleButton(
-                    label = "Retake Scan",
+                    label = stringResource(R.string.register_face_retake),
                     onClick = {
                         capture = CaptureState.Framing
                         onEvent(RegistrationUiEvent.OnFaceRetake)
@@ -174,7 +178,7 @@ fun RegisterFaceScreen(
                 )
             } else if (!cameraGranted) {
                 SimpleButton(
-                    label = "Allow Camera Access",
+                    label = stringResource(R.string.camera_allow_access),
                     onClick = requestCamera,
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Tertiary,
@@ -186,15 +190,16 @@ fun RegisterFaceScreen(
     }
 }
 
+@Composable
 private fun statusMessage(
     captured: Boolean,
     cameraGranted: Boolean,
     capture: CaptureState
 ): String = when {
-    captured -> "Face captured. Retake it if your face was not clearly inside the frame."
-    !cameraGranted -> "We need the camera to scan your face. Nothing is recorded until you tap the shutter."
-    capture is CaptureState.Problem -> capture.message
-    else -> "Find a well-lit spot, remove hats and sunglasses, and look straight ahead."
+    captured -> stringResource(R.string.register_face_captured)
+    !cameraGranted -> stringResource(R.string.register_face_camera_needed)
+    capture is CaptureState.Problem -> stringResource(capture.messageRes)
+    else -> stringResource(R.string.register_face_hint)
 }
 
 /** Registration sends a file path, so the capture is written to the app cache first. */

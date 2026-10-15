@@ -237,21 +237,8 @@ export default function AdminDash() {
             <Sidebar />
 
             <main className="admin-content">
-                <header className="topbar">
-                    <div>
-                        <div className="text-secondary small">
-                            Workspace / Access control
-                        </div>
-                        <h1 className="h4 mb-0 mt-1">Administrators</h1>
-                    </div>
-
-                    <div className="avatar avatar-sm" title="Current administrator">
-                        AD
-                    </div>
-                </header>
-
                 <div className="content-wrap">
-                    <div className="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+                    <div className="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4 panel p-3">
                         <div>
                             <p className="text-secondary small fw-semibold mb-1">
                                 ACCESS CONTROL

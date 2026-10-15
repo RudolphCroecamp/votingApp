@@ -156,304 +156,300 @@ export default function HealthMonitor() {
                     : 'text-secondary'
 
     return (
-    <div className="admin-layout">
-        <Sidebar />
+        <div className="admin-layout">
+            <Sidebar />
 
-        <main className="admin-content">
-            <header className="topbar">
-                <div>
-                    <div className="text-secondary small">
-                        Workspace / Monitoring
-                    </div>
-                    <h1 className="h4 mb-0 mt-1">API health</h1>
-                </div>
+            <main className="admin-content">
 
-                <button
-                    className="btn btn-outline-secondary btn-sm"
-                    type="button"
-                    onClick={() => refreshHealth(true)}
-                    disabled={refreshing || loading}
-                >
-                    {refreshing || loading ? "Checking..." : "↻ Refresh"}
-                </button>
-            </header>
 
-            <div className="content-wrap">
-                {/* Page heading */}
-                <div className="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
-                    <div>
-                        <p className="text-secondary small fw-semibold mb-1">
-                            SERVICE MONITORING
-                        </p>
-                        <h2 className="h3 fw-bold mb-1">System health</h2>
-                        <p className="text-secondary mb-0">
-                            Live checks of your API and PostgreSQL database.
-                        </p>
-                    </div>
+                <div className="content-wrap">
+                    {/* Page heading */}
 
-                    <span className="pill pill-neutral">
-                        Auto-refresh: 15 seconds
-                    </span>
-                </div>
+                    <div className="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4 panel p-3">
+                        <div>
+                            <p className="text-secondary small fw-semibold mb-1">
+                                SERVICE MONITORING
+                            </p>
+                            <h2 className="h3 fw-bold mb-1">System health</h2>
+                            <p className="text-secondary mb-0">
+                                Live checks of your API and PostgreSQL database.
+                            </p>
+                        </div>
 
-                {/* Overall health */}
-                <div className="health-hero mb-4">
-                    <div>
-                        <div className="d-flex align-items-center gap-2 mb-2">
-                            <span className="health-pulse"></span>
-                            <span className={`fw-semibold small ${overallClass}`}>
-                                SYSTEM {overallStatus.toUpperCase()}
+                        <div className="d-flex flex-column align-items-start gap-2">
+                            <button
+                                className="btn btn-outline-secondary btn-sm"
+                                type="button"
+                                onClick={() => refreshHealth(true)}
+                                disabled={refreshing || loading}
+                            >
+                                {refreshing || loading ? "Checking..." : "↻ Refresh"}
+                            </button>
+
+                            <span className="pill pill-neutral">
+                                Auto-refresh: 15 seconds
                             </span>
                         </div>
-
-                        <h2 className="h3 fw-bold mb-2">
-                            {overallStatus === "Healthy"
-                                ? "All configured checks are healthy"
-                                : overallStatus === "Degraded"
-                                    ? "Some services need attention"
-                                    : overallStatus === "Unhealthy"
-                                        ? "Health checks are failing"
-                                        : "Checking services..."}
-                        </h2>
-
-                        <p className="text-secondary mb-0">
-                            Last checked: {formatTime(lastChecked)}
-                        </p>
                     </div>
 
-                    <div className="health-score">
-                        <div className="health-score-number">
-                            {healthyCount}/{services.length || 2}
-                        </div>
-                        <div className="small text-secondary">
-                            Healthy services
-                        </div>
-                    </div>
-                </div>
 
-                {/* Health statistics */}
-                <div className="row g-0 mb-4">
-                    <div className="col-sm-6 col-xl-3 panel">
-                        <div className="stat-card">
-                            <div className="stat-label">API status</div>
-                            <div className="stat-number fs-4 mt-3">
-                                <StatusPill service={api} />
-                            </div>
-                            <div className="stat-foot">
-                                {api?.data?.environment
-                                    ? `Environment: ${api.data.environment}`
-                                    : "HTTP health endpoint"}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="col-sm-6 col-xl-3 panel">
-                        <div className="stat-card">
-                            <div className="stat-label">Database</div>
-                            <div className="stat-number fs-4 mt-3">
-                                <StatusPill service={database} />
-                            </div>
-                            <div className="stat-foot">
-                                {database?.data?.database ?? "PostgreSQL"}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="col-sm-6 col-xl-3 panel">
-                        <div className="stat-card">
-                            <div className="stat-label">API response time</div>
-                            <div className="stat-number fs-4 mt-3">
-                                {formatLatency(api?.latencyMs)}
-                            </div>
-                            <div className="stat-foot">
-                                Browser-measured HTTP latency
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="col-sm-6 col-xl-3 panel">
-                        <div className="stat-card">
-                            <div className="stat-label">API uptime</div>
-                            <div className="stat-number fs-4 mt-3">
-                                {Number.isFinite(api?.data?.uptimeSeconds)
-                                    ? `${Math.floor(api.data.uptimeSeconds / 3600)}h ${Math.floor(
-                                        (api.data.uptimeSeconds % 3600) / 60
-                                    )}m`
-                                    : "—"}
-                            </div>
-                            <div className="stat-foot">
-                                Time since API process started
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Service components */}
-                <section className="panel mb-4">
-                    <div className="panel-heading">
+                    {/* Overall health */}
+                    <div className="health-hero mb-4">
                         <div>
-                            <h3 className="h6 fw-bold mb-1">
-                                Service components
-                            </h3>
-                            <p className="text-secondary small mb-0">
-                                Live status of configured health endpoints
+                            <div className="d-flex align-items-center gap-2 mb-2">
+                                <span className="health-pulse"></span>
+                                <span className={`fw-semibold small ${overallClass}`}>
+                                    SYSTEM {overallStatus.toUpperCase()}
+                                </span>
+                            </div>
+
+                            <h2 className="h3 fw-bold mb-2">
+                                {overallStatus === "Healthy"
+                                    ? "All configured checks are healthy"
+                                    : overallStatus === "Degraded"
+                                        ? "Some services need attention"
+                                        : overallStatus === "Unhealthy"
+                                            ? "Health checks are failing"
+                                            : "Checking services..."}
+                            </h2>
+
+                            <p className="text-secondary mb-0">
+                                Last checked: {formatTime(lastChecked)}
                             </p>
                         </div>
+
+                        <div className="health-score">
+                            <div className="health-score-number">
+                                {healthyCount}/{services.length || 2}
+                            </div>
+                            <div className="small text-secondary">
+                                Healthy services
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="table-responsive">
-                        <table className="table table-hover align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Component</th>
-                                    <th>Purpose</th>
-                                    <th>Endpoint</th>
-                                    <th>Status</th>
-                                    <th>Latency</th>
-                                </tr>
-                            </thead>
+                    {/* Health statistics */}
+                    <div className="row g-0 mb-4">
+                        <div className="col-sm-6 col-xl-3 panel">
+                            <div className="stat-card">
+                                <div className="stat-label">API status</div>
+                                <div className="stat-number fs-4 mt-3">
+                                    <StatusPill service={api} />
+                                </div>
+                                <div className="stat-foot">
+                                    {api?.data?.environment
+                                        ? `Environment: ${api.data.environment}`
+                                        : "HTTP health endpoint"}
+                                </div>
+                            </div>
+                        </div>
 
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div className="fw-semibold">
-                                            Voting API
-                                        </div>
-                                        <div className="small text-secondary">
-                                            Main service
-                                        </div>
-                                    </td>
-                                    <td>HTTP request handling</td>
-                                    <td><code>/api/Health/health</code></td>
-                                    <td><StatusPill service={api} /></td>
-                                    <td>{formatLatency(api?.latencyMs)}</td>
-                                </tr>
+                        <div className="col-sm-6 col-xl-3 panel">
+                            <div className="stat-card">
+                                <div className="stat-label">Database</div>
+                                <div className="stat-number fs-4 mt-3">
+                                    <StatusPill service={database} />
+                                </div>
+                                <div className="stat-foot">
+                                    {database?.data?.database ?? "PostgreSQL"}
+                                </div>
+                            </div>
+                        </div>
 
-                                <tr>
-                                    <td>
-                                        <div className="fw-semibold">
-                                            PostgreSQL
-                                        </div>
-                                        <div className="small text-secondary">
-                                            Primary database
-                                        </div>
-                                    </td>
-                                    <td>Database connectivity</td>
-                                    <td><code>/api/Health/db_health</code></td>
-                                    <td><StatusPill service={database} /></td>
-                                    <td>{formatLatency(database?.latencyMs)}</td>
-                                </tr>
+                        <div className="col-sm-6 col-xl-3 panel">
+                            <div className="stat-card">
+                                <div className="stat-label">API response time</div>
+                                <div className="stat-number fs-4 mt-3">
+                                    {formatLatency(api?.latencyMs)}
+                                </div>
+                                <div className="stat-foot">
+                                    Browser-measured HTTP latency
+                                </div>
+                            </div>
+                        </div>
 
-                                {nodes?.data?.nodes?.map((node) => (
-                                    <tr key={node.node}>
+                        <div className="col-sm-6 col-xl-3 panel">
+                            <div className="stat-card">
+                                <div className="stat-label">API uptime</div>
+                                <div className="stat-number fs-4 mt-3">
+                                    {Number.isFinite(api?.data?.uptimeSeconds)
+                                        ? `${Math.floor(api.data.uptimeSeconds / 3600)}h ${Math.floor(
+                                            (api.data.uptimeSeconds % 3600) / 60
+                                        )}m`
+                                        : "—"}
+                                </div>
+                                <div className="stat-foot">
+                                    Time since API process started
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Service components */}
+                    <section className="panel mb-4">
+                        <div className="panel-heading">
+                            <div>
+                                <h3 className="h6 fw-bold mb-1">
+                                    Service components
+                                </h3>
+                                <p className="text-secondary small mb-0">
+                                    Live status of configured health endpoints
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="table-responsive">
+                            <table className="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Component</th>
+                                        <th>Purpose</th>
+                                        <th>Endpoint</th>
+                                        <th>Status</th>
+                                        <th>Latency</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
                                         <td>
                                             <div className="fw-semibold">
-                                                {node.node}
+                                                Voting API
                                             </div>
                                             <div className="small text-secondary">
-                                                Blockchain service
+                                                Main service
                                             </div>
                                         </td>
-                                        <td>Node availability</td>
+                                        <td>HTTP request handling</td>
+                                        <td><code>/api/Health/health</code></td>
+                                        <td><StatusPill service={api} /></td>
+                                        <td>{formatLatency(api?.latencyMs)}</td>
+                                    </tr>
+
+                                    <tr>
                                         <td>
-                                            <code>
-                                                /api/Health/nodes/{node.node}
-                                            </code>
+                                            <div className="fw-semibold">
+                                                PostgreSQL
+                                            </div>
+                                            <div className="small text-secondary">
+                                                Primary database
+                                            </div>
                                         </td>
-                                        <td>
-                                            <span
-                                                className={`pill ${
-                                                    node.status === "Healthy"
+                                        <td>Database connectivity</td>
+                                        <td><code>/api/Health/db_health</code></td>
+                                        <td><StatusPill service={database} /></td>
+                                        <td>{formatLatency(database?.latencyMs)}</td>
+                                    </tr>
+
+                                    {nodes?.data?.nodes?.map((node) => (
+                                        <tr key={node.node}>
+                                            <td>
+                                                <div className="fw-semibold">
+                                                    {node.node}
+                                                </div>
+                                                <div className="small text-secondary">
+                                                    Blockchain service
+                                                </div>
+                                            </td>
+                                            <td>Node availability</td>
+                                            <td>
+                                                <code>
+                                                    /api/Health/nodes/{node.node}
+                                                </code>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    className={`pill ${node.status === "Healthy"
                                                         ? "pill-success"
                                                         : "pill-danger"
-                                                }`}
+                                                        }`}
+                                                >
+                                                    {node.status}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {Number.isFinite(node.latencyMs)
+                                                    ? `${node.latencyMs} ms`
+                                                    : "—"}
+                                            </td>
+                                        </tr>
+                                    ))}
+
+                                    {!nodes?.data?.nodes && (
+                                        <tr>
+                                            <td
+                                                colSpan={5}
+                                                className="text-secondary p-3"
                                             >
-                                                {node.status}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            {Number.isFinite(node.latencyMs)
-                                                ? `${node.latencyMs} ms`
-                                                : "—"}
-                                        </td>
-                                    </tr>
-                                ))}
-
-                                {!nodes?.data?.nodes && (
-                                    <tr>
-                                        <td
-                                            colSpan={5}
-                                            className="text-secondary p-3"
-                                        >
-                                            {nodes?.error ??
-                                                "Node health data unavailable"}
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                {/* Diagnostic details */}
-                <section className="panel">
-                    <div className="panel-heading">
-                        <div>
-                            <h3 className="h6 fw-bold mb-1">
-                                Health details
-                            </h3>
-                            <p className="text-secondary small mb-0">
-                                Diagnostics from the API response
-                            </p>
+                                                {nodes?.error ??
+                                                    "Node health data unavailable"}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
+                    </section>
 
-                    <div className="p-4">
-                        {api?.data ? (
-                            <dl className="row mb-0">
-                                <dt className="col-sm-4">API status</dt>
-                                <dd className="col-sm-8">{api.status}</dd>
-
-                                <dt className="col-sm-4">Environment</dt>
-                                <dd className="col-sm-8">
-                                    {api.data.environment ?? "Not supplied"}
-                                </dd>
-
-                                <dt className="col-sm-4">
-                                    Server timestamp (UTC)
-                                </dt>
-                                <dd className="col-sm-8">
-                                    {formatTime(api.data.timestamp)}
-                                </dd>
-
-                                <dt className="col-sm-4">API uptime</dt>
-                                <dd className="col-sm-8">
-                                    {api.data.uptimeSeconds ?? "Not supplied"} seconds
-                                </dd>
-                            </dl>
-                        ) : (
-                            <p className="text-secondary mb-0">
-                                {loading
-                                    ? "Loading health details..."
-                                    : `API details unavailable. ${api?.error ?? ""}`}
-                            </p>
-                        )}
-
-                        {database && !database.healthy && (
-                            <div className="alert alert-danger mt-3 mb-0">
-                                Database check failed:{" "}
-                                {database.error ?? database.status}
+                    {/* Diagnostic details */}
+                    <section className="panel">
+                        <div className="panel-heading">
+                            <div>
+                                <h3 className="h6 fw-bold mb-1">
+                                    Health details
+                                </h3>
+                                <p className="text-secondary small mb-0">
+                                    Diagnostics from the API response
+                                </p>
                             </div>
-                        )}
-                    </div>
-                </section>
+                        </div>
 
-                <footer className="page-footer">
-                    <span>BallotAdmin · System monitoring</span>
-                    <span>API, database and blockchain node health</span>
-                </footer>
-            </div>
-        </main>
-    </div>
-);
+                        <div className="p-4">
+                            {api?.data ? (
+                                <dl className="row mb-0">
+                                    <dt className="col-sm-4">API status</dt>
+                                    <dd className="col-sm-8">{api.status}</dd>
+
+                                    <dt className="col-sm-4">Environment</dt>
+                                    <dd className="col-sm-8">
+                                        {api.data.environment ?? "Not supplied"}
+                                    </dd>
+
+                                    <dt className="col-sm-4">
+                                        Server timestamp (UTC)
+                                    </dt>
+                                    <dd className="col-sm-8">
+                                        {formatTime(api.data.timestamp)}
+                                    </dd>
+
+                                    <dt className="col-sm-4">API uptime</dt>
+                                    <dd className="col-sm-8">
+                                        {api.data.uptimeSeconds ?? "Not supplied"} seconds
+                                    </dd>
+                                </dl>
+                            ) : (
+                                <p className="text-secondary mb-0">
+                                    {loading
+                                        ? "Loading health details..."
+                                        : `API details unavailable. ${api?.error ?? ""}`}
+                                </p>
+                            )}
+
+                            {database && !database.healthy && (
+                                <div className="alert alert-danger mt-3 mb-0">
+                                    Database check failed:{" "}
+                                    {database.error ?? database.status}
+                                </div>
+                            )}
+                        </div>
+                    </section>
+
+                    <footer className="page-footer">
+                        <span>BallotAdmin · System monitoring</span>
+                        <span>API, database and blockchain node health</span>
+                    </footer>
+                </div>
+            </main>
+        </div>
+    );
 }

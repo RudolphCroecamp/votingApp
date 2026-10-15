@@ -9,23 +9,6 @@ export default function AdminDash() {
             <Sidebar />
 
             <main className="admin-content">
-                <header className="topbar d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <div className="text-secondary small">
-                            Workspace / Overview
-                        </div>
-                        <h1 className="h4 mb-0 mt-1">Overview</h1>
-                    </div>
-
-                    <div className="d-flex align-items-center gap-3 ">
-                        <span className="status-dot"></span>
-                        <span className="small text-secondary d-none d-sm-inline">
-                            System status: operational
-                        </span>
-                        <div className="avatar avatar-sm">AD</div>
-                    </div>
-                </header>
-
                 <div className="content-wrap">
                     {/* Welcome panel */}
                     <div className="welcome-panel mb-4">

@@ -26,11 +26,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.frontend.R
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.HeaderChipBackground
 import com.example.frontend.ui.theme.Spacing
@@ -43,7 +45,7 @@ import com.example.frontend.ui.theme.Spacing
 fun HomeHeader(
     greeting: String,
     modifier: Modifier = Modifier,
-    verifiedLabel: String = "Verified voter",
+    verifiedLabel: String = stringResource(R.string.home_verified_voter),
     language: String = "EN",
     onLanguageClick: () -> Unit = {},
     onHelpClick: () -> Unit = {},
@@ -140,7 +142,7 @@ private fun LanguagePill(language: String, onClick: () -> Unit, modifier: Modifi
             Text(text = language, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
             Icon(
                 imageVector = Icons.Default.ExpandMore,
-                contentDescription = "Change language",
+                contentDescription = stringResource(R.string.language_change),
                 modifier = Modifier.size(16.dp)
             )
         }
@@ -162,7 +164,7 @@ private fun HeaderIconButton(onClick: () -> Unit, modifier: Modifier = Modifier)
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.HelpOutline,
-            contentDescription = "Help",
+            contentDescription = stringResource(R.string.action_help),
             tint = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.size(19.dp)
         )

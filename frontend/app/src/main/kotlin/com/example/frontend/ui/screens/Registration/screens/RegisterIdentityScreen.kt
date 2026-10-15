@@ -26,11 +26,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.screens.Auth.PASSPORT_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.Components.AppTextField
@@ -64,7 +66,7 @@ fun RegisterIdentityScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Verify Identity", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = stringResource(R.string.register_identity_title), onBackClick = onBackClick) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -77,14 +79,14 @@ fun RegisterIdentityScreen(
         ) {
             RegisterStepHeader(
                 step = 4,
-                heading = "Identity Document",
-                description = "Pick your document type and capture a clear photo of the front."
+                heading = stringResource(R.string.register_identity_heading),
+                description = stringResource(R.string.register_identity_description)
             )
 
             Spacer(modifier = Modifier.height(Spacing.small))
 
             DescriptionLabel(
-                text = "Document Type",
+                text = stringResource(R.string.register_document_type),
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.labelLarge
             )
@@ -94,7 +96,7 @@ fun RegisterIdentityScreen(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.item)
             ) {
                 DocumentOptionChip(
-                    label = "National ID",
+                    label = stringResource(R.string.register_document_national_id),
                     isSelected = uiState.documentType == IdentityDocumentType.NATIONAL_ID,
                     onClick = {
                         onEvent(RegistrationUiEvent.OnDocumentTypeSelected(IdentityDocumentType.NATIONAL_ID))
@@ -102,7 +104,7 @@ fun RegisterIdentityScreen(
                     modifier = Modifier.weight(1f)
                 )
                 DocumentOptionChip(
-                    label = "Passport",
+                    label = stringResource(R.string.register_document_passport),
                     isSelected = uiState.documentType == IdentityDocumentType.PASSPORT,
                     onClick = {
                         onEvent(RegistrationUiEvent.OnDocumentTypeSelected(IdentityDocumentType.PASSPORT))
@@ -115,8 +117,8 @@ fun RegisterIdentityScreen(
                 value = uiState.documentNumber,
                 onValueChange = { onEvent(RegistrationUiEvent.OnDocumentNumberChanged(it)) },
                 placeholder = when (uiState.documentType) {
-                    IdentityDocumentType.NATIONAL_ID -> "ID Number"
-                    IdentityDocumentType.PASSPORT -> "Passport Number"
+                    IdentityDocumentType.NATIONAL_ID -> stringResource(R.string.field_id_number)
+                    IdentityDocumentType.PASSPORT -> stringResource(R.string.field_passport_number)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.Badge,
@@ -127,7 +129,7 @@ fun RegisterIdentityScreen(
             )
 
             DescriptionLabel(
-                text = "Document Photo",
+                text = stringResource(R.string.register_document_photo),
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.labelLarge
             )
@@ -140,16 +142,18 @@ fun RegisterIdentityScreen(
 
             StatusLabel(
                 message = if (uiState.documentFrontImagePath != null) {
-                    "Document captured. Tap it again to retake the photo."
+                    stringResource(R.string.register_document_captured_retake)
                 } else {
-                    "Lay the document flat, fill the frame, and avoid glare on the photo page."
+                    stringResource(R.string.register_document_hint)
                 },
                 type = if (uiState.documentFrontImagePath != null) StatusType.Success else StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
 
             SimpleButton(
-                label = if (uiState.isLoading) "Verifying…" else "Save & Verify Identity",
+                label = stringResource(
+                    if (uiState.isLoading) R.string.register_verifying else R.string.register_save_verify_identity
+                ),
                 onClick = {
                     onEvent(RegistrationUiEvent.OnSaveIdentityDetails)
                     onContinue()
@@ -220,7 +224,7 @@ private fun DocumentCaptureBox(
             ) {
                 if (captured) {
                     SuccessCheckmarkBadge(size = 48.dp)
-                    DescriptionLabel(text = "Document captured", color = MutedText)
+                    DescriptionLabel(text = stringResource(R.string.register_document_captured), color = MutedText)
                 } else {
                     Icon(
                         imageVector = Icons.Default.CameraAlt,
@@ -228,7 +232,7 @@ private fun DocumentCaptureBox(
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(36.dp)
                     )
-                    DescriptionLabel(text = "Tap to capture front of document", color = MutedText)
+                    DescriptionLabel(text = stringResource(R.string.register_document_tap_capture), color = MutedText)
                 }
             }
         }

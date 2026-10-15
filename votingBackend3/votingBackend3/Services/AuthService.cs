@@ -33,31 +33,28 @@ namespace votingBackend3.Services
                 var user = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.id_number == creds.id_number);
 
                 // Stop if no account matches the supplied ID.
-                if(user == null) throw new UnauthorizedAccessException("User not found");
-
-
-                //check if user is allowed access to the services
-                if(user.allowed == false) throw new UnauthorizedAccessException("User does not have access to the service");
-
-                //block admin request
-                if(user.role == "Admin") throw new UnauthorizedAccessException("User does not have access to these services");
+                if(user == null) throw new UnauthorizedAccessException("Invalid credentials provided");
 
                 // Stop if the account is blocked
-                if (!user.allowed) throw new Exception("Account is blocked");
+                if (!user.allowed) throw new UnauthorizedAccessException("This user's account has been blocked");
+
+                //check if user is allowed access to the services
+                if (user.allowed == false) throw new UnauthorizedAccessException("User does not have access to the service");
+
+                //block admin request
+                if(user.role == "Admin") throw new UnauthorizedAccessException("User does not have suffiecient priviliges to these services");
 
                 // Embeddings must have equal lengths to be compared.
-                if (user.face_embedding.Length != creds.face_embedding.Length) throw new UnauthorizedAccessException("Invalid face embedding");
+                if (user.face_embedding.Length != creds.face_embedding.Length) throw new UnauthorizedAccessException("Invalid credentials provided");
 
                 // Compare the submitted face embedding with the saved embedding.
                 double similarity = CosineSimilarity(user.face_embedding, creds.face_embedding);
 
                 // Reject embeddings that do not meet the configured similarity threshold.
-                if (similarity < SIMULARITYSCORE) throw new UnauthorizedAccessException($"Face embedding does not match, similarity score: {similarity}"); ;
+                if (similarity < SIMULARITYSCORE) throw new UnauthorizedAccessException($"Invalid credentials provided"); ;
 
                 // Issue a signed token for the authenticated account.
                 string token = await GenerateToken(user.voter_id, user.role);
-
-                //TODO: update login status in db
 
                 return token;
 
@@ -78,26 +75,26 @@ namespace votingBackend3.Services
                 var user = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.id_number == creds.id_number);
 
                 // Stop if no account matches the supplied ID.
-                if (user == null) throw new UnauthorizedAccessException("User not found");
+                if (user == null) throw new UnauthorizedAccessException("Invalid credentials provided");
 
+                // Stop if the account is blocked
+                if (!user.allowed) throw new UnauthorizedAccessException("This user's account has been blocked");
 
                 //check if user is allowed access to the services
-                if (user.allowed == false) throw new UnauthorizedAccessException("User does not have access to the service");
+                if (user.allowed == false) throw new UnauthorizedAccessException("This user's account has been blocked");
 
                 //block voter request
-                if (user.role == "Voter") throw new UnauthorizedAccessException("User does not have access to these services");
+                if (user.role == "Voter") throw new UnauthorizedAccessException("User does not have suffiecient priviliges to these services");
 
                 //check password
                 var passwordHasher = new PasswordHasher<object>();
 
                 var result = passwordHasher.VerifyHashedPassword(null!, user.password, creds.password);
 
-                if (result == PasswordVerificationResult.Failed) throw new UnauthorizedAccessException("Invalid ID number or password.");
+                if (result == PasswordVerificationResult.Failed) throw new UnauthorizedAccessException("Invalid credentials provided");
 
                 // Issue a signed token for the authenticated account.
                 string token = await GenerateToken(user.voter_id, user.role);
-
-                //TODO: update login status in db
 
                 return token;
 

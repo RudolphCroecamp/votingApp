@@ -342,7 +342,7 @@ export default function ElectionVoterManagement() {
 
             <main className="admin-content">
                 <div className="evm-page">
-                    <header className="evm-header">
+                    <header className="evm-header panel p-3">
                         <div>
                             <span className="evm-eyebrow">
                                 ELECTION ADMINISTRATION
