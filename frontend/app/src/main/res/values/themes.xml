@@ -3,8 +3,10 @@
     <!--
       Compose owns the app's Material 3 theming (see ui/theme/Theme.kt).
       This platform theme only covers the window before Compose draws.
+      AppCompat parent because MainActivity is an AppCompatActivity (needed for
+      in-app language switching below Android 13).
     -->
-    <style name="Theme.Frontend" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Frontend" parent="Theme.AppCompat.Light.NoActionBar" />
 
     <!--
       Cold-start theme: replaces the stock Android icon with the ballot logo, then

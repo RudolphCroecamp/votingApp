@@ -41,11 +41,13 @@ import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import com.example.frontend.ui.Components.ActionRow
 import com.example.frontend.ui.Components.AppBottomBar
+import com.example.frontend.ui.Components.AppLanguagePickerDialog
 import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.HeroCard
 import com.example.frontend.ui.Components.HeroState
 import com.example.frontend.ui.Components.HomeHeader
 import com.example.frontend.ui.Components.PrivacyNote
+import com.example.frontend.ui.Components.currentAppLanguage
 import com.example.frontend.ui.theme.ErrorContainer
 import com.example.frontend.ui.theme.ErrorContent
 import com.example.frontend.ui.theme.FrontendTheme
@@ -78,7 +80,6 @@ fun HomeScreen(
     onReportProblem: () -> Unit = {},
     onPrivacy: () -> Unit = {},
     onHelp: () -> Unit = {},
-    onLanguage: () -> Unit = {},
     onSettings: () -> Unit = {},
     onVerifyVote: () -> Unit = {},
     onRemindMe: () -> Unit = {},
@@ -86,6 +87,7 @@ fun HomeScreen(
     backgroundColor: Color = PageBackground
 ) {
     var menuOpen by remember { mutableStateOf(false) }
+    var languagePickerOpen by remember { mutableStateOf(false) }
     val entered by rememberEntranceTrigger()
     val heroSwapMillis = motionDuration(MotionDurations.medium)
     val displayName = voterName.ifBlank { stringResource(R.string.voter_fallback_name) }
@@ -95,7 +97,8 @@ fun HomeScreen(
         topBar = {
             HomeHeader(
                 greeting = stringResource(R.string.home_greeting, displayName),
-                onLanguageClick = onLanguage,
+                language = currentAppLanguage().shortCode,
+                onLanguageClick = { languagePickerOpen = true },
                 onHelpClick = {
                     menuOpen = true
                     onMenuClick()
@@ -148,6 +151,9 @@ fun HomeScreen(
         },
         bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
     ) { innerPadding ->
+        if (languagePickerOpen) {
+            AppLanguagePickerDialog(onDismiss = { languagePickerOpen = false })
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()

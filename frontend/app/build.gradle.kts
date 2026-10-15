@@ -14,6 +14,11 @@ android {
         compose = true
     }
 
+    androidResources {
+        // Lists values-af/zu/xh in the system "App languages" screen (Android 13+).
+        generateLocaleConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.example.frontend"
         minSdk = 28
@@ -64,6 +69,7 @@ dependencies {
     implementation(libs.mlkit.face.detection)
 
     implementation(libs.activity.ktx)
+    implementation(libs.appcompat)
     implementation(libs.core.splashscreen)
     implementation(libs.lifecycle.runtime.ktx)
 

@@ -50,10 +50,8 @@ Lint reports 14 unused resources.
 Kotlin.
 
 - [x] Move user-facing text to `strings.xml` (Manifestos and Results screens still pending, in progress on their own branches)
-- [ ] **The language pill in `HomeHeader` currently promises something the app
-      cannot do** — "EN ⌄" implies a language picker, but with hardcoded strings
-      there is nothing to switch to. Either wire up real locales
-      (`values-af/`, `values-zu/`, `values-xh/`) or drop the pill until it works
+- [x] Language pill now opens a real picker: English, Afrikaans, isiZulu, isiXhosa (KAN-38).
+      Translations are first drafts and need a native-speaker review before release.
 - [ ] Add `tools:locale` and check RTL layout — `supportsRtl="true"` is already
       set in the manifest, so it is claimed but untested
 

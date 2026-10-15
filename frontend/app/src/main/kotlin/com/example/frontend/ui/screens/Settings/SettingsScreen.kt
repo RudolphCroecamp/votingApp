@@ -1,7 +1,6 @@
 package com.example.frontend.ui.screens.Settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,8 +34,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -63,9 +60,11 @@ import com.example.frontend.effects.entrance
 import com.example.frontend.effects.pressScale
 import com.example.frontend.effects.rememberEntranceTrigger
 import com.example.frontend.ui.Components.AppBottomBar
+import com.example.frontend.ui.Components.AppLanguagePickerDialog
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.SectionHeading
+import com.example.frontend.ui.Components.currentAppLanguage
 import com.example.frontend.ui.theme.BrandNavy
 import com.example.frontend.ui.theme.DividerColor
 import com.example.frontend.ui.theme.ErrorContainer
@@ -110,7 +109,6 @@ fun SettingsScreen(
     val entered by rememberEntranceTrigger()
 
     // Preferences local states
-    var selectedLanguage by rememberSaveable { mutableStateOf("English (ZA)") }
     var notificationsEnabled by rememberSaveable { mutableStateOf(true) }
     var faceVerificationEnabled by rememberSaveable { mutableStateOf(true) }
 
@@ -177,7 +175,7 @@ fun SettingsScreen(
                 SettingValueRow(
                     icon = Icons.Default.Language,
                     title = stringResource(R.string.settings_language_title),
-                    value = selectedLanguage,
+                    value = currentAppLanguage().nativeName,
                     description = stringResource(R.string.settings_language_description),
                     onClick = { showLanguageDialog = true },
                     iconTint = WarningContent,
@@ -308,54 +306,9 @@ fun SettingsScreen(
         }
     }
 
-    // Language Picker Dialog
+    // Language picker: applies the choice to the whole app.
     if (showLanguageDialog) {
-        AlertDialog(
-            onDismissRequest = { showLanguageDialog = false },
-            title = {
-                Text(
-                    text = stringResource(R.string.settings_language_dialog_title),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = BrandNavy
-                )
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
-                    SupportedLanguages.forEach { language ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    selectedLanguage = language
-                                    showLanguageDialog = false
-                                }
-                                .padding(vertical = Spacing.small, horizontal = Spacing.tight),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(Spacing.small)
-                        ) {
-                            RadioButton(
-                                selected = (language == selectedLanguage),
-                                onClick = {
-                                    selectedLanguage = language
-                                    showLanguageDialog = false
-                                },
-                                colors = RadioButtonDefaults.colors(selectedColor = BrandNavy)
-                            )
-                            Text(
-                                text = language,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = BrandNavy
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showLanguageDialog = false }) {
-                    Text(stringResource(R.string.action_cancel), color = BrandNavy)
-                }
-            }
-        )
+        AppLanguagePickerDialog(onDismiss = { showLanguageDialog = false })
     }
 
     // Logout Confirmation Dialog
