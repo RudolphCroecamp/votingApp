@@ -54,8 +54,10 @@ Kotlin.
       cannot do** — "EN ⌄" implies a language picker, but with hardcoded strings
       there is nothing to switch to. Either wire up real locales
       (`values-af/`, `values-zu/`, `values-xh/`) or drop the pill until it works
-- [ ] Add `tools:locale` and check RTL layout — `supportsRtl="true"` is already
+- [x] Add `tools:locale` and check RTL layout — `supportsRtl="true"` is already
       set in the manifest, so it is claimed but untested
+      Checked (KAN-39): RtlLayoutTest, plus a manual run on an emulator with an RTL locale.
+      tools:locale ships with the translations PR (KAN-38).
 
 ## 4. Replace the test stubs
 
