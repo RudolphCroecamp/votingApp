@@ -29,8 +29,6 @@ import com.example.frontend.ui.screens.Auth.LoginFaceScreen
 import com.example.frontend.ui.screens.Auth.LoginFaceViewModel
 import com.example.frontend.ui.screens.Auth.LoginScreen
 import com.example.frontend.ui.screens.Info.InfoScreen
-import com.example.frontend.ui.screens.Manifestos.ManifestosScreen
-import com.example.frontend.ui.screens.Manifestos.PartyDetailScreen
 import com.example.frontend.ui.screens.Profile.ProfileScreen
 import com.example.frontend.ui.screens.Settings.SettingsScreen
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
@@ -57,7 +55,6 @@ import com.example.frontend.ui.theme.motionDuration
 private fun screenFor(tab: BottomTab): Screen = when (tab) {
     BottomTab.Home -> Screen.Home
     BottomTab.Vote -> Screen.PartySelection
-    BottomTab.Manifestos -> Screen.Manifestos
     BottomTab.Info -> Screen.Info
     BottomTab.Settings -> Screen.Settings
 }
@@ -66,7 +63,6 @@ private fun screenFor(tab: BottomTab): Screen = when (tab) {
 private fun tabFor(destination: NavDestination?): BottomTab = when {
     destination == null -> BottomTab.Vote
     destination.hasRoute<Screen.Home>() -> BottomTab.Home
-    destination.hasRoute<Screen.Manifestos>() -> BottomTab.Manifestos
     destination.hasRoute<Screen.Info>() -> BottomTab.Info
     destination.hasRoute<Screen.Settings>() -> BottomTab.Settings
     else -> BottomTab.Vote
@@ -168,15 +164,7 @@ fun AppNavGraph(
 
         composable<Screen.Login> {
             LoginScreen(
-                onFaceVerification = { idNumber ->
-                    // TEMPORARY TESTING OVERRIDE: Skip face recognition to make app testing easier.
-                    navController.navigate(Screen.Home) {
-                        popUpTo<Screen.Login> { inclusive = true }
-                    }
-
-                    navController.navigate(Screen.LoginFace(idNumber))
-
-                },
+                onFaceVerification = { idNumber -> navController.navigate(Screen.LoginFace(idNumber)) },
                 onRegister = { navController.navigate(Screen.Register) }
             )
         }
@@ -313,12 +301,6 @@ fun AppNavGraph(
                     selectedParty = party
                     navController.navigate(Screen.Review)
                 },
-                onManifestoClick = { party ->
-                    navController.navigate(Screen.PartyDetail(party.id))
-                },
-                onAllManifestosClick = {
-                    navController.navigate(Screen.Manifestos)
-                },
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) }
             )
@@ -402,23 +384,6 @@ fun AppNavGraph(
                 },
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) }
-            )
-        }
-
-        composable<Screen.Manifestos> {
-            ManifestosScreen(
-                onPartyClick = { party -> navController.navigate(Screen.PartyDetail(party.id)) },
-                selectedTab = currentTab,
-                onTabSelected = { openTab(it) }
-            )
-        }
-
-        composable<Screen.PartyDetail> { entry ->
-            val route = entry.toRoute<Screen.PartyDetail>()
-            val party = SampleParties.firstOrNull { it.id == route.partyId } ?: SampleParties.first()
-            PartyDetailScreen(
-                party = party,
-                onBackClick = { navController.popBackStack() }
             )
         }
     }

@@ -32,7 +32,9 @@ import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.Spacing
 import com.example.frontend.ui.theme.StandardEasing
 import com.example.frontend.ui.theme.motionDuration
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class Ballot(val title: String, val shortLabel: String) {
     National("National Assembly", "National"),
     Regional("Regional Assembly", "Regional"),

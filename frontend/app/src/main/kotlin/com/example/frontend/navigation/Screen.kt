@@ -1,5 +1,6 @@
 package com.example.frontend.navigation
 
+import com.example.frontend.ui.Components.Ballot
 import kotlinx.serialization.Serializable
 
 sealed interface Screen {
@@ -25,10 +26,19 @@ sealed interface Screen {
     data object RegisterFace : Screen
     @Serializable
     data object RegisterDone : Screen
+    /**
+     * One ballot of the three-ballot flow. [editing] = opened from Review's
+     * "Change", so Continue returns to Review instead of the next ballot.
+     */
     @Serializable
-    data object PartySelection : Screen
+    data class PartySelection(
+        val ballot: Ballot = Ballot.National,
+        val editing: Boolean = false
+    ) : Screen
     @Serializable
     data object Review : Screen
+    @Serializable
+    data object VoteFaceCheck : Screen
     @Serializable
     data object Confirmation : Screen
     @Serializable
