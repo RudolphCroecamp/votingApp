@@ -1,4 +1,6 @@
-﻿namespace votingBackend3.Models.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace votingBackend3.Models.Entities
 {
     public enum ElectionVoterStatus
     {
@@ -9,11 +11,13 @@
 
     public class ElectionVoter
     {
+        [Required]
         public Guid election_id { get; set; }
+        [Required]
         public Guid voter_id { get; set; }
-
+        [Required]
         public ElectionVoterStatus status { get; set; } = ElectionVoterStatus.Pending;
-
+        [Required]
         public bool has_voted { get; set; } = false;
 
         public Election Election { get; set; } = null!;

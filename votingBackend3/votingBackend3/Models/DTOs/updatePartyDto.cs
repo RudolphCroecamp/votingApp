@@ -7,12 +7,13 @@ namespace votingBackend3.Models.DTOs
         [Required, MaxLength(150)]
         public string name { get; set; } = string.Empty;
 
-        [MaxLength(20)]
-        public string abbreviation { get; set; }
+        [Required, MaxLength(20)]
+        public string abbreviation { get; set; } = string.Empty;
 
         [Required, MaxLength(500)]
         public string description { get; set; } = string.Empty;
 
+        [Required]
         public bool allowed { get; set; } = true;
     }
 }

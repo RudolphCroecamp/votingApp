@@ -49,6 +49,8 @@ namespace votingBackend3.Services
 
                 if (request.GetType() != typeof(new_electionDto)) throw new Exception("Invalid request format");
 
+                if (request.start_date > request.end_date) throw new Exception("Start date cannot be after end date.");
+
                 Election new_election = new Election
                 {
                     election_id = Guid.NewGuid(),
@@ -76,6 +78,11 @@ namespace votingBackend3.Services
         public async Task<Party> CreateParty(new_partyDto request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request), "Invalid request data.");
+            if (request.GetType() != typeof(new_electionDto)) throw new Exception("Invalid request format");
+
+            //Checks to see if party name is unique
+            var partyExists = await _votingDbContext.party.AnyAsync(p => p.name == request.name);
+            if (partyExists) throw new InvalidOperationException("Party already exists.");
 
             var newParty = new Party
             {
@@ -152,6 +159,9 @@ namespace votingBackend3.Services
         {
             try
             {
+                //Checks Date
+                if (request.start_date > request.end_date) throw new ArgumentException("Start date cannot be after the end date.");
+
                 var election = await _votingDbContext.election.FindAsync(election_id);
 
                 if (election == null) throw new Exception("Election not found");
@@ -462,7 +472,7 @@ namespace votingBackend3.Services
             var isVoter = await _votingDbContext.auth
                 .AnyAsync(a =>
                     a.voter_id == request.voter_id &&
-                    a.role == "voter");
+                    a.role == "Voter");
 
             if (!isVoter) throw new UnauthorizedAccessException("User does not exist or does not have the voter role.");
             

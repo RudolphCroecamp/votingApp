@@ -7,15 +7,15 @@ namespace votingBackend3.Models.Entities
     {
         [Key]
         public Guid election_id { get; set; } = Guid.NewGuid();
-        [NotNull, Required]
+        [Required]
         public string election_name { get; set; } = string.Empty;
-        [NotNull, Required]
+        [Required]
         public string election_type { get; set; } = string.Empty;
-        [NotNull, Required]
+        [Required]
         public DateOnly start_date { get; set; }
-        [NotNull, Required]
+        [Required]
         public DateOnly end_date { get; set; }
-        [NotNull, Required]
+        [Required]
         public bool isActive { get; set; } = false;
 
 
