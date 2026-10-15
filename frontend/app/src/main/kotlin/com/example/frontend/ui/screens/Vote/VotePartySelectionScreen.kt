@@ -14,9 +14,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,9 +41,12 @@ import com.example.frontend.ui.theme.PageBackground
 @Composable
 fun VotePartySelectionScreen(
     onBackClick: () -> Unit,
-    onContinue: (Party) -> Unit,
+    onPartySelected: (Party) -> Unit,
+    onContinue: () -> Unit,
     modifier: Modifier = Modifier,
     ballot: Ballot = Ballot.National,
+    selectedPartyId: String? = null,
+    continueLabel: String = "Continue",
     ballotTitle: String = ballot.title,
     parties: List<Party> = SampleParties,
     selectedTab: BottomTab = BottomTab.Vote,
@@ -54,14 +54,12 @@ fun VotePartySelectionScreen(
     backgroundColor: Color = PageBackground
 ) {
     val entered by rememberEntranceTrigger()
-    var selectedId by remember { mutableStateOf<String?>(null) }
-    val selectedParty = parties.firstOrNull { it.id == selectedId }
 
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
         topBar = { AppTopBar(
-                title = "National Election",
+                title = ballot.title,
                 subtitle = "Choose your party",
                 onBackClick = onBackClick
             ) },
@@ -89,8 +87,8 @@ fun VotePartySelectionScreen(
             parties.forEachIndexed { index, party ->
                 PartyOption(
                     party = party,
-                    selected = party.id == selectedId,
-                    onClick = { selectedId = party.id },
+                    selected = party.id == selectedPartyId,
+                    onClick = { onPartySelected(party) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .entrance(entered, index = index + 2)
@@ -100,9 +98,10 @@ fun VotePartySelectionScreen(
             Spacer(modifier = Modifier.height(Spacing.tight))
 
             SimpleButton(
-                label = "Continue",
-                onClick = { selectedParty?.let(onContinue) },
+                label = continueLabel,
+                onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
+                enabled = parties.any { it.id == selectedPartyId },
                 variant = ButtonVariant.Tertiary,
                 trailingIcon = Icons.AutoMirrored.Filled.ArrowForward
             )
@@ -114,6 +113,12 @@ fun VotePartySelectionScreen(
 @Composable
 private fun VotePartySelectionScreenPreview() {
     FrontendTheme {
-        VotePartySelectionScreen(onBackClick = {}, onContinue = {})
+        VotePartySelectionScreen(
+            onBackClick = {},
+            onPartySelected = {},
+            onContinue = {},
+            ballot = Ballot.Regional,
+            selectedPartyId = SampleParties.first().id
+        )
     }
 }
