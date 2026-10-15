@@ -80,9 +80,11 @@ advertises it as its own destination.
 
 Lint flags these; none are urgent and each risks churn.
 
-- [ ] `coreKtx` 1.10.1 — well behind
-- [ ] AGP and Gradle wrapper versions flagged as obsolete
-- [ ] Check before upgrading whether anything depends on current behaviour
+- [x] `coreKtx` 1.10.1 → 1.19.1 (also declared directly now; CameraView uses it)
+- [x] Gradle wrapper 9.8.0 → 9.8.1; Kotlin 2.4.21, splashscreen 1.2.0,
+      kotlinx-serialization 1.11.0, CameraX 1.6.2. AGP 9.4.1 is already current
+- [x] Checked: unit tests, lint (no dependency warnings left) and the face-check
+      camera screen on the emulator
 
 ---
 
