@@ -29,6 +29,8 @@ import com.example.frontend.ui.screens.Auth.LoginFaceScreen
 import com.example.frontend.ui.screens.Auth.LoginFaceViewModel
 import com.example.frontend.ui.screens.Auth.LoginScreen
 import com.example.frontend.ui.screens.Info.InfoScreen
+import com.example.frontend.ui.screens.Profile.ProfileScreen
+import com.example.frontend.ui.screens.Settings.SettingsScreen
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
 import com.example.frontend.ui.screens.Registration.RegistrationViewModel
 import com.example.frontend.ui.screens.PrivacyConsent.PrivacyConsentScreen
@@ -75,7 +77,13 @@ fun AppNavGraph(
     // Flow state that outlives a single destination. Anything a later screen
     // needs but cannot be derived from its own route lives here.
     var selectedParty by remember { mutableStateOf<Party?>(null) }
-    var registeredName by remember { mutableStateOf("Voter") }
+    var registeredName by remember { mutableStateOf("Thandi Nkosi") }
+    var registeredIdNumber by remember { mutableStateOf("9201185082089") }
+    var registeredPhone by remember { mutableStateOf("0821234567") }
+    var registeredStreet by remember { mutableStateOf("124 Market Street") }
+    var registeredCity by remember { mutableStateOf("Johannesburg") }
+    var registeredProvince by remember { mutableStateOf("Gauteng") }
+    var registeredPostalCode by remember { mutableStateOf("2001") }
 
     val registrationState by registrationViewModel.uiState.collectAsState()
 
@@ -255,7 +263,10 @@ fun AppNavGraph(
             RegisterDoneScreen(
                 voterName = registrationState.voterName,
                 onContinue = {
-                    registeredName = registrationState.voterName
+                    if (registrationState.fullNames.isNotBlank()) registeredName = registrationState.fullNames
+                    if (registrationState.idNumber.isNotBlank()) registeredIdNumber = registrationState.idNumber
+                    if (registrationState.phone.isNotBlank()) registeredPhone = registrationState.phone
+                    if (registrationState.postalCode.isNotBlank()) registeredPostalCode = registrationState.postalCode
                     registrationViewModel.onEvent(RegistrationUiEvent.OnRegistrationComplete)
                     navController.navigate(Screen.Home) {
                         popUpTo<Screen.Welcome> { inclusive = false }
@@ -272,7 +283,7 @@ fun AppNavGraph(
                 onTabSelected = { openTab(it) },
                 onVotingStation = { navController.navigate(Screen.Info) },
                 onVotingInformation = { navController.navigate(Screen.Info) },
-                onCheckRegistration = { navController.navigate(Screen.Info) },
+                onCheckRegistration = { navController.navigate(Screen.Profile) },
                 onRemindMe = { navController.navigate(Screen.Info) },
                 onReportProblem = { navController.navigate(Screen.Info) },
                 onPrivacy = { navController.navigate(Screen.Info) },
@@ -340,8 +351,37 @@ fun AppNavGraph(
         }
 
         composable<Screen.Settings> {
-            InfoScreen(
+            SettingsScreen(
                 onBackClick = { navController.popBackStack() },
+                onProfileClick = { navController.navigate(Screen.Profile) },
+                onCheckRegistrationClick = { navController.navigate(Screen.Profile) },
+                onVotingInformationClick = { navController.navigate(Screen.Info) },
+                onPrivacyClick = { navController.navigate(Screen.Info) },
+                onHelpClick = { navController.navigate(Screen.Info) },
+                onReportProblemClick = { navController.navigate(Screen.Info) },
+                onLogoutClick = { logout() },
+                selectedTab = currentTab,
+                onTabSelected = { openTab(it) }
+            )
+        }
+
+        composable<Screen.Profile> {
+            ProfileScreen(
+                onBackClick = { navController.popBackStack() },
+                initialName = registeredName,
+                initialIdNumber = registeredIdNumber,
+                initialPhone = registeredPhone,
+                initialStreet = registeredStreet,
+                initialCity = registeredCity,
+                initialProvince = registeredProvince,
+                initialPostalCode = registeredPostalCode,
+                onSaveProfile = { phoneChanged, newPhone ->
+                    if (phoneChanged) registeredPhone = newPhone
+                },
+                onSaveIdentity = { newName, newIdNumber ->
+                    registeredName = newName
+                    registeredIdNumber = newIdNumber
+                },
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) }
             )
