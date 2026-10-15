@@ -49,6 +49,16 @@ namespace votingBackend3.Services
 
                 if (request.GetType() != typeof(new_electionDto)) throw new Exception("Invalid request format");
 
+                //Makes sure that the start date starts before the end date
+                if (request.start_date > request.end_date) throw new Exception("Start date cannot be after end date.");
+
+                //Makes sure that the Election name field is not blank
+                if (string.IsNullOrWhiteSpace(request.election_name)) throw new Exception("Election name is required.");
+
+                //Checks to see if a election already exists
+                var duplicateElection = await _votingDbContext.election.AnyAsync(e => e.election_name == request.election_name);
+                if (duplicateElection) throw new Exception("Election already exists.");
+
                 Election new_election = new Election
                 {
                     election_id = Guid.NewGuid(),
@@ -76,7 +86,11 @@ namespace votingBackend3.Services
         public async Task<Party> CreateParty(new_partyDto request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request), "Invalid request data.");
-
+            //Checks to see if there is a party name
+            if (string.IsNullOrWhiteSpace(request.name)) throw new ArgumentException("A party name is required.");
+            //Checks to see if party name is unique
+            var partyExists = await _votingDbContext.party.AnyAsync(p => p.name == request.name);
+            if (partyExists) throw new InvalidOperationException("Party already exists.");
             var newParty = new Party
             {
                 party_id = Guid.NewGuid(),
@@ -102,6 +116,17 @@ namespace votingBackend3.Services
                 if (data.status.GetType() != typeof(bool)) throw new Exception("Invalid status");
 
                 var election = await _votingDbContext.election.FindAsync(data.ID);
+
+                //Checks to see if there is atleast 2 parties in the election.
+                var partyCount = await _votingDbContext.election_party.CountAsync(ep => ep.election_id == election.election_id);
+                if (partyCount < 2) throw new InvalidOperationException("Election must have at least 2 parties.");
+
+                //Checks to see if the election has voters
+                var voterCount = await _votingDbContext.election_voter.CountAsync(ev => ev.election_id == election.election_id);
+                if (voterCount == 0) throw new InvalidOperationException("Election must have voters.");
+
+                //Checks to see if the election period has not ended
+                //if (election.end_date < DateOnly.FromDateTime(DateTime.UtcNow)) throw new InvalidOperationException("Cannot activate an election that has ended.");
 
                 if (election == null) throw new Exception("Election not found");
 
@@ -155,6 +180,18 @@ namespace votingBackend3.Services
                 var election = await _votingDbContext.election.FindAsync(election_id);
 
                 if (election == null) throw new Exception("Election not found");
+                //Checks request
+                if (request == null) throw new Exception(nameof("request"));
+                //Checks Date
+                if (request.start_date > request.end_date) throw new ArgumentException("Start date cannot be after the end date.");
+                //Checks if there is a election name
+                if (string.IsNullOrWhiteSpace(request.election_name)) throw new ArgumentException("Election name is required".);
+                //Checks to see if the election name already exists
+                var duplicateElection = await _votingDbContext.election.AnyAsync(e => e.election_name == request.election_name && e.election_id != election_id);
+                if (duplicateElection) throw new InvalidOperationException("Another election uses this name already");
+          
+                    
+                
 
                 //update
                 election.election_name = request.election_name;
@@ -181,6 +218,13 @@ namespace votingBackend3.Services
                 var party = await _votingDbContext.party.FindAsync(party_id);
 
                 if (party == null) throw new Exception("Party not found");
+                if (request == null) throw new ArgumentException(nameof(request));
+                //Checks to see if there is a party name
+                if (string.IsNullOrWhiteSpace(request.name)) throw new ArgumentException("A party name is required.");
+                //Checks to make sure that a similar party name does not already exist
+                var duplicate = await _votingDbContext.party.AnyAsync(p => p.name == request.name && p.party_id != party_id);
+                if (duplicate) throw new Exception("A party with the same name already exists.");
+
 
                 //update
                 party.name = request.name;
@@ -272,6 +316,9 @@ namespace votingBackend3.Services
             var election = await _votingDbContext.election.FindAsync(request.election_id);
 
             if (election == null)throw new Exception("Election not found.");
+
+            //Prevents a party from being assigned an election while an election is active
+            if (election.isActive) throw new InvalidOperationException("Cannot add party to an active election."); 
 
             var party = await _votingDbContext.party.FindAsync(request.party_id);
 
@@ -456,7 +503,15 @@ namespace votingBackend3.Services
         {
             // Validate the requested status.
             if (!Enum.IsDefined(typeof(ElectionVoterStatus), request.status))throw new ArgumentException("Invalid election voter status.");
-            
+
+            //Checks to see if election exists
+            var electionExists = await _votingDbContext.election.AnyAsync(e => e.election_id == request.election_id);
+            if(!electionExists) throw new KeyNotFoundException("Election not found");
+
+            //Checks to see if election is active
+            var election = await _votingDbContext.election.FindAsync(request.election_id);
+            if (election == null) throw new Exception("Election not found.");
+            if(!election.isActive) throw new InvalidOperationException("Election is not active.")
 
             // Ensure the user exists in auth and has the voter role.
             var isVoter = await _votingDbContext.auth
@@ -491,7 +546,19 @@ namespace votingBackend3.Services
             };
         }
 
+        //Used to gather a lsit of non-voters which can be used in a notification system(Optional feature)
+       // public async Task<List<ElectionVoterDTO>> GetNonVoters(Guid election_id, int limit = 100, int skip = 0)
+      //  {
+        //    var electionExists = await _votingDbContext.election.AnyAsync(e => e.election_id == election_id);
 
+        //    if (!electionExists) throw new KeyNotFoundException("Election not found.");
+
+          //  var nonVoters = await (from ev in _votingDbContext.election_voter join a in _votingDbContext.auth on ev.voter_id equals a.voter_id join v in _votingDbContext.voter on ev.voter_id equals v.voter_id where ev.election_id == election_id && !ev.has_voted && a.role == "Voter" orderby v.lastname, v.firstname select new ElectionVoterDto { election_id = ev.election_id, voter_id = ev.voter_id, voted = ev.has_voted, status = ev.status })
+             //   .Skip(skip)
+             //   .Take(limit)
+             //   .ToListAsync();
+          //  return nonVoters;
+        }
 
 
 
@@ -507,6 +574,10 @@ namespace votingBackend3.Services
                 var adminUser = await _votingDbContext.auth.FirstOrDefaultAsync(au => au.id_number == request.id_number);
 
                 if (adminUser != null) throw new Exception("User already exist");
+                //Checks to make sure that the firstname field is not blank
+                //if (string.IsNullOrWhiteSpace(request.firstname)) throw new ArgumentException("A first name is required.");
+                //Checks to make sure that the lastname field is not blank
+                if (string.IsNullOrWhiteSpace(request.lastname)) throw new ArgumentException("A last name is required.");
 
                 //hash password
                 var passwordHasher = new PasswordHasher<object>();
