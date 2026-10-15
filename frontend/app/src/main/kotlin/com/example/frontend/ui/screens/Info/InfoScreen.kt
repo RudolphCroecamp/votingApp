@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import com.example.frontend.ui.Components.ActionRow
@@ -53,8 +55,8 @@ fun InfoScreen(
         containerColor = backgroundColor,
         topBar = {
             AppTopBar(
-                title = "Information",
-                subtitle = "Everything you need before you vote",
+                title = stringResource(R.string.info_title),
+                subtitle = stringResource(R.string.info_subtitle),
                 onBackClick = onBackClick
             )
         },
@@ -70,15 +72,15 @@ fun InfoScreen(
         ) {
             SectionHeading(
                 modifier = Modifier.entrance(entered, index = 0),
-                title = "How voting works",
-                description = "Short guides covering the ballot, your rights and your privacy."
+                title = stringResource(R.string.info_heading),
+                description = stringResource(R.string.info_description)
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.small)) {
                 ActionRow(
                     icon = Icons.Default.HowToVote,
-                    title = "Election info and your rights",
-                    description = "The election, your ballots and what you may expect",
+                    title = stringResource(R.string.home_action_info_title),
+                    description = stringResource(R.string.info_rights_description),
                     onClick = onVotingInformation,
                     modifier = Modifier.entrance(entered, index = 1),
                     iconTint = WarningContent,
@@ -86,15 +88,15 @@ fun InfoScreen(
                 )
                 ActionRow(
                     icon = Icons.Default.LocationOn,
-                    title = "Find my voting station",
-                    description = "Address, hours and directions",
+                    title = stringResource(R.string.home_action_station_title),
+                    description = stringResource(R.string.home_action_station_description),
                     onClick = onVotingStation,
                     modifier = Modifier.entrance(entered, index = 2)
                 )
                 ActionRow(
                     icon = Icons.Default.Shield,
-                    title = "Your privacy",
-                    description = "How your vote stays anonymous and separate from you",
+                    title = stringResource(R.string.info_privacy_title),
+                    description = stringResource(R.string.info_privacy_description),
                     onClick = onPrivacy,
                     modifier = Modifier.entrance(entered, index = 3),
                     iconTint = SuccessContent,
@@ -102,8 +104,8 @@ fun InfoScreen(
                 )
                 ActionRow(
                     icon = Icons.AutoMirrored.Filled.HelpOutline,
-                    title = "Help and support",
-                    description = "Signing in, voting and verifying your receipt",
+                    title = stringResource(R.string.info_help_title),
+                    description = stringResource(R.string.info_help_description),
                     onClick = onHelp,
                     modifier = Modifier.entrance(entered, index = 4)
                 )

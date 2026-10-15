@@ -49,7 +49,7 @@ fun FaceCheckCamera(
     cameraGranted: Boolean,
     fileName: String,
     onFaceCaptured: (imagePath: String) -> Unit,
-    onCaptureProblem: (message: String) -> Unit,
+    onCaptureProblem: (messageRes: Int) -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
     dimmed: Boolean = false
@@ -80,7 +80,7 @@ fun FaceCheckCamera(
                         when (val graded = evaluateFaceCapture(photo)) {
                             is CaptureState.Problem -> {
                                 capture = graded
-                                onCaptureProblem(graded.message)
+                                onCaptureProblem(graded.messageRes)
                             }
                             is CaptureState.Captured -> {
                                 capture = CaptureState.Uploading
@@ -95,9 +95,9 @@ fun FaceCheckCamera(
                     onRetry()
                 },
                 onConfirm = {},
-                onError = { message ->
-                    capture = CaptureState.Problem(message)
-                    onCaptureProblem(message)
+                onError = { messageRes ->
+                    capture = CaptureState.Problem(messageRes)
+                    onCaptureProblem(messageRes)
                 }
             )
         }

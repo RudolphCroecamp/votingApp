@@ -26,9 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
@@ -60,11 +62,12 @@ fun AlreadyVotedScreen(
 ) {
     val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
+    val clipLabel = stringResource(R.string.already_voted_clip_label)
 
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Already voted", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = stringResource(R.string.already_voted_title), onBackClick = onBackClick) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -78,9 +81,8 @@ fun AlreadyVotedScreen(
             SuccessCheckmarkBadge()
 
             SectionHeading(
-                title = "You have already voted",
-                description = "Your ballot is in. Everyone gets one vote per election, so this " +
-                    "ballot cannot be opened again.",
+                title = stringResource(R.string.already_voted_heading),
+                description = stringResource(R.string.already_voted_description),
                 textAlign = TextAlign.Center
             )
 
@@ -96,21 +98,20 @@ fun AlreadyVotedScreen(
                 ReceiptCodeBox(
                     receiptCode = receiptCode,
                     onCopyClick = {
-                        scope.launch { clipboard.setPlainText("Voting receipt", receiptCode) }
+                        scope.launch { clipboard.setPlainText(clipLabel, receiptCode) }
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
             StatusLabel(
-                message = "Your receipt proves your ballot was counted. It does not show anyone " +
-                    "who you voted for.",
+                message = stringResource(R.string.already_voted_receipt_info),
                 type = StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
 
             SimpleButton(
-                label = "View my receipt",
+                label = stringResource(R.string.already_voted_view_receipt),
                 onClick = onViewReceipt,
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary,
@@ -119,7 +120,7 @@ fun AlreadyVotedScreen(
             )
 
             SimpleButton(
-                label = "Verify Receipt",
+                label = stringResource(R.string.verify_button),
                 onClick = onVerifyReceipt,
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Secondary,
@@ -127,8 +128,7 @@ fun AlreadyVotedScreen(
             )
 
             DescriptionLabel(
-                text = "If you did not cast this vote, call the Electoral Commission helpline " +
-                    "straight away.",
+                text = stringResource(R.string.already_voted_not_you),
                 modifier = Modifier.fillMaxWidth(),
                 color = MutedText,
                 textAlign = TextAlign.Center
@@ -175,7 +175,7 @@ private fun CastDetailsCard(
                         modifier = Modifier.size(18.dp)
                     )
                     Text(
-                        text = "Vote cast $castAt",
+                        text = stringResource(R.string.already_voted_cast_at, castAt),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MutedText
                     )

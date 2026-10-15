@@ -25,8 +25,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import androidx.compose.ui.unit.dp
@@ -68,8 +70,8 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             BrandHeader(
-                title = "South Africa\nNational Voting App",
-                subtitle = "Secure  ·  Anonymous  ·  Verifiable",
+                title = stringResource(R.string.brand_title),
+                subtitle = stringResource(R.string.brand_tagline),
                 logoSize = 72.dp,
                 modifier = Modifier.entrance(entered, index = 0)
             )
@@ -78,15 +80,14 @@ fun LoginScreen(
 
             SectionHeading(
                 modifier = Modifier.entrance(entered, index = 1),
-                title = "Sign in",
-                description = "Enter your South African ID or passport number, then verify your " +
-                    "face to sign in."
+                title = stringResource(R.string.login_title),
+                description = stringResource(R.string.login_description)
             )
 
             AppTextField(
                 value = idNumber,
                 onValueChange = { idNumber = it },
-                placeholder = "ID Number / Passport Number",
+                placeholder = stringResource(R.string.field_id_or_passport),
                 modifier = Modifier
                     .fillMaxWidth()
                     .entrance(entered, index = 2),
@@ -95,7 +96,7 @@ fun LoginScreen(
             )
 
             SimpleButton(
-                label = "Sign in with Face Verification",
+                label = stringResource(R.string.login_with_face),
                 onClick = { onFaceVerification(idNumber) },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -106,7 +107,7 @@ fun LoginScreen(
             )
 
             StatusLabel(
-                message = "Your face is matched against your registration scan. No password is needed.",
+                message = stringResource(R.string.login_face_info),
                 type = StatusType.Info,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -115,13 +116,13 @@ fun LoginScreen(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 DescriptionLabel(
-                    text = "Don't have an account?",
+                    text = stringResource(R.string.login_no_account),
                     color = MutedText,
                     textAlign = TextAlign.Center
                 )
                 TextButton(onClick = onRegister) {
                     Text(
-                        text = "Register",
+                        text = stringResource(R.string.login_register),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary
                     )

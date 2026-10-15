@@ -13,8 +13,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.Otp.OTP_MAX_ATTEMPTS
@@ -53,8 +55,8 @@ fun RegisterOtpScreen(
         containerColor = backgroundColor,
         topBar = {
             AppTopBar(
-                title = "Confirm your cellphone",
-                subtitle = "Step $OTP_STEP of $REGISTRATION_STEPS",
+                title = stringResource(R.string.register_otp_title),
+                subtitle = stringResource(R.string.register_step_of, OTP_STEP, REGISTRATION_STEPS),
                 onBackClick = onBackClick
             )
         }
@@ -70,8 +72,8 @@ fun RegisterOtpScreen(
         ) {
             RegisterStepHeader(
                 step = OTP_STEP,
-                heading = "Enter your code",
-                description = "This proves the cellphone number you gave us belongs to you."
+                heading = stringResource(R.string.register_otp_heading),
+                description = stringResource(R.string.register_otp_description)
             )
 
             OtpVerificationPanel(
@@ -79,12 +81,12 @@ fun RegisterOtpScreen(
                 onCodeChange = { onEvent(RegistrationUiEvent.OnOtpChanged(it)) },
                 onSubmit = { onEvent(RegistrationUiEvent.OnOtpSubmitted) },
                 onResend = { onEvent(RegistrationUiEvent.OnOtpRequested) },
-                submitLabel = "Verify and continue",
-                successMessage = "Cellphone number confirmed."
+                submitLabel = stringResource(R.string.register_otp_submit),
+                successMessage = stringResource(R.string.register_otp_success)
             )
 
             DescriptionLabel(
-                text = "Standard network rates apply. We only use this number to confirm it is you.",
+                text = stringResource(R.string.register_otp_rates),
                 modifier = Modifier.fillMaxWidth(),
                 color = MutedText,
                 textAlign = TextAlign.Center

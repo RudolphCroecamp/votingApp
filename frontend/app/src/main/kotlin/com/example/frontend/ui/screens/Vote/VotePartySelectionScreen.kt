@@ -16,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import androidx.compose.ui.unit.dp
@@ -46,8 +48,8 @@ fun VotePartySelectionScreen(
     modifier: Modifier = Modifier,
     ballot: Ballot = Ballot.National,
     selectedPartyId: String? = null,
-    continueLabel: String = "Continue",
-    ballotTitle: String = ballot.title,
+    continueLabel: String = stringResource(R.string.action_continue),
+    ballotTitle: String = stringResource(ballot.titleRes),
     parties: List<Party> = SampleParties,
     selectedTab: BottomTab = BottomTab.Vote,
     onTabSelected: (BottomTab) -> Unit = {},
@@ -59,8 +61,8 @@ fun VotePartySelectionScreen(
         modifier = modifier,
         containerColor = backgroundColor,
         topBar = { AppTopBar(
-                title = ballot.title,
-                subtitle = "Choose your party",
+                title = stringResource(ballot.titleRes),
+                subtitle = stringResource(R.string.vote_choose_party),
                 onBackClick = onBackClick
             ) },
         bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
@@ -80,7 +82,7 @@ fun VotePartySelectionScreen(
 
             SectionHeading(
                 title = ballotTitle,
-                description = "Select ONE party",
+                description = stringResource(R.string.vote_select_one_party),
                 modifier = Modifier.entrance(entered, index = 1)
             )
 

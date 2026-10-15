@@ -26,9 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppBottomBar
 import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.AppTopBar
@@ -48,8 +50,8 @@ fun VoteReceiptScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     receipts: List<BallotReceipt> = SampleReceipts,
-    electionName: String = "2026 National Election",
-    status: String = "Valid",
+    electionName: String = stringResource(R.string.election_name_sample),
+    status: String = stringResource(R.string.receipt_status_valid),
     selectedTab: BottomTab = BottomTab.Vote,
     onTabSelected: (BottomTab) -> Unit = {},
     backgroundColor: Color = PageBackground
@@ -58,7 +60,9 @@ fun VoteReceiptScreen(
         modifier = modifier,
         containerColor = backgroundColor,
         topBar = { AppTopBar(
-                title = if (receipts.size > 1) "Voting Receipts" else "Voting Receipt",
+                title = stringResource(
+                    if (receipts.size > 1) R.string.receipt_title_plural else R.string.receipt_title
+                ),
                 onBackClick = onBackClick
             ) },
         bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
@@ -75,7 +79,7 @@ fun VoteReceiptScreen(
             receipts.forEach { receipt ->
                 ReceiptDetailsCard(
                     receiptCode = receipt.code,
-                    ballotTitle = receipt.ballot.title,
+                    ballotTitle = stringResource(receipt.ballot.titleRes),
                     castAt = receipt.castAt,
                     electionName = electionName,
                     status = status
@@ -106,7 +110,7 @@ private fun ReceiptDetailsCard(
     ) {
         QrCodeImage(content = receiptCode)
         HeadingLabel(
-            text = "Voting Receipt",
+            text = stringResource(R.string.receipt_title),
             modifier = Modifier.fillMaxWidth(),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
@@ -130,16 +134,24 @@ private fun ReceiptDetailsCard(
             )
         }
         HorizontalDivider(color = DividerColor)
-        ReceiptDetailRow(icon = Icons.Default.DateRange, label = "Election", value = electionName)
-        ReceiptDetailRow(icon = Icons.Default.Lock, label = "Receipt ID", value = receiptCode)
+        ReceiptDetailRow(
+            icon = Icons.Default.DateRange,
+            label = stringResource(R.string.receipt_field_election),
+            value = electionName
+        )
+        ReceiptDetailRow(
+            icon = Icons.Default.Lock,
+            label = stringResource(R.string.receipt_field_id),
+            value = receiptCode
+        )
         ReceiptDetailRow(
             icon = Icons.Default.CheckCircle,
-            label = "Status",
+            label = stringResource(R.string.receipt_field_status),
             value = status,
             valueColor = StatusType.Success.contentColor
         )
         StatusLabel(
-            message = "This receipt can be used to verify that your vote was recorded, but it does not reveal who you voted for.",
+            message = stringResource(R.string.receipt_explainer),
             type = StatusType.Info,
             icon = Icons.Default.Lock,
             modifier = Modifier.fillMaxWidth()

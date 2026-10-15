@@ -49,7 +49,7 @@ Lint reports 14 unused resources.
 `res/values/strings.xml` has 2 entries; every other piece of UI copy is inline in
 Kotlin.
 
-- [ ] Move user-facing text to `strings.xml`
+- [x] Move user-facing text to `strings.xml` (Manifestos and Results screens still pending, in progress on their own branches)
 - [ ] **The language pill in `HomeHeader` currently promises something the app
       cannot do** — "EN ⌄" implies a language picker, but with hardcoded strings
       there is nothing to switch to. Either wire up real locales

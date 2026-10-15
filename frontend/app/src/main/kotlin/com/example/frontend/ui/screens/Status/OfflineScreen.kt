@@ -25,10 +25,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
@@ -58,7 +60,7 @@ fun OfflineScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "No internet connection", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = stringResource(R.string.offline_title), onBackClick = onBackClick) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -84,9 +86,8 @@ fun OfflineScreen(
             }
 
             SectionHeading(
-                title = "You are offline",
-                description = "We could not reach the Electoral Commission. Check your Wi-Fi or " +
-                    "mobile data and try again.",
+                title = stringResource(R.string.offline_heading),
+                description = stringResource(R.string.offline_description),
                 textAlign = TextAlign.Center
             )
 
@@ -95,7 +96,7 @@ fun OfflineScreen(
             }
 
             SimpleButton(
-                label = if (isRetrying) "Trying again…" else "Try again",
+                label = stringResource(if (isRetrying) R.string.status_trying_again else R.string.action_try_again),
                 onClick = onRetry,
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary,
@@ -104,23 +105,19 @@ fun OfflineScreen(
             )
 
             if (isRetrying) {
-                IndeterminateLinearIndicator(label = "Looking for a connection…")
+                IndeterminateLinearIndicator(label = stringResource(R.string.offline_looking))
             }
 
             StatusLabel(
-                message = if (wasCastingVote) {
-                    "When you are back online, open the ballot again and make your mark. " +
-                        "Nothing you picked was sent."
-                } else {
-                    "You can keep reading the voting information offline. Voting needs a connection."
-                },
+                message = stringResource(
+                    if (wasCastingVote) R.string.offline_hint_casting else R.string.offline_hint_reading
+                ),
                 type = StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
 
             DescriptionLabel(
-                text = "Still stuck? Move somewhere with better signal, turn flight mode off, " +
-                    "or try again on Wi-Fi.",
+                text = stringResource(R.string.offline_still_stuck),
                 modifier = Modifier.fillMaxWidth(),
                 color = MutedText,
                 textAlign = TextAlign.Center
@@ -152,14 +149,13 @@ private fun NoVoteRecordedCard(modifier: Modifier = Modifier) {
             )
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
                 Text(
-                    text = "Your vote was NOT recorded",
+                    text = stringResource(R.string.vote_not_recorded),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = ErrorContent
                 )
                 Text(
-                    text = "The ballot never reached us, so nothing was counted and nothing was " +
-                        "used up. You still have your vote.",
+                    text = stringResource(R.string.offline_not_recorded_detail),
                     style = MaterialTheme.typography.bodyMedium,
                     color = ErrorContent
                 )

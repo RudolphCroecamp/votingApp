@@ -1,21 +1,33 @@
 package com.example.frontend.ui.screens.Registration
 
+import androidx.annotation.StringRes
+import com.example.frontend.R
 import com.example.frontend.ui.Components.Otp.OtpState
 
 const val REGISTRATION_STEPS = 6
 const val OTP_STEP = 2
 const val POSTAL_CODE_LENGTH = 4
 
-enum class Province(val displayName: String) {
-    EASTERN_CAPE("Eastern Cape"),
-    FREE_STATE("Free State"),
-    GAUTENG("Gauteng"),
-    KWAZULU_NATAL("KwaZulu-Natal"),
-    LIMPOPO("Limpopo"),
-    MPUMALANGA("Mpumalanga"),
-    NORTHERN_CAPE("Northern Cape"),
-    NORTH_WEST("North West"),
-    WESTERN_CAPE("Western Cape")
+/**
+ * [apiName] is the official English name the backend stores; [displayNameRes] is what the
+ * voter sees in their language.
+ */
+enum class Province(val apiName: String, @param:StringRes val displayNameRes: Int) {
+    EASTERN_CAPE("Eastern Cape", R.string.province_eastern_cape),
+    FREE_STATE("Free State", R.string.province_free_state),
+    GAUTENG("Gauteng", R.string.province_gauteng),
+    KWAZULU_NATAL("KwaZulu-Natal", R.string.province_kwazulu_natal),
+    LIMPOPO("Limpopo", R.string.province_limpopo),
+    MPUMALANGA("Mpumalanga", R.string.province_mpumalanga),
+    NORTHERN_CAPE("Northern Cape", R.string.province_northern_cape),
+    NORTH_WEST("North West", R.string.province_north_west),
+    WESTERN_CAPE("Western Cape", R.string.province_western_cape);
+
+    companion object {
+        /** Province for a stored [apiName], or null if it is not one of the nine. */
+        fun fromApiName(name: String): Province? =
+            entries.firstOrNull { it.apiName.equals(name.trim(), ignoreCase = true) }
+    }
 }
 
 enum class IdentityDocumentType {
@@ -73,8 +85,9 @@ data class RegistrationUiState(
     val canSubmitFace: Boolean
         get() = hasConsented && capturedFaceImagePath != null && !isLoading
 
+    /** Blank until the voter types a name; screens show a translated fallback. */
     val voterName: String
-        get() = fullNames.ifBlank { "Voter" }
+        get() = fullNames.trim()
 }
 
 sealed interface RegistrationUiEvent {

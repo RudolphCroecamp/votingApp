@@ -40,11 +40,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppBottomBar
 import com.example.frontend.ui.Components.AppTextField
 import com.example.frontend.ui.Components.AppTopBar
+import com.example.frontend.ui.Components.Ballot
 import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
@@ -71,7 +74,7 @@ sealed interface ReceiptLookup {
     data object NotFound : ReceiptLookup
     data class Found(
         val receiptCode: String,
-        val ballotTitle: String,
+        val ballot: Ballot,
         val castAt: String,
         val electionName: String
     ) : ReceiptLookup
@@ -95,7 +98,7 @@ fun VoteVerifyReceiptScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Verify Your Vote", onBackClick = onBackClick) },
+        topBar = { AppTopBar(title = stringResource(R.string.verify_title), onBackClick = onBackClick) },
         bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
     ) { innerPadding ->
         Column(
@@ -107,9 +110,8 @@ fun VoteVerifyReceiptScreen(
             verticalArrangement = Arrangement.spacedBy(Spacing.item)
         ) {
             SectionHeading(
-                title = "Confirm your vote",
-                description = "Enter the receipt code you were given after voting to check that " +
-                    "your ballot was recorded."
+                title = stringResource(R.string.verify_heading),
+                description = stringResource(R.string.verify_description)
             )
 
             AppTextField(
@@ -118,14 +120,14 @@ fun VoteVerifyReceiptScreen(
                     receiptCode = it.uppercase()
                     result = ReceiptLookup.Idle
                 },
-                placeholder = "Receipt Code (AB7F-92K4-6ZP1-3QX8)",
+                placeholder = stringResource(R.string.verify_placeholder),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.Lock,
                 maxLength = RECEIPT_CODE_LENGTH
             )
 
             SimpleButton(
-                label = "Verify Receipt",
+                label = stringResource(R.string.verify_button),
                 onClick = { result = onVerify(receiptCode.trim()) },
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary,
@@ -134,7 +136,7 @@ fun VoteVerifyReceiptScreen(
             )
 
             SimpleButton(
-                label = "Paste from Clipboard",
+                label = stringResource(R.string.verify_paste),
                 onClick = {
                     scope.launch {
                         clipboard.getPlainText()?.let {
@@ -162,14 +164,13 @@ fun VoteVerifyReceiptScreen(
             ) { lookup ->
                 when (lookup) {
                     ReceiptLookup.Idle -> StatusLabel(
-                        message = "Your receipt proves your ballot was counted. It never reveals " +
-                            "who you voted for.",
+                        message = stringResource(R.string.verify_idle_info),
                         type = StatusType.Info,
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     ReceiptLookup.NotFound -> StatusLabel(
-                        message = "No vote matches that receipt code. Check the code and try again.",
+                        message = stringResource(R.string.verify_not_found),
                         type = StatusType.Error,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -194,15 +195,23 @@ private fun VerifiedReceiptCard(lookup: ReceiptLookup.Found) {
         verticalArrangement = Arrangement.spacedBy(Spacing.item)
     ) {
         StatusLabel(
-            message = "This vote was recorded and counted.",
+            message = stringResource(R.string.verify_found),
             type = StatusType.Success,
             modifier = Modifier.fillMaxWidth()
         )
         HorizontalDivider(color = CardBorder)
-        VerifiedDetailRow(Icons.Default.Lock, "Receipt ID", lookup.receiptCode)
-        VerifiedDetailRow(Icons.Default.DateRange, "Election", lookup.electionName)
-        VerifiedDetailRow(Icons.Default.DateRange, "Ballot", lookup.ballotTitle)
-        VerifiedDetailRow(Icons.Default.DateRange, "Recorded", lookup.castAt)
+        VerifiedDetailRow(Icons.Default.Lock, stringResource(R.string.receipt_field_id), lookup.receiptCode)
+        VerifiedDetailRow(
+            Icons.Default.DateRange,
+            stringResource(R.string.receipt_field_election),
+            lookup.electionName
+        )
+        VerifiedDetailRow(
+            Icons.Default.DateRange,
+            stringResource(R.string.receipt_field_ballot),
+            stringResource(lookup.ballot.titleRes)
+        )
+        VerifiedDetailRow(Icons.Default.DateRange, stringResource(R.string.receipt_field_recorded), lookup.castAt)
     }
 }
 
@@ -237,7 +246,7 @@ fun sampleLookup(code: String): ReceiptLookup =
     if (code.equals("AB7F-92K4-6ZP1-3QX8", ignoreCase = true)) {
         ReceiptLookup.Found(
             receiptCode = code.uppercase(),
-            ballotTitle = "National Assembly",
+            ballot = Ballot.National,
             castAt = "2026-05-27 09:42",
             electionName = "2026 National Election"
         )
