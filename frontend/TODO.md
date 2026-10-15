@@ -88,7 +88,7 @@ Lint flags these; none are urgent and each risks churn.
 
 - [ ] `ui/Components/` uses a capital-C directory name while every other package
       is lowercase — inconsistent, and an IDE rename is cheap
-- [ ] `AppFontFamily` in `ui/theme/Type.kt` is `FontFamily.SansSerif`. Dropping a
+- [x] `AppFontFamily` in `ui/theme/Type.kt` was `FontFamily.SansSerif` (now Inter, KAN-46). Dropping a
       `.ttf` into `res/font/` and changing that one line moves the whole app onto
       a brand typeface
 - [ ] `Screen.Review` is a `data object`, with the selected party held in graph
