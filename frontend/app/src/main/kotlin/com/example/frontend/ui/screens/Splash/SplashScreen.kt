@@ -143,7 +143,7 @@ fun SplashScreen(
                 Spacer(Modifier.height(Spacing.section))
 
                 HeadingLabel(
-                    text = "Your Voice. Your Vote.\nThe Future Together.",
+                    text = stringResource(R.string.splash_title),
                     modifier = Modifier
                         .fillMaxWidth()
                         .alpha(titleAlpha),
@@ -153,7 +153,7 @@ fun SplashScreen(
                 Spacer(Modifier.height(Spacing.card))
 
                 DescriptionLabel(
-                    text = "A fundamental right that sustains our democracy.",
+                    text = stringResource(R.string.splash_subtitle),
                     modifier = Modifier
                         .fillMaxWidth()
                         .alpha(commitmentAlpha),

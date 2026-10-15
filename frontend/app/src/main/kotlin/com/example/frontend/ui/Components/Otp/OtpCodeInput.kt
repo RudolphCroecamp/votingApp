@@ -21,6 +21,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.ErrorBorder
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.R
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.SurfaceSunken
 
@@ -52,6 +54,7 @@ fun OtpCodeInput(
     onCompleted: (String) -> Unit = {}
 ) {
     val focusRequester = remember { FocusRequester() }
+    val inputDescription = stringResource(R.string.otp_input_description, length)
 
     LaunchedEffect(enabled, autoFocus) {
         if (enabled && autoFocus) focusRequester.requestFocus()
@@ -69,7 +72,7 @@ fun OtpCodeInput(
         modifier = modifier
             .fillMaxWidth()
             .focusRequester(focusRequester)
-            .semantics { contentDescription = "Enter the $length digit code" },
+            .semantics { contentDescription = inputDescription },
         enabled = enabled,
         singleLine = true,
         cursorBrush = SolidColor(Color.Transparent),

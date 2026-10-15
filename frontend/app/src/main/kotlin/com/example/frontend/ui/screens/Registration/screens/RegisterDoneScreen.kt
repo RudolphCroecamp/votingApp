@@ -25,9 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.HeadingLabel
@@ -45,7 +47,7 @@ import com.example.frontend.ui.theme.Spacing
 fun RegisterDoneScreen(
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
-    voterName: String = "Voter",
+    voterName: String = "",
     backgroundColor: Color = PageBackground
 ) {
     Scaffold(
@@ -64,8 +66,8 @@ fun RegisterDoneScreen(
         ) {
             RegisterStepHeader(
                 step = 6,
-                heading = "You're Registered",
-                description = "Your details, ID document and face scan have been submitted for verification."
+                heading = stringResource(R.string.register_done_heading),
+                description = stringResource(R.string.register_done_description)
             )
 
             Spacer(modifier = Modifier.height(Spacing.section))
@@ -86,8 +88,11 @@ fun RegisterDoneScreen(
                     SuccessCheckmarkBadge()
 
                     SectionHeading(
-                        title = "Welcome, $voterName",
-                        description = "You can now sign in with your ID number and a face scan.",
+                        title = stringResource(
+                            R.string.register_done_welcome,
+                            voterName.ifBlank { stringResource(R.string.voter_fallback_name) }
+                        ),
+                        description = stringResource(R.string.register_done_sign_in_hint),
                         titleStyle = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center
                     )
@@ -98,17 +103,17 @@ fun RegisterDoneScreen(
 
             RegistrationFact(
                 icon = Icons.Default.Lock,
-                title = "Your privacy is protected",
-                description = "Your identity is secure and your vote stays anonymous."
+                title = stringResource(R.string.register_done_privacy_title),
+                description = stringResource(R.string.register_done_privacy_description)
             )
             RegistrationFact(
                 icon = Icons.Default.HowToVote,
-                title = "One person. One vote.",
-                description = "You can only vote once in each election."
+                title = stringResource(R.string.register_done_one_vote_title),
+                description = stringResource(R.string.register_done_one_vote_description)
             )
 
             StatusLabel(
-                message = "Keep your ID number handy. You will need it every time you sign in.",
+                message = stringResource(R.string.register_done_keep_id),
                 type = StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -116,7 +121,7 @@ fun RegisterDoneScreen(
             Spacer(modifier = Modifier.height(Spacing.section))
 
             SimpleButton(
-                label = "Continue to App",
+                label = stringResource(R.string.register_done_continue),
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary

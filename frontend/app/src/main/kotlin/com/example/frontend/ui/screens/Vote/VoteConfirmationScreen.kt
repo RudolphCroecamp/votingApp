@@ -21,8 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import com.example.frontend.ui.Components.AppBottomBar
@@ -74,11 +76,11 @@ fun VoteConfirmationScreen(
             Spacer(modifier = Modifier.height(Spacing.tight))
 
             SectionHeading(
-                title = "You made your mark!",
+                title = stringResource(R.string.confirmation_title),
                 description = if (receipts.size > 1) {
-                    "All ${receipts.size} of your votes have been recorded."
+                    stringResource(R.string.confirmation_all_recorded, receipts.size)
                 } else {
-                    "Your vote has been recorded."
+                    stringResource(R.string.confirmation_one_recorded)
                 },
                 textAlign = TextAlign.Center,
                 modifier = Modifier.entrance(entered, index = 1)
@@ -88,12 +90,14 @@ fun VoteConfirmationScreen(
 
             // One receipt per ballot (KAN-18).
             receipts.forEach { receipt ->
+                val shortLabel = stringResource(receipt.ballot.shortLabelRes)
+                val clipLabel = stringResource(R.string.confirmation_clip_label, shortLabel)
                 ReceiptCodeBox(
                     receiptCode = receipt.code,
-                    label = "${receipt.ballot.shortLabel} ballot receipt:",
+                    label = stringResource(R.string.confirmation_receipt_label, shortLabel),
                     onCopyClick = {
                         scope.launch {
-                            clipboard.setPlainText("${receipt.ballot.shortLabel} voting receipt", receipt.code)
+                            clipboard.setPlainText(clipLabel, receipt.code)
                         }
                     },
                     modifier = Modifier.entrance(entered, index = 2)
@@ -105,16 +109,21 @@ fun VoteConfirmationScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .entrance(entered, index = 3),
-                message = "Keep these receipts. They never show who you voted for."
+                message = stringResource(R.string.confirmation_keep_receipts)
             )
 
             Spacer(modifier = Modifier.height(Spacing.small))
 
             TextButton(onClick = onViewReceipt) {
-                Text(text = if (receipts.size > 1) "View receipts" else "View receipt", style = MaterialTheme.typography.labelLarge)
+                Text(
+                    text = stringResource(
+                        if (receipts.size > 1) R.string.confirmation_view_receipts else R.string.confirmation_view_receipt
+                    ),
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
             SimpleButton(
-                label = "Done",
+                label = stringResource(R.string.action_done),
                 onClick = onDone,
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary

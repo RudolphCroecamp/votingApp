@@ -24,8 +24,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppTextField
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.screens.Registration.POSTAL_CODE_LENGTH
@@ -48,7 +50,7 @@ fun AddressFields(
         verticalArrangement = Arrangement.spacedBy(Spacing.item)
     ) {
         DescriptionLabel(
-            text = "Your address",
+            text = stringResource(R.string.address_heading),
             modifier = Modifier.fillMaxWidth(),
             style = MaterialTheme.typography.labelLarge
         )
@@ -62,7 +64,7 @@ fun AddressFields(
         AppTextField(
             value = uiState.street,
             onValueChange = { onEvent(RegistrationUiEvent.OnStreetChanged(it)) },
-            placeholder = "Street Address",
+            placeholder = stringResource(R.string.address_street),
             modifier = Modifier.fillMaxWidth(),
             leadingIcon = Icons.Default.Home
         )
@@ -70,7 +72,7 @@ fun AddressFields(
         AppTextField(
             value = uiState.city,
             onValueChange = { onEvent(RegistrationUiEvent.OnCityChanged(it)) },
-            placeholder = "City or Town",
+            placeholder = stringResource(R.string.address_city),
             modifier = Modifier.fillMaxWidth(),
             leadingIcon = Icons.Default.LocationCity
         )
@@ -78,7 +80,7 @@ fun AddressFields(
         AppTextField(
             value = uiState.postalCode,
             onValueChange = { onEvent(RegistrationUiEvent.OnPostalCodeChanged(it)) },
-            placeholder = "Postal Code",
+            placeholder = stringResource(R.string.address_postal_code),
             modifier = Modifier.fillMaxWidth(),
             leadingIcon = Icons.Default.MarkunreadMailbox,
             keyboardType = KeyboardType.Number,
@@ -86,8 +88,7 @@ fun AddressFields(
         )
 
         DescriptionLabel(
-            text = "Your province decides which provincial and regional ballots you get, " +
-                "so it has to be right.",
+            text = stringResource(R.string.address_province_hint),
             modifier = Modifier.fillMaxWidth(),
             color = MutedText,
             style = MaterialTheme.typography.bodySmall
@@ -110,7 +111,7 @@ private fun ProvinceDropdown(
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = selected?.displayName.orEmpty(),
+            value = selected?.let { stringResource(it.displayNameRes) }.orEmpty(),
             onValueChange = {},
             readOnly = true,
             modifier = Modifier
@@ -120,7 +121,7 @@ private fun ProvinceDropdown(
             shape = MaterialTheme.shapes.medium,
             placeholder = {
                 Text(
-                    text = "Province",
+                    text = stringResource(R.string.address_province),
                     color = MutedText,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -152,7 +153,7 @@ private fun ProvinceDropdown(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = province.displayName,
+                            text = stringResource(province.displayNameRes),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.primary
                         )

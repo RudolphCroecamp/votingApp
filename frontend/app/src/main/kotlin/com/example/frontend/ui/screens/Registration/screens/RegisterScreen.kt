@@ -21,9 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.Components.AppTextField
 import com.example.frontend.ui.Components.AppTopBar
@@ -59,8 +61,8 @@ fun RegisterScreen(
         containerColor = backgroundColor,
         topBar = {
             AppTopBar(
-                title = "Create your account",
-                subtitle = "Step 1 of $REGISTRATION_STEPS",
+                title = stringResource(R.string.register_title),
+                subtitle = stringResource(R.string.register_step_of, 1, REGISTRATION_STEPS),
                 onBackClick = onBackClick
             )
         }
@@ -76,14 +78,14 @@ fun RegisterScreen(
         ) {
             RegisterStepHeader(
                 step = 1,
-                heading = "Your Details",
-                description = "Register with your South African ID or passport to get your ballot."
+                heading = stringResource(R.string.register_details_heading),
+                description = stringResource(R.string.register_details_description)
             )
 
             AppTextField(
                 value = uiState.fullNames,
                 onValueChange = { onEvent(RegistrationUiEvent.OnFullNamesChanged(it)) },
-                placeholder = "Full Name",
+                placeholder = stringResource(R.string.field_full_name),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.Person
             )
@@ -91,7 +93,7 @@ fun RegisterScreen(
             AppTextField(
                 value = uiState.idNumber,
                 onValueChange = { onEvent(RegistrationUiEvent.OnIdNumberChanged(it)) },
-                placeholder = "ID Number / Passport Number",
+                placeholder = stringResource(R.string.field_id_or_passport),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.AccountBox,
                 maxLength = ID_NUMBER_MAX_LENGTH
@@ -100,7 +102,7 @@ fun RegisterScreen(
             AppTextField(
                 value = uiState.phone,
                 onValueChange = { onEvent(RegistrationUiEvent.OnPhoneChanged(it)) },
-                placeholder = "Cellphone Number",
+                placeholder = stringResource(R.string.field_cellphone),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.Phone,
                 keyboardType = KeyboardType.Phone
@@ -109,7 +111,7 @@ fun RegisterScreen(
             AppTextField(
                 value = uiState.email,
                 onValueChange = { onEvent(RegistrationUiEvent.OnEmailChanged(it)) },
-                placeholder = "Email Address (Optional)",
+                placeholder = stringResource(R.string.field_email_optional),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.Email,
                 keyboardType = KeyboardType.Email
@@ -122,7 +124,7 @@ fun RegisterScreen(
             )
 
             SimpleButton(
-                label = "Continue",
+                label = stringResource(R.string.action_continue),
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary,
@@ -130,15 +132,13 @@ fun RegisterScreen(
             )
 
             StatusLabel(
-                message = "Next you will capture your ID document, then scan your face. " +
-                    "That scan replaces a password when you sign in.",
+                message = stringResource(R.string.register_next_steps_info),
                 type = StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
 
             DescriptionLabel(
-                text = "Your details are used only to confirm you are on the voters' roll. " +
-                    "Your ballot stays anonymous.",
+                text = stringResource(R.string.register_details_privacy),
                 modifier = Modifier.fillMaxWidth(),
                 color = MutedText,
                 textAlign = TextAlign.Center
@@ -146,13 +146,13 @@ fun RegisterScreen(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 DescriptionLabel(
-                    text = "Already have an account?",
+                    text = stringResource(R.string.register_have_account),
                     color = MutedText,
                     textAlign = TextAlign.Center
                 )
                 TextButton(onClick = onSignIn) {
                     Text(
-                        text = "Sign In",
+                        text = stringResource(R.string.register_sign_in),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary
                     )

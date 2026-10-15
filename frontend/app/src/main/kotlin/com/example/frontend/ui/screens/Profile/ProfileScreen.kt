@@ -64,11 +64,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import com.example.frontend.ui.Components.AppBottomBar
@@ -76,8 +78,10 @@ import com.example.frontend.ui.Components.AppTextField
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.BottomTab
 import com.example.frontend.ui.Components.ButtonVariant
+import com.example.frontend.ui.Components.Otp.formatCountdown
 import com.example.frontend.ui.Components.SectionHeading
 import com.example.frontend.ui.Components.SimpleButton
+import com.example.frontend.ui.screens.Registration.Province
 import com.example.frontend.ui.theme.BrandNavy
 import com.example.frontend.ui.theme.BrandNavyDeep
 import com.example.frontend.ui.theme.CardBorder
@@ -97,17 +101,10 @@ import com.example.frontend.ui.theme.WarningText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private val SouthAfricanProvinces = listOf(
-    "Eastern Cape",
-    "Free State",
-    "Gauteng",
-    "KwaZulu-Natal",
-    "Limpopo",
-    "Mpumalanga",
-    "North West",
-    "Northern Cape",
-    "Western Cape"
-)
+/** Translated label for a stored province name; unknown names are shown as-is. */
+@Composable
+private fun provinceLabel(apiName: String): String =
+    Province.fromApiName(apiName)?.let { stringResource(it.displayNameRes) } ?: apiName
 
 @Composable
 fun ProfileScreen(
@@ -168,7 +165,12 @@ fun ProfileScreen(
     // OTP Modal states for Cellphone update
     var showOtpDialog by remember { mutableStateOf(false) }
     var otpCode by remember { mutableStateOf("") }
-    var otpError by remember { mutableStateOf<String?>(null) }
+    var otpError by remember { mutableStateOf<Int?>(null) }
+
+    // Resolved up front: snackbars are shown from coroutines, outside composition.
+    val addressUpdatedMessage = stringResource(R.string.profile_snackbar_address_updated)
+    val identityUpdatedMessage = stringResource(R.string.profile_snackbar_identity_updated)
+    val phoneUpdatedMessage = stringResource(R.string.profile_snackbar_phone_updated)
     var isVerifyingOtp by remember { mutableStateOf(false) }
     var countdownSeconds by remember { mutableStateOf(30) }
 
@@ -204,8 +206,8 @@ fun ProfileScreen(
         containerColor = backgroundColor,
         topBar = {
             AppTopBar(
-                title = "Voter Profile",
-                subtitle = "View and manage your registered details",
+                title = stringResource(R.string.settings_profile_title),
+                subtitle = stringResource(R.string.profile_subtitle),
                 onBackClick = onBackClick
             )
         },
@@ -273,7 +275,7 @@ fun ProfileScreen(
                                 modifier = Modifier.size(16.dp)
                             )
                             Text(
-                                text = "Verified Registered Voter",
+                                text = stringResource(R.string.profile_verified_voter),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = SuccessContent
                             )
@@ -293,8 +295,8 @@ fun ProfileScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SectionHeading(
-                        title = "Verified Identity Information",
-                        description = "Full legal names and South African ID / Passport Number",
+                        title = stringResource(R.string.profile_identity_title),
+                        description = stringResource(R.string.profile_identity_description),
                         modifier = Modifier.weight(1f)
                     )
                     TextButton(
@@ -308,7 +310,7 @@ fun ProfileScreen(
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = if (isEditingIdentity) "Cancel" else "Edit",
+                            text = stringResource(if (isEditingIdentity) R.string.action_cancel else R.string.action_edit),
                             color = BrandNavy,
                             fontWeight = FontWeight.Bold
                         )
@@ -330,45 +332,49 @@ fun ProfileScreen(
                         if (!isEditingIdentity) {
                             ReadOnlyDetailRow(
                                 icon = Icons.Default.Person,
-                                label = "Full Names",
+                                label = stringResource(R.string.profile_full_names),
                                 value = currentFullName
                             )
                             HorizontalDivider(color = DividerColor)
                             ReadOnlyDetailRow(
                                 icon = Icons.Default.AccountBox,
-                                label = "National ID / Passport Number",
+                                label = stringResource(R.string.profile_id_or_passport),
                                 value = formatIdNumber(currentIdNumber),
                                 isProtected = true
                             )
                             HorizontalDivider(color = DividerColor)
                             ReadOnlyDetailRow(
                                 icon = Icons.Default.Shield,
-                                label = "Voting District Status",
-                                value = "Active • District 19700183 ($province)"
+                                label = stringResource(R.string.profile_district_status),
+                                value = stringResource(
+                                    R.string.profile_district_value,
+                                    "19700183",
+                                    provinceLabel(province)
+                                )
                             )
                         } else {
                             Text(
-                                text = "Full Legal Names",
+                                text = stringResource(R.string.profile_full_legal_names),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = BrandNavy
                             )
                             AppTextField(
                                 value = fullName,
                                 onValueChange = { fullName = it },
-                                placeholder = "Full Legal Names (e.g. Thandi Nkosi)",
+                                placeholder = stringResource(R.string.profile_full_legal_names_hint),
                                 leadingIcon = Icons.Default.Person,
                                 modifier = Modifier.fillMaxWidth()
                             )
 
                             Text(
-                                text = "National ID / Passport Number",
+                                text = stringResource(R.string.profile_id_or_passport),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = BrandNavy
                             )
                             AppTextField(
                                 value = idNumber,
                                 onValueChange = { idNumber = it },
-                                placeholder = "13-Digit SA ID Number",
+                                placeholder = stringResource(R.string.profile_id_hint),
                                 leadingIcon = Icons.Default.AccountBox,
                                 keyboardType = KeyboardType.Number,
                                 maxLength = 13,
@@ -393,7 +399,7 @@ fun ProfileScreen(
                                         modifier = Modifier.size(18.dp)
                                     )
                                     Text(
-                                        text = "Biometric Face Recognition required: Updating your legal name or ID number triggers a face scan verification.",
+                                        text = stringResource(R.string.profile_identity_face_warning),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = WarningText
                                     )
@@ -410,13 +416,13 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.spacedBy(Spacing.small)
             ) {
                 SectionHeading(
-                    title = "Contact Information",
-                    description = "Your registered cellphone number for SMS notifications"
+                    title = stringResource(R.string.profile_contact_title),
+                    description = stringResource(R.string.profile_contact_description)
                 )
                 AppTextField(
                     value = phone,
                     onValueChange = { phone = it },
-                    placeholder = "Cellphone number (e.g. 082 123 4567)",
+                    placeholder = stringResource(R.string.profile_phone_hint),
                     leadingIcon = Icons.Default.Phone,
                     keyboardType = KeyboardType.Phone,
                     modifier = Modifier.fillMaxWidth()
@@ -439,7 +445,7 @@ fun ProfileScreen(
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
-                            text = "Changing your cellphone number requires a 6-digit SMS OTP code.",
+                            text = stringResource(R.string.profile_phone_otp_warning),
                             style = MaterialTheme.typography.bodySmall,
                             color = WarningText
                         )
@@ -453,18 +459,18 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.spacedBy(Spacing.small)
             ) {
                 SectionHeading(
-                    title = "Residential Address",
-                    description = "Determines your provincial and regional ballot allocation"
+                    title = stringResource(R.string.profile_address_title),
+                    description = stringResource(R.string.profile_address_description)
                 )
 
                 // Province Dropdown Field
                 Box(modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
-                        value = province,
+                        value = provinceLabel(province),
                         onValueChange = {},
                         readOnly = true,
                         enabled = false,
-                        label = { Text("Province", color = MutedText) },
+                        label = { Text(stringResource(R.string.address_province), color = MutedText) },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Home,
@@ -475,7 +481,7 @@ fun ProfileScreen(
                         trailingIcon = {
                             Icon(
                                 imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = "Select province",
+                                contentDescription = stringResource(R.string.profile_select_province),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         },
@@ -498,11 +504,11 @@ fun ProfileScreen(
                         onDismissRequest = { provinceExpanded = false },
                         modifier = Modifier.fillMaxWidth(0.85f)
                     ) {
-                        SouthAfricanProvinces.forEach { item ->
+                        Province.entries.forEach { item ->
                             DropdownMenuItem(
-                                text = { Text(text = item, color = BrandNavy) },
+                                text = { Text(text = stringResource(item.displayNameRes), color = BrandNavy) },
                                 onClick = {
-                                    province = item
+                                    province = item.apiName
                                     provinceExpanded = false
                                 }
                             )
@@ -513,7 +519,7 @@ fun ProfileScreen(
                 AppTextField(
                     value = city,
                     onValueChange = { city = it },
-                    placeholder = "City / Town (e.g. Johannesburg)",
+                    placeholder = stringResource(R.string.profile_city_hint),
                     leadingIcon = Icons.Default.Home,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -521,7 +527,7 @@ fun ProfileScreen(
                 AppTextField(
                     value = street,
                     onValueChange = { street = it },
-                    placeholder = "Street Address (e.g. 124 Market Street)",
+                    placeholder = stringResource(R.string.profile_street_hint),
                     leadingIcon = Icons.Default.Home,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -529,7 +535,7 @@ fun ProfileScreen(
                 AppTextField(
                     value = postalCode,
                     onValueChange = { postalCode = it },
-                    placeholder = "Postal Code (e.g. 2001)",
+                    placeholder = stringResource(R.string.profile_postal_hint),
                     leadingIcon = Icons.Default.Badge,
                     keyboardType = KeyboardType.Number,
                     maxLength = 4,
@@ -543,7 +549,9 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.spacedBy(Spacing.small)
             ) {
                 SimpleButton(
-                    label = if (identityHasChanged) "Verify Face & Save Changes" else "Save Profile Changes",
+                    label = stringResource(
+                        if (identityHasChanged) R.string.profile_verify_face_save else R.string.profile_save_changes
+                    ),
                     onClick = {
                         if (identityHasChanged) {
                             showFaceScanDialog = true
@@ -555,7 +563,7 @@ fun ProfileScreen(
                             otpError = null
                         } else {
                             scope.launch {
-                                snackbarHostState.showSnackbar("Residential address updated successfully")
+                                snackbarHostState.showSnackbar(addressUpdatedMessage)
                             }
                             onSaveProfile(false, phone)
                         }
@@ -588,7 +596,7 @@ fun ProfileScreen(
             },
             title = {
                 Text(
-                    text = "Face Verification Required",
+                    text = stringResource(R.string.profile_face_required_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = BrandNavy,
                     textAlign = TextAlign.Center
@@ -600,7 +608,7 @@ fun ProfileScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "To update your legal name or ID number, please complete a biometric face scan to verify your identity.",
+                        text = stringResource(R.string.profile_face_required_body),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MutedText,
                         textAlign = TextAlign.Center
@@ -633,7 +641,7 @@ fun ProfileScreen(
                             ) {
                                 CircularProgressIndicator(color = GoldAccent, modifier = Modifier.size(36.dp))
                                 Text(
-                                    text = "Matching biometric face template...",
+                                    text = stringResource(R.string.profile_face_matching),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.White
                                 )
@@ -664,7 +672,7 @@ fun ProfileScreen(
                         )
                     } else {
                         Text(
-                            text = "Hold device at eye level and position your face in the oval.",
+                            text = stringResource(R.string.profile_face_hint),
                             style = MaterialTheme.typography.bodySmall,
                             color = MutedText,
                             textAlign = TextAlign.Center
@@ -674,7 +682,9 @@ fun ProfileScreen(
             },
             confirmButton = {
                 SimpleButton(
-                    label = if (isVerifyingFace) "Scanning..." else "Verify Face & Save",
+                    label = stringResource(
+                        if (isVerifyingFace) R.string.profile_scanning else R.string.profile_verify_face_and_save
+                    ),
                     onClick = {
                         isVerifyingFace = true
                         faceScanError = null
@@ -698,7 +708,7 @@ fun ProfileScreen(
                                 countdownSeconds = 30
                                 otpCode = ""
                             } else {
-                                snackbarHostState.showSnackbar("Identity verified. Full Name and ID Number updated!")
+                                snackbarHostState.showSnackbar(identityUpdatedMessage)
                                 onSaveProfile(false, phone)
                             }
                         }
@@ -717,7 +727,7 @@ fun ProfileScreen(
                     },
                     enabled = !isVerifyingFace
                 ) {
-                    Text("Cancel", color = BrandNavy)
+                    Text(stringResource(R.string.action_cancel), color = BrandNavy)
                 }
             }
         )
@@ -741,7 +751,7 @@ fun ProfileScreen(
             },
             title = {
                 Text(
-                    text = "Verify Cellphone Change",
+                    text = stringResource(R.string.profile_otp_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = BrandNavy
                 )
@@ -752,7 +762,7 @@ fun ProfileScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "A 6-digit SMS OTP code was sent to $phone. Enter it below to confirm your phone number change.",
+                        text = stringResource(R.string.profile_otp_body, phone),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MutedText,
                         textAlign = TextAlign.Center
@@ -774,7 +784,7 @@ fun ProfileScreen(
 
                     if (otpError != null) {
                         Text(
-                            text = otpError!!,
+                            text = stringResource(otpError!!),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -786,7 +796,11 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = if (countdownSeconds > 0) "Resend in ${countdownSeconds}s" else "Didn't receive code?",
+                            text = if (countdownSeconds > 0) {
+                                stringResource(R.string.otp_resend_in, formatCountdown(countdownSeconds))
+                            } else {
+                                stringResource(R.string.profile_otp_not_received)
+                            },
                             style = MaterialTheme.typography.bodySmall,
                             color = MutedText
                         )
@@ -798,14 +812,19 @@ fun ProfileScreen(
                                 otpError = null
                             }
                         ) {
-                            Text("Resend SMS", color = if (countdownSeconds == 0) BrandNavy else MutedText)
+                            Text(
+                                stringResource(R.string.profile_otp_resend_sms),
+                                color = if (countdownSeconds == 0) BrandNavy else MutedText
+                            )
                         }
                     }
                 }
             },
             confirmButton = {
                 SimpleButton(
-                    label = if (isVerifyingOtp) "Verifying..." else "Verify & Save",
+                    label = stringResource(
+                        if (isVerifyingOtp) R.string.register_verifying else R.string.profile_verify_and_save
+                    ),
                     onClick = {
                         if (otpCode.length == 6) {
                             isVerifyingOtp = true
@@ -814,11 +833,11 @@ fun ProfileScreen(
                                 showOtpDialog = false
                                 isVerifyingOtp = false
                                 currentPhone = phone
-                                snackbarHostState.showSnackbar("Cellphone number & profile updated successfully")
+                                snackbarHostState.showSnackbar(phoneUpdatedMessage)
                                 onSaveProfile(true, phone)
                             }
                         } else {
-                            otpError = "Please enter the full 6-digit OTP code"
+                            otpError = R.string.profile_otp_incomplete
                         }
                     },
                     enabled = otpCode.length == 6 && !isVerifyingOtp,
@@ -833,7 +852,7 @@ fun ProfileScreen(
                         otpError = null
                     }
                 ) {
-                    Text("Cancel", color = BrandNavy)
+                    Text(stringResource(R.string.action_cancel), color = BrandNavy)
                 }
             }
         )
@@ -886,7 +905,7 @@ private fun ReadOnlyDetailRow(
         if (isProtected) {
             Icon(
                 imageVector = Icons.Default.Lock,
-                contentDescription = "Read only",
+                contentDescription = stringResource(R.string.profile_read_only),
                 tint = MutedText,
                 modifier = Modifier.size(18.dp)
             )

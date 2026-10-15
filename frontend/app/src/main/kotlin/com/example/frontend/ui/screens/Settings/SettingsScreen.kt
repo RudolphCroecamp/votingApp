@@ -53,10 +53,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.pressScale
 import com.example.frontend.effects.rememberEntranceTrigger
@@ -121,8 +123,8 @@ fun SettingsScreen(
         containerColor = backgroundColor,
         topBar = {
             AppTopBar(
-                title = "Settings",
-                subtitle = "Preferences, account & app configuration",
+                title = stringResource(R.string.tab_settings),
+                subtitle = stringResource(R.string.settings_subtitle),
                 onBackClick = onBackClick
             )
         },
@@ -142,21 +144,21 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(Spacing.small)
             ) {
                 SectionHeading(
-                    title = "Account & Voter Profile",
-                    description = "Manage your registration and voter details"
+                    title = stringResource(R.string.settings_account_title),
+                    description = stringResource(R.string.settings_account_description)
                 )
                 SettingActionRow(
                     icon = Icons.Default.Person,
-                    title = "Voter Profile",
-                    description = "View personal details and registered address",
+                    title = stringResource(R.string.settings_profile_title),
+                    description = stringResource(R.string.settings_profile_description),
                     onClick = onProfileClick,
                     iconTint = InfoContent,
                     iconBackground = InfoContainer
                 )
                 SettingActionRow(
                     icon = Icons.Default.AssignmentTurnedIn,
-                    title = "Check Registration Status",
-                    description = "Confirm your status and voting district",
+                    title = stringResource(R.string.settings_registration_title),
+                    description = stringResource(R.string.settings_registration_description),
                     onClick = onCheckRegistrationClick,
                     iconTint = SuccessContent,
                     iconBackground = SuccessContainer
@@ -169,22 +171,22 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(Spacing.small)
             ) {
                 SectionHeading(
-                    title = "App Preferences",
-                    description = "Customize language and notification reminders"
+                    title = stringResource(R.string.settings_preferences_title),
+                    description = stringResource(R.string.settings_preferences_description)
                 )
                 SettingValueRow(
                     icon = Icons.Default.Language,
-                    title = "Language",
+                    title = stringResource(R.string.settings_language_title),
                     value = selectedLanguage,
-                    description = "Select your preferred official language",
+                    description = stringResource(R.string.settings_language_description),
                     onClick = { showLanguageDialog = true },
                     iconTint = WarningContent,
                     iconBackground = WarningContainer
                 )
                 SettingToggleRow(
                     icon = Icons.Default.Notifications,
-                    title = "Election Reminders",
-                    description = "Receive voting day reminders and official alerts",
+                    title = stringResource(R.string.settings_reminders_title),
+                    description = stringResource(R.string.settings_reminders_description),
                     checked = notificationsEnabled,
                     onCheckedChange = { notificationsEnabled = it },
                     iconTint = InfoContent,
@@ -198,13 +200,13 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(Spacing.small)
             ) {
                 SectionHeading(
-                    title = "Security & Privacy",
-                    description = "Biometrics and ballot privacy settings"
+                    title = stringResource(R.string.settings_security_title),
+                    description = stringResource(R.string.settings_security_description)
                 )
                 SettingToggleRow(
                     icon = Icons.Default.Face,
-                    title = "Face Verification",
-                    description = "Require facial scan check before voting",
+                    title = stringResource(R.string.settings_face_title),
+                    description = stringResource(R.string.settings_face_description),
                     checked = faceVerificationEnabled,
                     onCheckedChange = { faceVerificationEnabled = it },
                     iconTint = SuccessContent,
@@ -212,8 +214,8 @@ fun SettingsScreen(
                 )
                 SettingActionRow(
                     icon = Icons.Default.Shield,
-                    title = "Privacy & Data Protection",
-                    description = "How your vote stays encrypted and anonymous",
+                    title = stringResource(R.string.settings_privacy_title),
+                    description = stringResource(R.string.settings_privacy_description),
                     onClick = onPrivacyClick,
                     iconTint = SuccessContent,
                     iconBackground = SuccessContainer
@@ -226,29 +228,29 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(Spacing.small)
             ) {
                 SectionHeading(
-                    title = "Help & Information",
-                    description = "Guides, support and reporting issues"
+                    title = stringResource(R.string.settings_help_section_title),
+                    description = stringResource(R.string.settings_help_section_description)
                 )
                 SettingActionRow(
                     icon = Icons.AutoMirrored.Filled.HelpOutline,
-                    title = "Help & Support",
-                    description = "Voting guides and answers to common questions",
+                    title = stringResource(R.string.menu_help_support),
+                    description = stringResource(R.string.settings_help_description),
                     onClick = onHelpClick,
                     iconTint = WarningContent,
                     iconBackground = WarningContainer
                 )
                 SettingActionRow(
                     icon = Icons.AutoMirrored.Filled.MenuBook,
-                    title = "Election Information",
-                    description = "Ballot process, rules and voter rights",
+                    title = stringResource(R.string.settings_election_info_title),
+                    description = stringResource(R.string.settings_election_info_description),
                     onClick = onVotingInformationClick,
                     iconTint = WarningContent,
                     iconBackground = WarningContainer
                 )
                 SettingActionRow(
                     icon = Icons.Default.ReportProblem,
-                    title = "Report a Problem",
-                    description = "Log technical issues or voter concerns",
+                    title = stringResource(R.string.settings_report_title),
+                    description = stringResource(R.string.settings_report_description),
                     onClick = onReportProblemClick,
                     iconTint = ErrorContent,
                     iconBackground = ErrorContainer
@@ -262,8 +264,8 @@ fun SettingsScreen(
             ) {
                 SettingActionRow(
                     icon = Icons.AutoMirrored.Filled.Logout,
-                    title = "Log Out",
-                    description = "Sign out of your voter account",
+                    title = stringResource(R.string.menu_log_out),
+                    description = stringResource(R.string.settings_logout_description),
                     onClick = { showLogoutDialog = true },
                     iconTint = ErrorContent,
                     iconBackground = ErrorContainer
@@ -291,13 +293,13 @@ fun SettingsScreen(
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        text = "Electoral Commission of South Africa (IEC)",
+                        text = stringResource(R.string.settings_footer_iec),
                         style = MaterialTheme.typography.labelMedium,
                         color = MutedText
                     )
                 }
                 Text(
-                    text = "Version 1.0.0 • Build 2026.1 • Secure E-Voting System",
+                    text = stringResource(R.string.settings_footer_version),
                     style = MaterialTheme.typography.bodySmall,
                     color = MutedText,
                     textAlign = TextAlign.Center
@@ -312,7 +314,7 @@ fun SettingsScreen(
             onDismissRequest = { showLanguageDialog = false },
             title = {
                 Text(
-                    text = "Select Language",
+                    text = stringResource(R.string.settings_language_dialog_title),
                     style = MaterialTheme.typography.titleLarge,
                     color = BrandNavy
                 )
@@ -350,7 +352,7 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showLanguageDialog = false }) {
-                    Text("Cancel", color = BrandNavy)
+                    Text(stringResource(R.string.action_cancel), color = BrandNavy)
                 }
             }
         )
@@ -370,14 +372,14 @@ fun SettingsScreen(
             },
             title = {
                 Text(
-                    text = "Log Out?",
+                    text = stringResource(R.string.settings_logout_confirm_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = BrandNavy
                 )
             },
             text = {
                 Text(
-                    text = "Are you sure you want to log out of your voter account on this device?",
+                    text = stringResource(R.string.settings_logout_confirm_body),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MutedText
                 )
@@ -389,12 +391,12 @@ fun SettingsScreen(
                         onLogoutClick()
                     }
                 ) {
-                    Text("Log Out", color = ErrorContent, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.menu_log_out), color = ErrorContent, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("Cancel", color = BrandNavy)
+                    Text(stringResource(R.string.action_cancel), color = BrandNavy)
                 }
             }
         )

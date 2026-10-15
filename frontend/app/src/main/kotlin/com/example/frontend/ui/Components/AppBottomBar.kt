@@ -1,5 +1,6 @@
 package com.example.frontend.ui.Components
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -30,8 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.InfoContainer
 import com.example.frontend.ui.theme.MotionDurations
@@ -40,11 +43,11 @@ import com.example.frontend.ui.theme.StandardEasing
 import com.example.frontend.ui.theme.motionDuration
 import com.example.frontend.ui.theme.pressSpring
 
-enum class BottomTab(val label: String, val icon: ImageVector) {
-    Home("Home", Icons.Default.Home),
-    Vote("Vote", Icons.Default.HowToVote),
-    Info("Info", Icons.Default.Info),
-    Settings("Settings", Icons.Default.Settings)
+enum class BottomTab(@param:StringRes val labelRes: Int, val icon: ImageVector) {
+    Home(R.string.tab_home, Icons.Default.Home),
+    Vote(R.string.tab_vote, Icons.Default.HowToVote),
+    Info(R.string.tab_info, Icons.Default.Info),
+    Settings(R.string.tab_settings, Icons.Default.Settings)
 }
 
 /**
@@ -71,6 +74,7 @@ fun AppBottomBar(
         ) {
             BottomTab.entries.forEach { tab ->
                 val active = tab == selected
+                val label = stringResource(tab.labelRes)
                 val colorSpec = tween<androidx.compose.ui.graphics.Color>(
                     durationMillis = motionDuration(MotionDurations.medium),
                     easing = StandardEasing
@@ -107,7 +111,7 @@ fun AppBottomBar(
                     ) {
                         Icon(
                             imageVector = tab.icon,
-                            contentDescription = tab.label,
+                            contentDescription = label,
                             tint = tint,
                             modifier = Modifier
                                 .size(22.dp)
@@ -118,7 +122,7 @@ fun AppBottomBar(
                         )
                     }
                     Text(
-                        text = tab.label,
+                        text = label,
                         color = tint,
                         style = if (active) {
                             MaterialTheme.typography.labelSmall
