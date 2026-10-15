@@ -64,6 +64,9 @@ dependencies {
     implementation(libs.mlkit.face.detection)
 
     implementation(libs.activity.ktx)
+    // CameraView uses core-ktx (androidx.core.graphics.red/green/blue); it only came in
+    // transitively before, at whatever version other libraries pulled.
+    implementation(libs.androidx.core.ktx)
     implementation(libs.core.splashscreen)
     implementation(libs.lifecycle.runtime.ktx)
 
