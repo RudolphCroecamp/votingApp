@@ -71,8 +71,8 @@ Kotlin.
 `Screen.Settings` renders `InfoScreen` as a placeholder, but the bottom bar
 advertises it as its own destination.
 
-- [ ] Decide what belongs there (language, notifications, sign out, about)
-- [ ] Or remove the tab until it exists
+- [x] Decide what belongs there (language, notifications, sign out, about)
+- [x] Implemented SettingsScreen with Account, Language, Notifications, Theme, Biometrics, Privacy and Log Out options
 
 ## 6. Dependency updates (low priority)
 

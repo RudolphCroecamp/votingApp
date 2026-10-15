@@ -31,6 +31,17 @@ android {
             }
         }
     }
+    testOptions {
+        // Robolectric navigation tests render real Compose screens on the JVM.
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            // Robolectric reads JDK internals that JDK 17+ (this build runs on 25) hides by default.
+            it.jvmArgs(
+                "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED",
+                "--add-opens=java.base/java.io=ALL-UNNAMED"
+            )
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -71,6 +82,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(platform(libs.compose.bom))
+    testImplementation(libs.compose.ui.test.junit4)
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ext.junit)
