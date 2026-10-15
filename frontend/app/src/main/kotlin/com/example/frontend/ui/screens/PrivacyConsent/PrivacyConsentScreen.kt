@@ -1,5 +1,6 @@
 package com.example.frontend.ui.screens.PrivacyConsent
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,11 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import androidx.compose.runtime.getValue
@@ -59,47 +62,43 @@ import com.example.frontend.ui.theme.Spacing
 
 const val PRIVACY_CONSENT_STEP = 3
 
-private const val CONSENT_STATEMENT =
-    "I have read the above and I agree to the Electoral Commission collecting and " +
-        "using my personal information for voter registration and voting."
-
 data class ConsentDataItem(
     val icon: ImageVector,
-    val label: String,
-    val purpose: String,
-    val retention: String
+    @param:StringRes val labelRes: Int,
+    @param:StringRes val purposeRes: Int,
+    @param:StringRes val retentionRes: Int
 )
 
 val CONSENT_DATA_ITEMS: List<ConsentDataItem> = listOf(
     ConsentDataItem(
         icon = Icons.Default.AccountBox,
-        label = "Your ID number",
-        purpose = "To check you are on the voters' roll and that you only vote once.",
-        retention = "Kept while you stay registered to vote."
+        labelRes = R.string.consent_id_label,
+        purposeRes = R.string.consent_id_purpose,
+        retentionRes = R.string.consent_retention_registered
     ),
     ConsentDataItem(
         icon = Icons.Default.PhotoCamera,
-        label = "A photo of your ID or passport",
-        purpose = "To confirm the ID number you gave us belongs to a real document.",
-        retention = "Deleted once your registration is approved, within 30 days."
+        labelRes = R.string.consent_id_photo_label,
+        purposeRes = R.string.consent_id_photo_purpose,
+        retentionRes = R.string.consent_retention_30_days
     ),
     ConsentDataItem(
         icon = Icons.Default.Face,
-        label = "A scan of your face",
-        purpose = "To match your face to your ID photo, and to sign you in instead of a password.",
-        retention = "Deleted once your registration is approved, within 30 days."
+        labelRes = R.string.consent_face_label,
+        purposeRes = R.string.consent_face_purpose,
+        retentionRes = R.string.consent_retention_30_days
     ),
     ConsentDataItem(
         icon = Icons.Default.Home,
-        label = "Your home address",
-        purpose = "To place you in the right voting district, which decides your ballots.",
-        retention = "Kept while you stay registered to vote."
+        labelRes = R.string.consent_address_label,
+        purposeRes = R.string.consent_address_purpose,
+        retentionRes = R.string.consent_retention_registered
     ),
     ConsentDataItem(
         icon = Icons.Default.Phone,
-        label = "Your cellphone number",
-        purpose = "To send the one-time code that confirms it is you signing in.",
-        retention = "Kept while you stay registered to vote."
+        labelRes = R.string.consent_phone_label,
+        purposeRes = R.string.consent_phone_purpose,
+        retentionRes = R.string.consent_retention_registered
     )
 )
 
@@ -120,8 +119,8 @@ fun PrivacyConsentScreen(
         containerColor = backgroundColor,
         topBar = {
             AppTopBar(
-                title = "Privacy and consent",
-                subtitle = "Step $PRIVACY_CONSENT_STEP of $REGISTRATION_STEPS",
+                title = stringResource(R.string.consent_title),
+                subtitle = stringResource(R.string.register_step_of, PRIVACY_CONSENT_STEP, REGISTRATION_STEPS),
                 onBackClick = onBackClick
             )
         }
@@ -136,14 +135,13 @@ fun PrivacyConsentScreen(
         ) {
             RegisterStepHeader(
                 step = PRIVACY_CONSENT_STEP,
-                heading = "What we collect and why",
-                description = "South Africa's privacy law (POPIA) says we must tell you this " +
-                    "and get your agreement before we collect anything.",
+                heading = stringResource(R.string.consent_heading),
+                description = stringResource(R.string.consent_description),
                 modifier = Modifier.entrance(entered, index = 0)
             )
 
             StatusLabel(
-                message = "No photos are taken and no face is scanned until you agree below.",
+                message = stringResource(R.string.consent_no_photos_yet),
                 type = StatusType.Info,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -160,10 +158,7 @@ fun PrivacyConsentScreen(
             }
 
             DescriptionLabel(
-                text = "We never sell your information and we never share who you voted for. " +
-                    "Your ballot is stored separately from your identity, so no one can link " +
-                    "the two. You may withdraw your agreement or ask us to delete your data at " +
-                    "any time in Settings, though you cannot vote without it.",
+                text = stringResource(R.string.consent_never_sell),
                 modifier = Modifier
                     .fillMaxWidth()
                     .entrance(entered, index = dataItems.size + 2),
@@ -179,7 +174,7 @@ fun PrivacyConsentScreen(
             )
 
             SimpleButton(
-                label = "Continue",
+                label = stringResource(R.string.action_continue),
                 onClick = onContinue,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -191,7 +186,7 @@ fun PrivacyConsentScreen(
 
             if (!uiState.hasConsented) {
                 DescriptionLabel(
-                    text = "Tick the box above to continue.",
+                    text = stringResource(R.string.consent_tick_to_continue),
                     modifier = Modifier.fillMaxWidth(),
                     color = MutedText,
                     textAlign = TextAlign.Center
@@ -224,12 +219,12 @@ private fun ConsentDataRow(
             )
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
                 HeadingLabel(
-                    text = item.label,
+                    text = stringResource(item.labelRes),
                     style = MaterialTheme.typography.titleSmall
                 )
-                DescriptionLabel(text = item.purpose)
+                DescriptionLabel(text = stringResource(item.purposeRes))
                 DescriptionLabel(
-                    text = "How long we keep it: ${item.retention}",
+                    text = stringResource(R.string.consent_how_long, stringResource(item.retentionRes)),
                     color = MutedText,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -264,7 +259,7 @@ private fun ConsentCheckbox(
         ) {
             Checkbox(checked = checked, onCheckedChange = null)
             Text(
-                text = CONSENT_STATEMENT,
+                text = stringResource(R.string.consent_statement),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )

@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -22,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.frontend.R
 import com.example.frontend.data.SampleParties
 import com.example.frontend.ui.Components.Ballot
 import com.example.frontend.ui.Components.BottomTab
@@ -51,6 +53,7 @@ import com.example.frontend.ui.screens.Vote.VotePartySelectionScreen
 import com.example.frontend.ui.screens.Vote.VoteReceiptScreen
 import com.example.frontend.ui.screens.Vote.VoteReviewScreen
 import com.example.frontend.ui.screens.Vote.VoteVerifyReceiptScreen
+import com.example.frontend.ui.screens.Vote.reviewErrorMessage
 import com.example.frontend.ui.screens.Welcome.WelcomeScreen
 import com.example.frontend.ui.screens.home.HomeScreen
 import com.example.frontend.ui.theme.MotionDurations
@@ -326,9 +329,9 @@ fun AppNavGraph(
                 selectedPartyId = voteState.selectionFor(route.ballot),
                 onPartySelected = { party -> voteFlowViewModel.select(route.ballot, party.id) },
                 continueLabel = when {
-                    route.editing -> "Back to review"
-                    next != null -> "Next: ${next.shortLabel} ballot"
-                    else -> "Review my votes"
+                    route.editing -> stringResource(R.string.vote_back_to_review)
+                    next != null -> stringResource(R.string.vote_next_ballot, stringResource(next.shortLabelRes))
+                    else -> stringResource(R.string.vote_review_my_votes)
                 },
                 onContinue = {
                     when {
@@ -346,7 +349,9 @@ fun AppNavGraph(
         composable<Screen.Review> {
             VoteReviewScreen(
                 selections = voteState.selections.resolveParties(SampleParties),
-                errorMessage = voteState.reviewError,
+                errorMessage = voteState.reviewError?.let {
+                    reviewErrorMessage(it, voteState.faceAttemptsLeft)
+                },
                 confirmEnabled = voteState.isComplete && !voteState.isFaceLocked,
                 onChangeBallot = { ballot ->
                     voteFlowViewModel.clearReviewError()

@@ -1,5 +1,10 @@
 package com.example.frontend.ui.Components.Otp
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import com.example.frontend.R
+
 const val OTP_LENGTH = 6
 const val OTP_RESEND_COOLDOWN_SECONDS = 30
 const val OTP_EXPIRY_SECONDS = 5 * 60
@@ -111,16 +116,19 @@ fun formatCountdown(totalSeconds: Int): String {
     return if (minutes > 0) "%d:%02d".format(minutes, seconds) else "${seconds}s"
 }
 
+/** Masked number for display, or "" when there are too few digits to mask (UI shows a generic label). */
 fun maskDestination(phone: String): String {
     val digits = phone.filter { it.isDigit() }
-    if (digits.length < 4) return "your cellphone"
+    if (digits.length < 4) return ""
     return "•••• ••• " + digits.takeLast(4)
 }
 
+@Composable
 fun otpErrorMessage(state: OtpState): String? = when (state.error) {
-    OtpError.WrongCode -> "That code is not right. ${state.attemptsLeft} tries left before we lock the step."
-    OtpError.Expired -> "That code has expired. Tap resend to get a new one."
+    OtpError.WrongCode ->
+        pluralStringResource(R.plurals.otp_error_wrong_code, state.attemptsLeft, state.attemptsLeft)
+    OtpError.Expired -> stringResource(R.string.otp_error_expired)
     OtpError.TooManyAttempts ->
-        "Too many wrong codes. Try again in ${formatCountdown(state.lockSecondsRemaining)}."
+        stringResource(R.string.otp_error_too_many, formatCountdown(state.lockSecondsRemaining))
     null -> null
 }

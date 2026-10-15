@@ -23,7 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
 import com.example.frontend.effects.entrance
@@ -66,8 +69,8 @@ fun VoteReviewScreen(
         modifier = modifier,
         containerColor = backgroundColor,
         topBar = { AppTopBar(
-                title = "Review your vote",
-                subtitle = "Check all ${BALLOT_ORDER.size} ballots",
+                title = stringResource(R.string.review_title),
+                subtitle = stringResource(R.string.review_subtitle, BALLOT_ORDER.size),
                 onBackClick = onBackClick
             ) },
         bottomBar = { AppBottomBar(selected = selectedTab, onSelect = onTabSelected) }
@@ -101,8 +104,7 @@ fun VoteReviewScreen(
             }
 
             StatusLabel(
-                message = "Your votes cannot be changed after confirmation. " +
-                    "You will scan your face once more to cast them.",
+                message = stringResource(R.string.review_final_warning),
                 type = StatusType.Warning,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,7 +114,7 @@ fun VoteReviewScreen(
             Spacer(modifier = Modifier.height(Spacing.small))
 
             SimpleButton(
-                label = "Confirm Vote",
+                label = stringResource(R.string.review_confirm_vote),
                 onClick = onConfirmVote,
                 enabled = confirmEnabled,
                 modifier = Modifier
@@ -133,14 +135,18 @@ private fun BallotChoice(
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             SectionHeading(
-                title = ballot.title,
-                description = "Ballot ${BALLOT_ORDER.indexOf(ballot) + 1} of ${BALLOT_ORDER.size}",
+                title = stringResource(ballot.titleRes),
+                description = stringResource(
+                    R.string.ballot_step_count,
+                    BALLOT_ORDER.indexOf(ballot) + 1,
+                    BALLOT_ORDER.size
+                ),
                 modifier = Modifier.weight(1f)
             )
             TextButton(onClick = onChange) {
                 Icon(Icons.Default.Edit, contentDescription = null)
                 Text(
-                    text = if (party == null) "Choose" else "Change",
+                    text = stringResource(if (party == null) R.string.review_choose else R.string.review_change),
                     modifier = Modifier.padding(start = Spacing.tight),
                     style = MaterialTheme.typography.labelLarge
                 )
@@ -155,7 +161,7 @@ private fun BallotChoice(
             )
         } else {
             Text(
-                text = "Not chosen yet",
+                text = stringResource(R.string.review_not_chosen),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MutedText
             )
@@ -185,7 +191,15 @@ private fun VoteReviewScreenFaceFailedPreview() {
             onChangeBallot = {},
             onConfirmVote = {},
             onBackClick = {},
-            errorMessage = "Face didn't match. Your vote was NOT submitted. 2 tries left."
+            errorMessage = reviewErrorMessage(ReviewError.FaceMismatch, attemptsLeft = 2)
         )
     }
+}
+
+/** Translated text for a [ReviewError]; [attemptsLeft] fills in the mismatch message. */
+@Composable
+fun reviewErrorMessage(error: ReviewError, attemptsLeft: Int): String = when (error) {
+    ReviewError.FaceMismatch ->
+        pluralStringResource(R.plurals.review_error_face_mismatch, attemptsLeft, attemptsLeft)
+    ReviewError.FaceLocked -> stringResource(R.string.review_error_face_locked)
 }

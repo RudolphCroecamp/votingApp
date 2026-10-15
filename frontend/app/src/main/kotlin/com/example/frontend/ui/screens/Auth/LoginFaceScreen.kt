@@ -36,9 +36,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.Camera.CameraCaptureStates
@@ -91,7 +94,7 @@ fun LoginFaceScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Face check", onBackClick = onBackClick) }
+        topBar = { AppTopBar(title = stringResource(R.string.login_face_title), onBackClick = onBackClick) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -103,9 +106,8 @@ fun LoginFaceScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SectionHeading(
-                title = "Prove it is you",
-                description = "Look straight at the camera and blink slowly when asked. " +
-                    "A photo of you will not pass this check."
+                title = stringResource(R.string.login_face_heading),
+                description = stringResource(R.string.login_face_description)
             )
 
             if (uiState.cameraActive && cameraGranted && !inPreview) {
@@ -126,7 +128,7 @@ fun LoginFaceScreen(
                                 when (val graded = evaluateFaceCapture(photo)) {
                                     is CaptureState.Problem -> {
                                         capture = graded
-                                        onEvent(LoginFaceUiEvent.OnCaptureProblem(graded.message))
+                                        onEvent(LoginFaceUiEvent.OnCaptureProblem(graded.messageRes))
                                     }
                                     is CaptureState.Captured -> {
                                         capture = CaptureState.Uploading
@@ -145,9 +147,9 @@ fun LoginFaceScreen(
                             onEvent(LoginFaceUiEvent.OnRetry)
                         },
                         onConfirm = {},
-                        onError = { message ->
-                            capture = CaptureState.Problem(message)
-                            onEvent(LoginFaceUiEvent.OnCaptureProblem(message))
+                        onError = { messageRes ->
+                            capture = CaptureState.Problem(messageRes)
+                            onEvent(LoginFaceUiEvent.OnCaptureProblem(messageRes))
                         }
                     )
                 }
@@ -165,18 +167,18 @@ fun LoginFaceScreen(
             )
 
             if (uiState.isChecking) {
-                IndeterminateLinearIndicator(label = "Checking…")
+                IndeterminateLinearIndicator(label = stringResource(R.string.status_checking))
             }
 
             when {
                 uiState.isLocked -> SimpleButton(
-                    label = "Back to sign in",
+                    label = stringResource(R.string.login_back_to_sign_in),
                     onClick = onBackClick,
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Tertiary
                 )
                 uiState.didNotMatch || uiState.captureProblem != null -> SimpleButton(
-                    label = "Try again",
+                    label = stringResource(R.string.action_try_again),
                     onClick = {
                         capture = CaptureState.Framing
                         onEvent(LoginFaceUiEvent.OnRetry)
@@ -186,7 +188,7 @@ fun LoginFaceScreen(
                     leadingIcon = Icons.Default.Refresh
                 )
                 !cameraGranted -> SimpleButton(
-                    label = "Allow Camera Access",
+                    label = stringResource(R.string.camera_allow_access),
                     onClick = requestCamera,
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Tertiary,
@@ -195,8 +197,7 @@ fun LoginFaceScreen(
             }
 
             DescriptionLabel(
-                text = "The scan is matched against your registration photo and is never shared " +
-                    "with anyone else.",
+                text = stringResource(R.string.login_face_privacy),
                 modifier = Modifier.fillMaxWidth(),
                 color = MutedText,
                 textAlign = TextAlign.Center
@@ -205,17 +206,20 @@ fun LoginFaceScreen(
     }
 }
 
+@Composable
 private fun statusMessage(state: LoginFaceUiState, cameraGranted: Boolean): String = when {
-    state.isVerified -> "Face matched. Signing you in…"
-    state.isLocked ->
-        "Account locked after $FACE_MAX_ATTEMPTS failed checks. " +
-            "Try again in ${formatCountdown(state.lockSecondsRemaining)}."
-    state.isChecking -> "Checking…"
+    state.isVerified -> stringResource(R.string.login_face_matched)
+    state.isLocked -> stringResource(
+        R.string.login_face_locked,
+        FACE_MAX_ATTEMPTS,
+        formatCountdown(state.lockSecondsRemaining)
+    )
+    state.isChecking -> stringResource(R.string.status_checking)
     state.didNotMatch ->
-        "Face didn't match, try again. ${state.attemptsLeft} tries left before we lock the account."
-    state.captureProblem != null -> state.captureProblem
-    !cameraGranted -> "We need the camera to check your face. Nothing is sent until the check runs."
-    else -> "Keep your face in the oval and blink slowly when asked."
+        pluralStringResource(R.plurals.login_face_no_match, state.attemptsLeft, state.attemptsLeft)
+    state.captureProblem != null -> stringResource(state.captureProblem)
+    !cameraGranted -> stringResource(R.string.camera_needed_face)
+    else -> stringResource(R.string.login_face_hint)
 }
 
 private fun statusType(state: LoginFaceUiState): StatusType = when {

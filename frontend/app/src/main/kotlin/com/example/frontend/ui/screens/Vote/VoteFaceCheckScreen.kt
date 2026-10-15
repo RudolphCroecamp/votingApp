@@ -16,10 +16,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.frontend.R
 import com.example.frontend.ui.Components.AppTopBar
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.Camera.FaceCheckCamera
@@ -94,7 +96,7 @@ class VoteFaceCheckViewModel(
     fun onEvent(event: LoginFaceUiEvent) {
         when (event) {
             is LoginFaceUiEvent.OnFaceCaptured -> match(event.imagePath)
-            is LoginFaceUiEvent.OnCaptureProblem -> _uiState.update { it.withCaptureProblem(event.message) }
+            is LoginFaceUiEvent.OnCaptureProblem -> _uiState.update { it.withCaptureProblem(event.messageRes) }
             LoginFaceUiEvent.OnRetry -> _uiState.update { it.retried() }
         }
     }
@@ -133,7 +135,13 @@ fun VoteFaceCheckScreen(
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
-        topBar = { AppTopBar(title = "Confirm it is you", subtitle = "Last step", onBackClick = onBackClick) }
+        topBar = {
+            AppTopBar(
+                title = stringResource(R.string.vote_face_title),
+                subtitle = stringResource(R.string.vote_face_subtitle),
+                onBackClick = onBackClick
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -145,9 +153,8 @@ fun VoteFaceCheckScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SectionHeading(
-                title = "Scan your face to cast your vote",
-                description = "Look straight at the camera and blink slowly when asked. " +
-                    "Your votes are only sent once the scan matches."
+                title = stringResource(R.string.vote_face_heading),
+                description = stringResource(R.string.vote_face_description)
             )
 
             FaceCheckCamera(
@@ -171,19 +178,19 @@ fun VoteFaceCheckScreen(
             )
 
             if (uiState.isChecking) {
-                IndeterminateLinearIndicator(label = "Checking…")
+                IndeterminateLinearIndicator(label = stringResource(R.string.status_checking))
             }
 
             when {
                 uiState.captureProblem != null -> SimpleButton(
-                    label = "Try again",
+                    label = stringResource(R.string.action_try_again),
                     onClick = { onEvent(LoginFaceUiEvent.OnRetry) },
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Tertiary,
                     leadingIcon = Icons.Default.Refresh
                 )
                 !cameraGranted -> SimpleButton(
-                    label = "Allow Camera Access",
+                    label = stringResource(R.string.camera_allow_access),
                     onClick = requestCamera,
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Tertiary,
@@ -192,7 +199,7 @@ fun VoteFaceCheckScreen(
             }
 
             DescriptionLabel(
-                text = "The scan only proves you are the registered voter. It is never linked to your choices.",
+                text = stringResource(R.string.vote_face_privacy),
                 modifier = Modifier.fillMaxWidth(),
                 color = MutedText,
                 textAlign = TextAlign.Center
@@ -201,12 +208,13 @@ fun VoteFaceCheckScreen(
     }
 }
 
+@Composable
 private fun voteFaceStatus(state: LoginFaceUiState, cameraGranted: Boolean): String = when {
-    state.isVerified -> "Face matched. Casting your vote…"
-    state.isChecking -> "Checking…"
-    state.captureProblem != null -> state.captureProblem
-    !cameraGranted -> "We need the camera to confirm it is you. Nothing is sent until the check runs."
-    else -> "Keep your face in the oval and blink slowly when asked."
+    state.isVerified -> stringResource(R.string.vote_face_matched)
+    state.isChecking -> stringResource(R.string.status_checking)
+    state.captureProblem != null -> stringResource(state.captureProblem)
+    !cameraGranted -> stringResource(R.string.camera_needed_confirm)
+    else -> stringResource(R.string.login_face_hint)
 }
 
 @Preview(showBackground = true)

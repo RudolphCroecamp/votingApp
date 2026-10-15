@@ -34,7 +34,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import com.example.frontend.ui.Components.ActionRow
@@ -61,12 +63,12 @@ import com.example.frontend.ui.theme.WarningContent
 fun HomeScreen(
     onVoteNow: () -> Unit,
     modifier: Modifier = Modifier,
-    voterName: String = "Voter",
-    electionName: String = "2026 Local Government Election",
+    voterName: String = "",
+    electionName: String = stringResource(R.string.home_sample_election),
     heroState: HeroState = HeroState.VotingOpen,
-    closingTime: String = "Closes today at 21:00. Make your mark!",
-    openingTime: String = "Voting opens in 2 days · 07:00. Get ready!",
-    receiptSummary: String = "Recorded at 10:42 · Receipt ID 7F3A-92KD",
+    closingTime: String = stringResource(R.string.home_sample_closing),
+    openingTime: String = stringResource(R.string.home_sample_opening),
+    receiptSummary: String = stringResource(R.string.home_sample_receipt_summary),
     selectedTab: BottomTab = BottomTab.Home,
     onTabSelected: (BottomTab) -> Unit = {},
     onMenuClick: () -> Unit = {},
@@ -86,12 +88,13 @@ fun HomeScreen(
     var menuOpen by remember { mutableStateOf(false) }
     val entered by rememberEntranceTrigger()
     val heroSwapMillis = motionDuration(MotionDurations.medium)
+    val displayName = voterName.ifBlank { stringResource(R.string.voter_fallback_name) }
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
         topBar = {
             HomeHeader(
-                greeting = "Hi, $voterName",
+                greeting = stringResource(R.string.home_greeting, displayName),
                 onLanguageClick = onLanguage,
                 onHelpClick = {
                     menuOpen = true
@@ -100,7 +103,7 @@ fun HomeScreen(
                 trailingContent = {
                     DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                         DropdownMenuItem(
-                            text = { Text("Help & Support") },
+                            text = { Text(stringResource(R.string.menu_help_support)) },
                             onClick = {
                                 menuOpen = false
                                 onHelp()
@@ -113,7 +116,7 @@ fun HomeScreen(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Settings") },
+                            text = { Text(stringResource(R.string.tab_settings)) },
                             onClick = {
                                 menuOpen = false
                                 onSettings()
@@ -121,7 +124,7 @@ fun HomeScreen(
                             leadingIcon = { Icon(Icons.Default.Settings, contentDescription = null) }
                         )
                         DropdownMenuItem(
-                            text = { Text("Verify Your Vote") },
+                            text = { Text(stringResource(R.string.verify_title)) },
                             onClick = {
                                 menuOpen = false
                                 onVerifyVote()
@@ -130,7 +133,7 @@ fun HomeScreen(
                         )
                         HorizontalDivider()
                         DropdownMenuItem(
-                            text = { Text("Log Out") },
+                            text = { Text(stringResource(R.string.menu_log_out)) },
                             onClick = {
                                 menuOpen = false
                                 onLogout()
@@ -171,18 +174,18 @@ fun HomeScreen(
                         state = HeroState.VotingOpen,
                         title = electionName,
                         subtitle = closingTime,
-                        actionLabel = "Vote now",
+                        actionLabel = stringResource(R.string.home_vote_now),
                         onAction = onVoteNow,
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     HeroState.VoteCast -> HeroCard(
                         state = HeroState.VoteCast,
-                        title = "You made your mark, $voterName!",
+                        title = stringResource(R.string.home_made_your_mark, displayName),
                         subtitle = receiptSummary,
-                        actionLabel = "View vote receipt",
+                        actionLabel = stringResource(R.string.home_view_receipt),
                         onAction = onVerifyVote,
-                        footnote = "Your receipt proves you voted. It never shows who for.",
+                        footnote = stringResource(R.string.home_receipt_footnote),
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -190,7 +193,7 @@ fun HomeScreen(
                         state = HeroState.ComingUp,
                         title = electionName,
                         subtitle = openingTime,
-                        actionLabel = "Remind me",
+                        actionLabel = stringResource(R.string.home_remind_me),
                         onAction = onRemindMe,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -231,15 +234,15 @@ private fun HomeActions(
     ) {
         ActionRow(
             icon = Icons.Default.LocationOn,
-            title = "Find my voting station",
-            description = "Address, hours and directions",
+            title = stringResource(R.string.home_action_station_title),
+            description = stringResource(R.string.home_action_station_description),
             onClick = onVotingStation,
             modifier = Modifier.entrance(entered, index = 1)
         )
         ActionRow(
             icon = Icons.AutoMirrored.Filled.MenuBook,
-            title = "Election info and your rights",
-            description = "How voting works, step by step",
+            title = stringResource(R.string.home_action_info_title),
+            description = stringResource(R.string.home_action_info_description),
             onClick = onVotingInformation,
             modifier = Modifier.entrance(entered, index = 2),
             iconTint = WarningContent,
@@ -247,8 +250,8 @@ private fun HomeActions(
         )
         ActionRow(
             icon = Icons.Default.AssignmentTurnedIn,
-            title = "Check my registration",
-            description = "Confirm your details are correct",
+            title = stringResource(R.string.home_action_registration_title),
+            description = stringResource(R.string.home_action_registration_description),
             onClick = onCheckRegistration,
             modifier = Modifier.entrance(entered, index = 3),
             iconTint = SuccessContent,
@@ -256,8 +259,8 @@ private fun HomeActions(
         )
         ActionRow(
             icon = Icons.Default.ReportProblem,
-            title = "Report a problem",
-            description = "Something wrong with your vote?",
+            title = stringResource(R.string.home_action_report_title),
+            description = stringResource(R.string.home_action_report_description),
             onClick = onReportProblem,
             modifier = Modifier.entrance(entered, index = 4),
             iconTint = ErrorContent,

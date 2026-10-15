@@ -108,7 +108,8 @@ class OtpChallengeTest {
     @Test
     fun `destination hides all but the last four digits`() {
         assertEquals("•••• ••• 5678", maskDestination("071 234 5678"))
-        assertEquals("your cellphone", maskDestination("07"))
+        // Too short to mask: blank, so the UI falls back to its translated "your cellphone".
+        assertEquals("", maskDestination("07"))
     }
 
     @Test

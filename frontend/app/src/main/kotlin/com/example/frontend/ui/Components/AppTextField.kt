@@ -20,10 +20,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
@@ -71,7 +73,9 @@ fun AppTextField(
                 IconButton(onClick = { revealed = !revealed }) {
                     Icon(
                         imageVector = if (revealed) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                        contentDescription = if (revealed) "Hide password" else "Show password",
+                        contentDescription = stringResource(
+                            if (revealed) R.string.password_hide else R.string.password_show
+                        ),
                         tint = MutedText
                     )
                 }

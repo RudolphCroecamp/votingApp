@@ -28,7 +28,7 @@ class LoginFaceViewModel : ViewModel() {
         when (event) {
             is LoginFaceUiEvent.OnFaceCaptured -> matchFace()
             is LoginFaceUiEvent.OnCaptureProblem -> _uiState.update {
-                it.withCaptureProblem(event.message)
+                it.withCaptureProblem(event.messageRes)
             }
             LoginFaceUiEvent.OnRetry -> _uiState.update { it.retried() }
         }

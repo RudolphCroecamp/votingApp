@@ -12,8 +12,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.frontend.R
 import com.example.frontend.ui.Components.ButtonVariant
 import com.example.frontend.ui.Components.DescriptionLabel
 import com.example.frontend.ui.Components.IndeterminateLinearIndicator
@@ -31,16 +33,17 @@ fun OtpVerificationPanel(
     onSubmit: () -> Unit,
     onResend: () -> Unit,
     modifier: Modifier = Modifier,
-    submitLabel: String = "Verify code",
-    successMessage: String = "Code confirmed."
+    submitLabel: String = stringResource(R.string.otp_verify_code),
+    successMessage: String = stringResource(R.string.otp_code_confirmed)
 ) {
+    val destination = state.destination.ifBlank { stringResource(R.string.otp_destination_fallback) }
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.item),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         DescriptionLabel(
-            text = "We sent a $OTP_LENGTH digit code to ${state.destination}.",
+            text = stringResource(R.string.otp_sent_to, OTP_LENGTH, destination),
             modifier = Modifier.fillMaxWidth(),
             color = MutedText,
             textAlign = TextAlign.Center
@@ -68,14 +71,17 @@ fun OtpVerificationPanel(
                 modifier = Modifier.fillMaxWidth()
             )
             state.expirySecondsRemaining > 0 -> StatusLabel(
-                message = "This code expires in ${formatCountdown(state.expirySecondsRemaining)}.",
+                message = stringResource(
+                    R.string.otp_expires_in,
+                    formatCountdown(state.expirySecondsRemaining)
+                ),
                 type = StatusType.Info,
                 modifier = Modifier.fillMaxWidth()
             )
         }
 
         if (state.isVerifying) {
-            IndeterminateLinearIndicator(label = "Checking your code…")
+            IndeterminateLinearIndicator(label = stringResource(R.string.otp_checking))
         }
 
         SimpleButton(
@@ -88,7 +94,7 @@ fun OtpVerificationPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             DescriptionLabel(
-                text = "Did not get it?",
+                text = stringResource(R.string.otp_did_not_get_it),
                 color = MutedText,
                 textAlign = TextAlign.Center
             )
@@ -103,10 +109,12 @@ fun OtpVerificationPanel(
     }
 }
 
+@Composable
 private fun resendLabel(state: OtpState): String = when {
-    state.isLocked -> "Resend locked"
-    state.resendSecondsRemaining > 0 -> "Resend in ${formatCountdown(state.resendSecondsRemaining)}"
-    else -> "Resend code"
+    state.isLocked -> stringResource(R.string.otp_resend_locked)
+    state.resendSecondsRemaining > 0 ->
+        stringResource(R.string.otp_resend_in, formatCountdown(state.resendSecondsRemaining))
+    else -> stringResource(R.string.otp_resend_code)
 }
 
 @Preview(showBackground = true, widthDp = 360)
