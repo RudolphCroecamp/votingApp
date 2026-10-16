@@ -14,6 +14,11 @@ android {
         compose = true
     }
 
+    androidResources {
+        // Lists values-af/zu/xh in the system "App languages" screen (Android 13+).
+        generateLocaleConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.example.frontend"
         minSdk = 28
@@ -67,6 +72,7 @@ dependencies {
     // CameraView uses core-ktx (androidx.core.graphics.red/green/blue); it only came in
     // transitively before, at whatever version other libraries pulled.
     implementation(libs.androidx.core.ktx)
+    implementation(libs.appcompat)
     implementation(libs.core.splashscreen)
     implementation(libs.lifecycle.runtime.ktx)
 

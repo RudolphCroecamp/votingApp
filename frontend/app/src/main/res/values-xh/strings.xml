@@ -1,0 +1,433 @@
+<resources>
+    <string name="sa_voting_location_text">Izikhululo zokuvota zivulwa ukusuka ngo-07:00 ukuya ku-21:00 ngomhla wonyulo.</string>
+
+    <!-- Common actions and states -->
+    <string name="action_back">Emva</string>
+    <string name="action_help">Uncedo</string>
+    <string name="action_continue">Qhubeka</string>
+    <string name="action_done">Kugqityiwe</string>
+    <string name="action_try_again">Zama kwakhona</string>
+    <string name="action_cancel">Rhoxisa</string>
+    <string name="action_edit">Hlela</string>
+    <string name="action_reload">Layisha kwakhona</string>
+    <string name="status_checking">Kuyajongwa…</string>
+    <string name="status_trying_again">Kuzanywa kwakhona…</string>
+    <string name="voter_fallback_name">Mvoti</string>
+    <string name="brand_title">uMzantsi Afrika\nI-App Yokuvota Yesizwe</string>
+    <string name="brand_tagline">Kukhuselekile  ·  Akwaziwa  ·  Kuyaqinisekiseka</string>
+    <string name="menu_help_support">Uncedo &amp; Inkxaso</string>
+    <string name="menu_log_out">Phuma</string>
+    <string name="vote_not_recorded">Ivoti lakho ALIBHALWANGA</string>
+    <string name="vote_was_recorded">Ivoti lakho LIBHALIWE</string>
+    <string name="vote_outcome_unknown">Asikakwazi ukuthi ingaba ivoti lakho lidlulile na</string>
+
+    <!-- Ballots -->
+    <string name="ballot_national_title">INdlu yoWiso-mthetho yeSizwe</string>
+    <string name="ballot_national_short">Esizwe</string>
+    <string name="ballot_regional_title">IBhunga loMmandla</string>
+    <string name="ballot_regional_short">Ommandla</string>
+    <string name="ballot_provincial_title">INdlu yoWiso-mthetho yePhondo</string>
+    <string name="ballot_provincial_short">Ephondo</string>
+    <string name="ballot_step_count">Iphepha lokuvota %1$d kwangama-%2$d</string>
+    <string name="ballot_step_description">Iphepha lokuvota %1$d kwangama-%2$d, %3$s</string>
+
+    <!-- Shared components -->
+    <string name="tab_home">Ekhaya</string>
+    <string name="tab_vote">Vota</string>
+    <string name="tab_manifestos">Imanifesto</string>
+    <string name="tab_info">Ulwazi</string>
+    <string name="tab_settings">Iisetingi</string>
+    <string name="leader_photo_of">Ifoto ka-%1$s</string>
+    <string name="privacy_note_message">Ivoti lakho liyimfihlo.</string>
+    <string name="privacy_note_link">Indlela esikhusela ngayo iinkcukacha zakho</string>
+    <string name="receipt_label_default">Irisithi yakho yokuvota:</string>
+    <string name="receipt_copy_code">Kopa ikhowudi yerisithi</string>
+    <string name="password_show">Bonisa igama lokugqitha</string>
+    <string name="password_hide">Fihla igama lokugqitha</string>
+    <string name="hero_status_voting_open">UKUVOTA KUVULIWE</string>
+    <string name="hero_status_vote_cast">IVOTI LIFAKIWE</string>
+    <string name="hero_status_coming_up">KUYEZA</string>
+    <string name="home_verified_voter">Umvoti oqinisekisiweyo</string>
+    <string name="language_change">Tshintsha ulwimi</string>
+
+    <!-- SMS code (OTP) -->
+    <string name="otp_verify_code">Qinisekisa ikhowudi</string>
+    <string name="otp_code_confirmed">Ikhowudi iqinisekisiwe.</string>
+    <string name="otp_destination_fallback">iselfowuni yakho</string>
+    <string name="otp_sent_to">Sithumele ikhowudi eneenombolo ezi-%1$d ku-%2$s.</string>
+    <string name="otp_expires_in">Le khowudi iphelelwa lixesha emva kwe-%1$s.</string>
+    <string name="otp_checking">Ijonga ikhowudi yakho…</string>
+    <string name="otp_did_not_get_it">Awuyifumananga?</string>
+    <string name="otp_resend_locked">Ukuthumela kwakhona kutshixiwe</string>
+    <string name="otp_resend_in">Thumela kwakhona emva kwe-%1$s</string>
+    <string name="otp_resend_code">Thumela ikhowudi kwakhona</string>
+    <string name="otp_input_description">Faka ikhowudi eneenombolo ezi-%1$d</string>
+    <plurals name="otp_error_wrong_code">
+        <item quantity="one">Loo khowudi ayichanekanga. Ushiyelwe ngumzamo o-%1$d phambi kokuba sitshixe eli nyathelo.</item>
+        <item quantity="other">Loo khowudi ayichanekanga. Ushiyelwe yimizamo e-%1$d phambi kokuba sitshixe eli nyathelo.</item>
+    </plurals>
+    <string name="otp_error_expired">Loo khowudi iphelelwe lixesha. Cofa ukuthumela kwakhona ukuze ufumane entsha.</string>
+    <string name="otp_error_too_many">Iikhowudi ezingachanekanga zininzi kakhulu. Zama kwakhona emva kwe-%1$s.</string>
+
+    <!-- Camera -->
+    <string name="camera_captured_photo">Ifoto ethathiweyo</string>
+    <string name="camera_fit_id">Faka i-ID yakho ngaphakathi kwesakhelo</string>
+    <string name="camera_retake">Thatha kwakhona</string>
+    <string name="camera_use_photo">Sebenzisa ifoto</string>
+    <string name="camera_uploading">Iyalayisha…</string>
+    <string name="camera_take_photo">Thatha ifoto</string>
+    <string name="camera_allow_access">Vumela ikhamera</string>
+    <string name="camera_needed_face">Sidinga ikhamera ukuze sijonge ubuso bakho. Akukho nto ithunyelwayo de kuqale ukujonga.</string>
+    <string name="camera_needed_confirm">Sidinga ikhamera ukuze siqinisekise ukuba nguwe. Akukho nto ithunyelwayo de kuqale ukujonga.</string>
+    <string name="camera_problem_capture_failed">Asikwazanga ukuthatha ifoto. Zama kwakhona.</string>
+    <string name="camera_problem_check_failed">Asikwazanga ukujonga ifoto - zama kwakhona</string>
+    <string name="camera_problem_no_face">Akukho buso bufunyenweyo - zama kwakhona</string>
+    <string name="camera_problem_multiple_faces">Makubekho umntu omnye kuphela kwifoto</string>
+    <string name="camera_problem_too_dark">Kumnyama kakhulu - yiya kwindawo ekhanyayo</string>
+    <string name="camera_problem_blurry">Akucacanga - bamba ifowuni ingashukumi</string>
+    <string name="face_guidance_no_face">Faka ubuso bakho ngaphakathi kwesangqa</string>
+    <string name="face_guidance_multiple_faces">Qinisekisa ukuba nguwe wedwa osesakhelweni</string>
+    <string name="face_guidance_move_closer">Sondela kancinci</string>
+    <string name="face_guidance_move_back">Buyela umva kancinci</string>
+    <string name="face_guidance_centre">Beka ubuso bakho embindini wesangqa</string>
+    <string name="face_guidance_look_straight">Jonga ngqo kwikhamera</string>
+    <string name="face_guidance_blink">Qhwanyaza kancinci</string>
+    <string name="face_guidance_ready">Musa ukushukuma</string>
+
+    <!-- Sign in: face check -->
+    <string name="login_face_title">Ukujongwa kobuso</string>
+    <string name="login_face_heading">Ngqina ukuba nguwe</string>
+    <string name="login_face_description">Jonga ngqo kwikhamera kwaye uqhwanyaze kancinci xa ucelwa. Ifoto yakho ayizukuphumelela kolu vavanyo.</string>
+    <string name="login_back_to_sign_in">Buyela ekungeneni</string>
+    <string name="login_face_privacy">Ukuskena kuthelekiswa nefoto yakho yobhaliso kwaye akuze kwabelwane nabani na omnye.</string>
+    <string name="login_face_matched">Ubuso buyafana. Uyangeniswa…</string>
+    <string name="login_face_locked">I-akhawunti itshixiwe emva kovavanyo olu-%1$d olungaphumelelanga. Zama kwakhona emva kwe-%2$s.</string>
+    <plurals name="login_face_no_match">
+        <item quantity="one">Ubuso abufani, zama kwakhona. Ushiyelwe ngumzamo o-%1$d phambi kokuba sitshixe i-akhawunti.</item>
+        <item quantity="other">Ubuso abufani, zama kwakhona. Ushiyelwe yimizamo e-%1$d phambi kokuba sitshixe i-akhawunti.</item>
+    </plurals>
+    <string name="login_face_hint">Gcina ubuso bakho ngaphakathi kwesangqa kwaye uqhwanyaze kancinci xa ucelwa.</string>
+
+    <!-- Voting: party selection and review -->
+    <string name="vote_choose_party">Khetha umbutho wakho</string>
+    <string name="vote_select_one_party">Khetha umbutho OMNYE</string>
+    <string name="vote_back_to_review">Buyela kuphononongo</string>
+    <string name="vote_next_ballot">Okulandelayo: iphepha lokuvota %1$s</string>
+    <string name="vote_review_my_votes">Phonononga iivoti zam</string>
+    <string name="review_title">Phonononga ivoti lakho</string>
+    <string name="review_subtitle">Jonga onke amaphepha okuvota ali-%1$d</string>
+    <string name="review_final_warning">Iivoti zakho azinakutshintshwa emva kokuqinisekisa. Uza kuskena ubuso bakho kwakhona ukuze uzifake.</string>
+    <string name="review_confirm_vote">Qinisekisa ivoti</string>
+    <string name="review_choose">Khetha</string>
+    <string name="review_change">Tshintsha</string>
+    <string name="review_not_chosen">Akukakhethwa</string>
+    <plurals name="review_error_face_mismatch">
+        <item quantity="one">Ubuso abufani. Ivoti lakho ALITHUNYELWANGA. Ushiyelwe ngumzamo o-%1$d.</item>
+        <item quantity="other">Ubuso abufani. Ivoti lakho ALITHUNYELWANGA. Ushiyelwe yimizamo e-%1$d.</item>
+    </plurals>
+    <string name="review_error_face_locked">Ubuso abufani. Ivoti lakho ALITHUNYELWANGA kwaye ukuvota kutshixiwe. Qhagamshelana nomnxeba woncedo we-IEC.</string>
+
+    <!-- Voting: face check -->
+    <string name="vote_face_title">Qinisekisa ukuba nguwe</string>
+    <string name="vote_face_subtitle">Inyathelo lokugqibela</string>
+    <string name="vote_face_heading">Skena ubuso bakho ukuze ufake ivoti lakho</string>
+    <string name="vote_face_description">Jonga ngqo kwikhamera kwaye uqhwanyaze kancinci xa ucelwa. Iivoti zakho zithunyelwa kuphela xa ukuskena kufana.</string>
+    <string name="vote_face_privacy">Ukuskena kungqina kuphela ukuba ungumvoti obhalisiweyo. Akuze kudityaniswe nokhetho lwakho.</string>
+    <string name="vote_face_matched">Ubuso buyafana. Ivoti lakho liyafakwa…</string>
+
+    <!-- Voting: confirmation and receipts -->
+    <string name="confirmation_title">Ushiye uphawu lwakho!</string>
+    <string name="confirmation_all_recorded">Zonke iivoti zakho ezi-%1$d zibhaliwe.</string>
+    <string name="confirmation_one_recorded">Ivoti lakho libhaliwe.</string>
+    <string name="confirmation_receipt_label">Irisithi yephepha lokuvota %1$s:</string>
+    <string name="confirmation_clip_label">Irisithi yokuvota %1$s</string>
+    <string name="confirmation_keep_receipts">Gcina ezi risithi. Azize zibonise ukuba uvotele bani.</string>
+    <string name="confirmation_view_receipts">Jonga iirisithi</string>
+    <string name="confirmation_view_receipt">Jonga irisithi</string>
+    <string name="election_name_sample">Unyulo lweSizwe luka-2026</string>
+    <string name="receipt_status_valid">Iyasebenza</string>
+    <string name="receipt_title">Irisithi Yokuvota</string>
+    <string name="receipt_title_plural">Iirisithi Zokuvota</string>
+    <string name="receipt_field_election">Unyulo</string>
+    <string name="receipt_field_id">I-ID yerisithi</string>
+    <string name="receipt_field_status">Imeko</string>
+    <string name="receipt_field_ballot">Iphepha lokuvota</string>
+    <string name="receipt_field_recorded">Kubhaliwe</string>
+    <string name="receipt_explainer">Le risithi ingasetyenziswa ukuqinisekisa ukuba ivoti lakho libhaliwe, kodwa ayibonisi ukuba uvotele bani.</string>
+
+    <!-- Verify receipt -->
+    <string name="verify_title">Qinisekisa Ivoti Lakho</string>
+    <string name="verify_heading">Qinisekisa ivoti lakho</string>
+    <string name="verify_description">Faka ikhowudi yerisithi oyinikwe emva kokuvota ukuze ujonge ukuba iphepha lakho lokuvota libhaliwe.</string>
+    <string name="verify_placeholder">Ikhowudi yerisithi (AB7F-92K4-6ZP1-3QX8)</string>
+    <string name="verify_button">Qinisekisa irisithi</string>
+    <string name="verify_paste">Ncamathisela ukusuka kwibhodi yeklip</string>
+    <string name="verify_idle_info">Irisithi yakho ingqina ukuba iphepha lakho lokuvota libaliwe. Ayize ityhile ukuba uvotele bani.</string>
+    <string name="verify_not_found">Akukho voti lihambelana naloo khowudi yerisithi. Jonga ikhowudi uze uzame kwakhona.</string>
+    <string name="verify_found">Eli voti libhaliwe kwaye labalwa.</string>
+
+    <!-- Splash and welcome -->
+    <string name="splash_title">Ilizwi Lakho. Ivoti Lakho.\nIkamva Kunye.</string>
+    <string name="splash_subtitle">Ilungelo elisisiseko elixhasa idemokhrasi yethu.</string>
+    <string name="welcome_tagline">Ivoti lakho. Ilizwi lakho.\nuMzantsi Afrika owomeleleyo.</string>
+    <string name="welcome_get_started">Qalisa</string>
+
+    <!-- Sign in -->
+    <string name="login_title">Ngena</string>
+    <string name="login_description">Faka inombolo yakho ye-ID yaseMzantsi Afrika okanye yepaspoti, uze uqinisekise ubuso bakho ukuze ungene.</string>
+    <string name="login_with_face">Ngena ngokuqinisekisa ubuso</string>
+    <string name="login_face_info">Ubuso bakho buthelekiswa nokuskena kwakho kobhaliso. Akufuneki gama lokugqitha.</string>
+    <string name="login_no_account">Awunayo i-akhawunti?</string>
+    <string name="login_register">Bhalisa</string>
+
+    <!-- Form fields -->
+    <string name="field_full_name">Igama elipheleleyo</string>
+    <string name="field_id_or_passport">Inombolo ye-ID / Inombolo yepaspoti</string>
+    <string name="field_id_number">Inombolo ye-ID</string>
+    <string name="field_passport_number">Inombolo yepaspoti</string>
+    <string name="field_cellphone">Inombolo yeselfowuni</string>
+    <string name="field_email_optional">Idilesi ye-imeyile (ukuba uyathanda)</string>
+
+    <!-- Provinces -->
+    <string name="province_eastern_cape">IMpuma Koloni</string>
+    <string name="province_free_state">IFreyistata</string>
+    <string name="province_gauteng">IRhawuti</string>
+    <string name="province_kwazulu_natal">KwaZulu-Natala</string>
+    <string name="province_limpopo">ILimpopo</string>
+    <string name="province_mpumalanga">IMpumalanga</string>
+    <string name="province_northern_cape">UMntla Koloni</string>
+    <string name="province_north_west">UMntla Ntshona</string>
+    <string name="province_western_cape">INtshona Koloni</string>
+
+    <!-- Registration -->
+    <string name="register_step_of">Inyathelo %1$d kwangama-%2$d</string>
+    <string name="register_title">Yenza i-akhawunti yakho</string>
+    <string name="register_details_heading">Iinkcukacha Zakho</string>
+    <string name="register_details_description">Bhalisa nge-ID yakho yaseMzantsi Afrika okanye ngepaspoti ukuze ufumane iphepha lakho lokuvota.</string>
+    <string name="register_next_steps_info">Okulandelayo uza kuthatha ifoto yoxwebhu lwakho lwe-ID, uze uskene ubuso bakho. Oko kuskena kuthatha indawo yegama lokugqitha xa ungena.</string>
+    <string name="register_details_privacy">Iinkcukacha zakho zisetyenziselwa kuphela ukuqinisekisa ukuba ukuluhlu lwabavoti. Iphepha lakho lokuvota lihlala lingaziwa.</string>
+    <string name="register_have_account">Sele unayo i-akhawunti?</string>
+    <string name="register_sign_in">Ngena</string>
+    <string name="register_verifying">Iyaqinisekisa…</string>
+    <string name="register_verify_continue">Qinisekisa &amp; Qhubeka</string>
+    <string name="address_heading">Idilesi yakho</string>
+    <string name="address_street">Idilesi yesitrato</string>
+    <string name="address_city">Isixeko okanye idolophu</string>
+    <string name="address_postal_code">Ikhowudi yeposi</string>
+    <string name="address_province">Iphondo</string>
+    <string name="address_province_hint">Iphondo lakho ligqiba ukuba ngawaphi amaphepha okuvota ephondo nawommandla oza kuwafumana, ngoko kufuneka lichaneke.</string>
+    <string name="register_otp_title">Qinisekisa iselfowuni yakho</string>
+    <string name="register_otp_heading">Faka ikhowudi yakho</string>
+    <string name="register_otp_description">Oku kungqina ukuba inombolo yeselfowuni osinike yona yeyakho.</string>
+    <string name="register_otp_submit">Qinisekisa uze uqhubeke</string>
+    <string name="register_otp_success">Inombolo yeselfowuni iqinisekisiwe.</string>
+    <string name="register_otp_rates">Kusebenza amaxabiso aqhelekileyo enethiwekhi. Sisebenzisa le nombolo kuphela ukuqinisekisa ukuba nguwe.</string>
+    <string name="register_identity_title">Qinisekisa Isazisi</string>
+    <string name="register_identity_heading">Uxwebhu Lwesazisi</string>
+    <string name="register_identity_description">Khetha uhlobo loxwebhu lwakho uze uthathe ifoto ecacileyo yangaphambili.</string>
+    <string name="register_document_type">Uhlobo loxwebhu</string>
+    <string name="register_document_national_id">I-ID yesizwe</string>
+    <string name="register_document_passport">Ipaspoti</string>
+    <string name="register_document_photo">Ifoto yoxwebhu</string>
+    <string name="register_document_captured_retake">Uxwebhu luthathiwe. Lucofe kwakhona ukuze uthathe ifoto kwakhona.</string>
+    <string name="register_document_hint">Beka uxwebhu lucwecwe, ugcwalise isakhelo, kwaye uphephe ukukhazimla kwiphepha lefoto.</string>
+    <string name="register_save_verify_identity">Gcina &amp; Qinisekisa Isazisi</string>
+    <string name="register_document_captured">Uxwebhu luthathiwe</string>
+    <string name="register_document_tap_capture">Cofa ukuze uthathe icala langaphambili loxwebhu</string>
+    <string name="register_face_title">Ubhaliso Lobuso</string>
+    <string name="register_face_heading">Skena Ubuso Bakho</string>
+    <string name="register_face_description">Bamba ifowuni yakho kwinqanaba lamehlo kwaye ugcine ubuso bakho ngaphakathi kwesakhelo.</string>
+    <string name="register_face_retake">Skena kwakhona</string>
+    <string name="register_face_captured">Ubuso buthathiwe. Buthathe kwakhona ukuba ubuso bakho bebungabonakali kakuhle ngaphakathi kwesakhelo.</string>
+    <string name="register_face_camera_needed">Sidinga ikhamera ukuze siskene ubuso bakho. Akukho nto irekhodwayo de ucofe iqhosha lokuthatha ifoto.</string>
+    <string name="register_face_hint">Fumana indawo ekhanya kakuhle, khulula iminqwazi neeglasi zelanga, uze ujonge ngqo phambili.</string>
+    <string name="register_done_heading">Ubhalisile</string>
+    <string name="register_done_description">Iinkcukacha zakho, uxwebhu lwe-ID nokuskena kobuso kuthunyelwe ukuze kuqinisekiswe.</string>
+    <string name="register_done_welcome">Wamkelekile, %1$s</string>
+    <string name="register_done_sign_in_hint">Ngoku ungangena ngenombolo yakho ye-ID nokuskena kobuso.</string>
+    <string name="register_done_privacy_title">Ubumfihlo bakho bukhuselekile</string>
+    <string name="register_done_privacy_description">Isazisi sakho sikhuselekile kwaye ivoti lakho lihlala lingaziwa.</string>
+    <string name="register_done_one_vote_title">Umntu omnye. Ivoti elinye.</string>
+    <string name="register_done_one_vote_description">Ungavota kanye kuphela kunyulo ngalunye.</string>
+    <string name="register_done_keep_id">Gcina inombolo yakho ye-ID ikufuphi. Uza kuyidinga qho xa ungena.</string>
+    <string name="register_done_continue">Qhubekela kwi-App</string>
+
+    <!-- Privacy consent (POPIA) -->
+    <string name="consent_title">Ubumfihlo nemvume</string>
+    <string name="consent_heading">Esikuqokelelayo nokuba kutheni</string>
+    <string name="consent_description">Umthetho wobumfihlo waseMzantsi Afrika (i-POPIA) uthi kufuneka sikuxelele oku kwaye sifumane imvume yakho phambi kokuba siqokelele nantoni na.</string>
+    <string name="consent_no_photos_yet">Akukho foto ithathwayo kwaye akukho buso buskenwayo de uvume ngezantsi.</string>
+    <string name="consent_never_sell">Asize sithengise iinkcukacha zakho kwaye asize sabelane ngokuba uvotele bani. Iphepha lakho lokuvota ligcinwa lahlukile kwisazisi sakho, ngoko akukho mntu unokudibanisa ezi zinto zimbini. Ungarhoxisa imvume yakho okanye usicele ukuba sicime iinkcukacha zakho nangaliphi na ixesha kwiiSetingi, nangona ungasayi kukwazi ukuvota ngaphandle kwazo.</string>
+    <string name="consent_tick_to_continue">Phawula ibhokisi engentla ukuze uqhubeke.</string>
+    <string name="consent_how_long">Ixesha esikugcina ngalo: %1$s</string>
+    <string name="consent_statement">Ndifundile okungentla kwaye ndiyavuma ukuba iKomishoni yoNyulo iqokelele kwaye isebenzise iinkcukacha zam zobuqu kubhaliso lwabavoti nasekuvoteni.</string>
+    <string name="consent_retention_registered">Kugcinwa logama usabhalisiwe ukuvota.</string>
+    <string name="consent_retention_30_days">Kucinywa xa ubhaliso lwakho luvunyiwe, kungaphelanga iintsuku ezingama-30.</string>
+    <string name="consent_id_label">Inombolo yakho ye-ID</string>
+    <string name="consent_id_purpose">Ukujonga ukuba ukuluhlu lwabavoti nokuba uvota kanye kuphela.</string>
+    <string name="consent_id_photo_label">Ifoto ye-ID yakho okanye yepaspoti</string>
+    <string name="consent_id_photo_purpose">Ukuqinisekisa ukuba inombolo ye-ID osinike yona yeyoxwebhu lokwenene.</string>
+    <string name="consent_face_label">Ukuskena kobuso bakho</string>
+    <string name="consent_face_purpose">Ukuthelekisa ubuso bakho nefoto ye-ID yakho, nokukungenisa endaweni yegama lokugqitha.</string>
+    <string name="consent_address_label">Idilesi yakho yasekhaya</string>
+    <string name="consent_address_purpose">Ukukubeka kwisithili sokuvota esichanekileyo, esigqiba amaphepha akho okuvota.</string>
+    <string name="consent_phone_label">Inombolo yakho yeselfowuni</string>
+    <string name="consent_phone_purpose">Ukuthumela ikhowudi yexesha elinye eqinisekisa ukuba nguwe ongenayo.</string>
+
+    <!-- Home -->
+    <string name="home_greeting">Molo, %1$s</string>
+    <string name="home_sample_election">Unyulo lukaRhulumente Wasekhaya luka-2026</string>
+    <string name="home_sample_closing">Kuvalwa namhlanje ngo-21:00. Shiya uphawu lwakho!</string>
+    <string name="home_sample_opening">Ukuvota kuvulwa kwiintsuku ezi-2 · 07:00. Zilungiselele!</string>
+    <string name="home_sample_receipt_summary">Kubhalwe ngo-10:42 · I-ID yerisithi 7F3A-92KD</string>
+    <string name="home_vote_now">Vota ngoku</string>
+    <string name="home_made_your_mark">Ushiye uphawu lwakho, %1$s!</string>
+    <string name="home_view_receipt">Jonga irisithi yevoti</string>
+    <string name="home_receipt_footnote">Irisithi yakho ingqina ukuba uvotile. Ayize ibonise ukuba uvotele bani.</string>
+    <string name="home_remind_me">Ndikhumbuze</string>
+    <string name="home_action_station_title">Fumana isikhululo sam sokuvota</string>
+    <string name="home_action_station_description">Idilesi, iiyure nezikhokelo</string>
+    <string name="home_action_info_title">Ulwazi lonyulo namalungelo akho</string>
+    <string name="home_action_info_description">Indlela ukuvota okusebenza ngayo, inyathelo ngenyathelo</string>
+    <string name="home_action_registration_title">Jonga ubhaliso lwam</string>
+    <string name="home_action_registration_description">Qinisekisa ukuba iinkcukacha zakho zichanekile</string>
+    <string name="home_action_report_title">Xela ingxaki</string>
+    <string name="home_action_report_description">Ingaba kukho into engalunganga ngevoti lakho?</string>
+
+    <!-- Info -->
+    <string name="info_title">Ulwazi</string>
+    <string name="info_subtitle">Yonke into oyidingayo phambi kokuba uvote</string>
+    <string name="info_heading">Indlela ukuvota okusebenza ngayo</string>
+    <string name="info_description">Izikhokelo ezimfutshane malunga nephepha lokuvota, amalungelo akho nobumfihlo bakho.</string>
+    <string name="info_rights_description">Unyulo, amaphepha akho okuvota noko unokukulindela</string>
+    <string name="info_privacy_title">Ubumfihlo bakho</string>
+    <string name="info_privacy_description">Indlela ivoti lakho elihlala lingaziwa kwaye lahlukile kuwe</string>
+    <string name="info_help_title">Uncedo nenkxaso</string>
+    <string name="info_help_description">Ukungena, ukuvota nokuqinisekisa irisithi yakho</string>
+
+    <!-- Status screens -->
+    <string name="already_voted_title">Sele uvotile</string>
+    <string name="already_voted_heading">Sele uvotile</string>
+    <string name="already_voted_description">Iphepha lakho lokuvota lingenile. Wonke umntu ufumana ivoti elinye kunyulo ngalunye, ngoko eli phepha lokuvota alinakuvulwa kwakhona.</string>
+    <string name="already_voted_clip_label">Irisithi yokuvota</string>
+    <string name="already_voted_receipt_info">Irisithi yakho ingqina ukuba iphepha lakho lokuvota libaliwe. Ayibonisi mntu ukuba uvotele bani.</string>
+    <string name="already_voted_view_receipt">Jonga irisithi yam</string>
+    <string name="already_voted_not_you">Ukuba asinguwe ofake eli voti, tsalela umnxeba woncedo weKomishoni yoNyulo ngoko nangoko.</string>
+    <string name="already_voted_cast_at">Ivoti lifakwe %1$s</string>
+    <string name="closed_title">Ukuvota kuvaliwe</string>
+    <string name="closed_heading">Eli phepha lokuvota livaliwe</string>
+    <string name="closed_description">Ukuvota kuphelile, ngoko akusenakufakwa amanye amaphepha okuvota. Naliphi na ivoti osele ulithumele lisabalwa.</string>
+    <string name="closed_results_out">Iziphumo ziphumile. Ungabona ukubalwa kwephepha ngalinye lokuvota.</string>
+    <string name="closed_results_expected">Iziphumo zilindeleke %1$s.</string>
+    <string name="closed_results_counting">Iivoti ziyabalwa. Iziphumo ziza kuvela apha xa iKomishoni yoNyulo izipapashile.</string>
+    <string name="closed_view_results">Jonga iziphumo</string>
+    <string name="closed_results_not_published">Iziphumo azikapapashwa</string>
+    <string name="closed_keep_receipt">Ukuba uvotile, gcina ikhowudi yakho yerisithi. Usenako ukujonga ukuba iphepha lakho lokuvota labalwa emva kokupapashwa kweziphumo.</string>
+    <string name="closed_voting_is_closed">Ukuvota kuvaliwe</string>
+    <string name="closed_voting_closed_on">Ukuvota kuvalwe ngo</string>
+    <string name="closed_no_more_votes">Akusamkelwa zivoti zimbi</string>
+    <string name="no_election_title">Akukho nyulo luvulekileyo</string>
+    <string name="no_election_heading">Akukho nto yokuvotela okwangoku</string>
+    <string name="no_election_description">Akukho nyulo luvulekileyo okwangoku. Ubhaliso lwakho luhlala lusebenza, ngoko akufuneki ubhalise kwakhona.</string>
+    <string name="no_election_date_known">Uza kukwazi ukuvota kule app ngomhla wonyulo. Siza kukukhumbuza xa ixesha lisondela.</string>
+    <string name="no_election_date_unknown">Siza kukuxelela kwakamsinya xa umhla ubhengezwa.</string>
+    <string name="no_election_voting_info">Ulwazi lokuvota</string>
+    <string name="no_election_info_hint">Jonga isithili sakho sokuvota, into egqitywa liphepha ngalinye lokuvota, nendlela ivoti lakho elihlala ngayo lingaziwa.</string>
+    <string name="no_election_next">Unyulo olulandelayo</string>
+    <string name="no_election_next_opens">Unyulo olulandelayo luvulwa</string>
+    <string name="no_election_date_not_announced">Umhla awukabhengezwa</string>
+    <string name="offline_title">Akukho qhagamshelwano lwe-intanethi</string>
+    <string name="offline_heading">Awuqhagamshelwanga</string>
+    <string name="offline_description">Asikwazanga ukufikelela kwiKomishoni yoNyulo. Jonga i-Wi-Fi yakho okanye idatha yeselfowuni uze uzame kwakhona.</string>
+    <string name="offline_looking">Ifuna uqhagamshelwano…</string>
+    <string name="offline_hint_casting">Xa uqhagamshelwe kwakhona, vula iphepha lokuvota kwakhona uze ushiye uphawu lwakho. Akukho nto oyikhethileyo ithunyelweyo.</string>
+    <string name="offline_hint_reading">Ungaqhubeka ufunda ulwazi lokuvota ungaqhagamshelwanga. Ukuvota kudinga uqhagamshelwano.</string>
+    <string name="offline_still_stuck">Usabambekile? Yiya kwindawo enomqondiso ongcono, cima imowudi yenqwelomoya, okanye uzame kwakhona nge-Wi-Fi.</string>
+    <string name="offline_not_recorded_detail">Iphepha lokuvota alizange lifike kuthi, ngoko akukho nto ibaliweyo kwaye akukho nto isetyenzisiweyo. Usenalo ivoti lakho.</string>
+    <string name="server_error_title">Kukho into engahambanga kakuhle</string>
+    <string name="server_error_heading">Inkonzo ayiphenduli</string>
+    <string name="server_error_description">Le yingxaki kwicala lethu, hayi elakho. Ifowuni yakho noqhagamshelwano lwakho zilungile.</string>
+    <string name="server_error_retrying">Kuzanywa kwakhona iKomishoni yoNyulo…</string>
+    <string name="server_error_check_receipt">Jonga ngerisithi yam</string>
+    <string name="server_error_reference">Isalathiso %1$s — sikhankanye xa utsalela umnxeba woncedo.</string>
+    <string name="server_error_keeps_happening">Ukuba oku kuqhubeka kusenzeka, linda imizuzu embalwa uze uzame kwakhona, okanye uvote kwisikhululo sakho sokuvota.</string>
+    <string name="server_error_not_recorded_detail">Iphepha lokuvota alizange lamkelwe, ngoko akukho nto ibaliweyo. Usenalo ivoti lakho, kwaye ungazama kwakhona.</string>
+    <string name="server_error_recorded_detail">Iphepha lakho lokuvota lamkelwe kwaye labalwa. Impazamo yenzeke emva koko, ngoxa besilayisha irisithi yakho. Musa ukuvota kwakhona.</string>
+    <string name="server_error_unknown_detail">Uqhagamshelwano luqhawukile ngoxa iphepha lakho lokuvota lithunyelwa. Musa ukucinga ukuba alizange liphumelele. Jonga irisithi yakho phambi kokuba uzame ukuvota kwakhona, ukuze ungavoti kabini.</string>
+
+    <!-- Settings -->
+    <string name="settings_subtitle">Ukhetho, i-akhawunti &amp; uqwalaselo lwe-app</string>
+    <string name="settings_account_title">I-akhawunti &amp; Iprofayile Yomvoti</string>
+    <string name="settings_account_description">Lawula ubhaliso lwakho neenkcukacha zomvoti</string>
+    <string name="settings_profile_title">Iprofayile Yomvoti</string>
+    <string name="settings_profile_description">Jonga iinkcukacha zobuqu nedilesi ebhalisiweyo</string>
+    <string name="settings_registration_title">Jonga Imeko Yobhaliso</string>
+    <string name="settings_registration_description">Qinisekisa imeko yakho nesithili sokuvota</string>
+    <string name="settings_preferences_title">Ukhetho lwe-App</string>
+    <string name="settings_preferences_description">Lungelelanisa ulwimi nezikhumbuzi zezaziso</string>
+    <string name="settings_language_title">Ulwimi</string>
+    <string name="settings_language_description">Khetha ulwimi olusemthethweni olukhethayo</string>
+    <string name="settings_language_dialog_title">Khetha Ulwimi</string>
+    <string name="settings_reminders_title">Izikhumbuzi Zonyulo</string>
+    <string name="settings_reminders_description">Fumana izikhumbuzi zomhla wokuvota nezilumkiso ezisemthethweni</string>
+    <string name="settings_security_title">Ukhuseleko &amp; Ubumfihlo</string>
+    <string name="settings_security_description">Iisetingi ze-biometric nezobumfihlo bephepha lokuvota</string>
+    <string name="settings_face_title">Ukuqinisekiswa Kobuso</string>
+    <string name="settings_face_description">Funa ukuskena ubuso phambi kokuvota</string>
+    <string name="settings_privacy_title">Ubumfihlo &amp; Ukhuseleko Lwedatha</string>
+    <string name="settings_privacy_description">Indlela ivoti lakho elihlala libethelwe kwaye lingaziwa</string>
+    <string name="settings_help_section_title">Uncedo &amp; Ulwazi</string>
+    <string name="settings_help_section_description">Izikhokelo, inkxaso nokuxela iingxaki</string>
+    <string name="settings_help_description">Izikhokelo zokuvota neempendulo kwimibuzo eqhelekileyo</string>
+    <string name="settings_election_info_title">Ulwazi Lonyulo</string>
+    <string name="settings_election_info_description">Inkqubo yokuvota, imithetho namalungelo omvoti</string>
+    <string name="settings_report_title">Xela Ingxaki</string>
+    <string name="settings_report_description">Xela iingxaki zobuchwephesha okanye iinkxalabo zomvoti</string>
+    <string name="settings_logout_description">Phuma kwi-akhawunti yakho yomvoti</string>
+    <string name="settings_logout_confirm_title">Uyaphuma?</string>
+    <string name="settings_logout_confirm_body">Uqinisekile ukuba ufuna ukuphuma kwi-akhawunti yakho yomvoti kwesi sixhobo?</string>
+    <string name="settings_footer_iec">IKomishoni yoNyulo yaseMzantsi Afrika (IEC)</string>
+    <string name="settings_footer_version">Inguqulelo 1.0.0 • Ulwakhiwo 2026.1 • Inkqubo Ekhuselekileyo Yokuvota nge-Intanethi</string>
+
+    <!-- Profile -->
+    <string name="profile_subtitle">Jonga uze ulawule iinkcukacha zakho ezibhalisiweyo</string>
+    <string name="profile_verified_voter">Umvoti Obhalisiweyo Oqinisekisiweyo</string>
+    <string name="profile_identity_title">Ulwazi Lwesazisi Oluqinisekisiweyo</string>
+    <string name="profile_identity_description">Amagama apheleleyo asemthethweni nenombolo ye-ID / yepaspoti yaseMzantsi Afrika</string>
+    <string name="profile_full_names">Amagama Apheleleyo</string>
+    <string name="profile_id_or_passport">Inombolo ye-ID Yesizwe / Yepaspoti</string>
+    <string name="profile_district_status">Imeko Yesithili Sokuvota</string>
+    <string name="profile_district_value">Iyasebenza • Isithili %1$s (%2$s)</string>
+    <string name="profile_full_legal_names">Amagama Apheleleyo Asemthethweni</string>
+    <string name="profile_full_legal_names_hint">Amagama apheleleyo asemthethweni (umz. Thandi Nkosi)</string>
+    <string name="profile_id_hint">Inombolo ye-ID yase-SA eneenombolo ezili-13</string>
+    <string name="profile_identity_face_warning">Kufuneka ukuqondwa kobuso nge-biometric: Ukutshintsha igama lakho elisemthethweni okanye inombolo ye-ID kufuna ukuqinisekiswa ngokuskena ubuso.</string>
+    <string name="profile_contact_title">Iinkcukacha Zoqhagamshelwano</string>
+    <string name="profile_contact_description">Inombolo yakho yeselfowuni ebhalisiweyo yezaziso ze-SMS</string>
+    <string name="profile_phone_hint">Inombolo yeselfowuni (umz. 082 123 4567)</string>
+    <string name="profile_phone_otp_warning">Ukutshintsha inombolo yakho yeselfowuni kufuna ikhowudi ye-SMS OTP eneenombolo ezi-6.</string>
+    <string name="profile_address_title">Idilesi Yokuhlala</string>
+    <string name="profile_address_description">Igqiba amaphepha akho okuvota ephondo nawommandla</string>
+    <string name="profile_select_province">Khetha iphondo</string>
+    <string name="profile_city_hint">Isixeko / Idolophu (umz. eRhawutini)</string>
+    <string name="profile_street_hint">Idilesi yesitrato (umz. 124 Market Street)</string>
+    <string name="profile_postal_hint">Ikhowudi yeposi (umz. 2001)</string>
+    <string name="profile_verify_face_save">Qinisekisa Ubuso &amp; Gcina Utshintsho</string>
+    <string name="profile_save_changes">Gcina Utshintsho Lweprofayile</string>
+    <string name="profile_snackbar_address_updated">Idilesi yokuhlala ihlaziywe ngempumelelo</string>
+    <string name="profile_snackbar_identity_updated">Isazisi siqinisekisiwe. Igama elipheleleyo nenombolo ye-ID zihlaziyiwe!</string>
+    <string name="profile_snackbar_phone_updated">Inombolo yeselfowuni &amp; iprofayile zihlaziywe ngempumelelo</string>
+    <string name="profile_face_required_title">Kufuneka Ukuqinisekiswa Kobuso</string>
+    <string name="profile_face_required_body">Ukuze uhlaziye igama lakho elisemthethweni okanye inombolo ye-ID, nceda ugqibezele ukuskena ubuso nge-biometric ukuze uqinisekise isazisi sakho.</string>
+    <string name="profile_face_matching">Ithelekisa ipateni yobuso…</string>
+    <string name="profile_face_hint">Bamba isixhobo kwinqanaba lamehlo uze ubeke ubuso bakho ngaphakathi kwesangqa.</string>
+    <string name="profile_scanning">Iyaskena…</string>
+    <string name="profile_verify_face_and_save">Qinisekisa Ubuso &amp; Gcina</string>
+    <string name="profile_otp_title">Qinisekisa Utshintsho Lweselfowuni</string>
+    <string name="profile_otp_body">Ikhowudi ye-SMS OTP eneenombolo ezi-6 ithunyelwe ku-%1$s. Yifake ngezantsi ukuze uqinisekise utshintsho lwenombolo yakho yefowuni.</string>
+    <string name="profile_otp_not_received">Awuyifumananga ikhowudi?</string>
+    <string name="profile_otp_resend_sms">Thumela i-SMS kwakhona</string>
+    <string name="profile_verify_and_save">Qinisekisa &amp; Gcina</string>
+    <string name="profile_otp_incomplete">Nceda ufake yonke ikhowudi ye-OTP eneenombolo ezi-6</string>
+    <string name="profile_read_only">Ukufunda kuphela</string>
+</resources>

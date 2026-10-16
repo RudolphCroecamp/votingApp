@@ -1,0 +1,433 @@
+<resources>
+    <string name="sa_voting_location_text">Stemlokale is op verkiesingsdag van 07:00 tot 21:00 oop.</string>
+
+    <!-- Common actions and states -->
+    <string name="action_back">Terug</string>
+    <string name="action_help">Hulp</string>
+    <string name="action_continue">Gaan voort</string>
+    <string name="action_done">Klaar</string>
+    <string name="action_try_again">Probeer weer</string>
+    <string name="action_cancel">Kanselleer</string>
+    <string name="action_edit">Wysig</string>
+    <string name="action_reload">Herlaai</string>
+    <string name="status_checking">Kontroleer tans…</string>
+    <string name="status_trying_again">Probeer weer…</string>
+    <string name="voter_fallback_name">Kieser</string>
+    <string name="brand_title">Suid-Afrika\nNasionale Stem-app</string>
+    <string name="brand_tagline">Veilig  ·  Anoniem  ·  Verifieerbaar</string>
+    <string name="menu_help_support">Hulp &amp; Ondersteuning</string>
+    <string name="menu_log_out">Teken uit</string>
+    <string name="vote_not_recorded">Jou stem is NIE aangeteken nie</string>
+    <string name="vote_was_recorded">Jou stem IS aangeteken</string>
+    <string name="vote_outcome_unknown">Ons kan nog nie sê of jou stem deurgegaan het nie</string>
+
+    <!-- Ballots -->
+    <string name="ballot_national_title">Nasionale Vergadering</string>
+    <string name="ballot_national_short">Nasionaal</string>
+    <string name="ballot_regional_title">Streeksvergadering</string>
+    <string name="ballot_regional_short">Streeks</string>
+    <string name="ballot_provincial_title">Provinsiale Wetgewer</string>
+    <string name="ballot_provincial_short">Provinsiaal</string>
+    <string name="ballot_step_count">Stembrief %1$d van %2$d</string>
+    <string name="ballot_step_description">Stembrief %1$d van %2$d, %3$s</string>
+
+    <!-- Shared components -->
+    <string name="tab_home">Tuis</string>
+    <string name="tab_vote">Stem</string>
+    <string name="tab_manifestos">Manifeste</string>
+    <string name="tab_info">Inligting</string>
+    <string name="tab_settings">Instellings</string>
+    <string name="leader_photo_of">Foto van %1$s</string>
+    <string name="privacy_note_message">Jou stem is geheim.</string>
+    <string name="privacy_note_link">Hoe ons jou data beskerm</string>
+    <string name="receipt_label_default">Jou stemkwitansie:</string>
+    <string name="receipt_copy_code">Kopieer kwitansiekode</string>
+    <string name="password_show">Wys wagwoord</string>
+    <string name="password_hide">Versteek wagwoord</string>
+    <string name="hero_status_voting_open">STEMMING OOP</string>
+    <string name="hero_status_vote_cast">STEM UITGEBRING</string>
+    <string name="hero_status_coming_up">BINNEKORT</string>
+    <string name="home_verified_voter">Geverifieerde kieser</string>
+    <string name="language_change">Verander taal</string>
+
+    <!-- SMS code (OTP) -->
+    <string name="otp_verify_code">Verifieer kode</string>
+    <string name="otp_code_confirmed">Kode bevestig.</string>
+    <string name="otp_destination_fallback">jou selfoon</string>
+    <string name="otp_sent_to">Ons het \'n %1$d-syfer-kode na %2$s gestuur.</string>
+    <string name="otp_expires_in">Hierdie kode verval oor %1$s.</string>
+    <string name="otp_checking">Kontroleer jou kode…</string>
+    <string name="otp_did_not_get_it">Nie ontvang nie?</string>
+    <string name="otp_resend_locked">Herstuur gesluit</string>
+    <string name="otp_resend_in">Herstuur oor %1$s</string>
+    <string name="otp_resend_code">Herstuur kode</string>
+    <string name="otp_input_description">Voer die %1$d-syfer-kode in</string>
+    <plurals name="otp_error_wrong_code">
+        <item quantity="one">Daardie kode is verkeerd. Nog %1$d probeerslag voordat ons die stap sluit.</item>
+        <item quantity="other">Daardie kode is verkeerd. Nog %1$d probeerslae voordat ons die stap sluit.</item>
+    </plurals>
+    <string name="otp_error_expired">Daardie kode het verval. Tik herstuur vir \'n nuwe een.</string>
+    <string name="otp_error_too_many">Te veel verkeerde kodes. Probeer weer oor %1$s.</string>
+
+    <!-- Camera -->
+    <string name="camera_captured_photo">Geneemde foto</string>
+    <string name="camera_fit_id">Pas jou ID in die raam</string>
+    <string name="camera_retake">Neem weer</string>
+    <string name="camera_use_photo">Gebruik foto</string>
+    <string name="camera_uploading">Laai tans op…</string>
+    <string name="camera_take_photo">Neem foto</string>
+    <string name="camera_allow_access">Gee kameratoegang</string>
+    <string name="camera_needed_face">Ons het die kamera nodig om jou gesig na te gaan. Niks word gestuur voordat die toets loop nie.</string>
+    <string name="camera_needed_confirm">Ons het die kamera nodig om te bevestig dat dit jy is. Niks word gestuur voordat die toets loop nie.</string>
+    <string name="camera_problem_capture_failed">Kon nie die foto neem nie. Probeer weer.</string>
+    <string name="camera_problem_check_failed">Kon nie die foto nagaan nie - probeer weer</string>
+    <string name="camera_problem_no_face">Geen gesig gevind nie - probeer weer</string>
+    <string name="camera_problem_multiple_faces">Net een persoon moet op die foto wees</string>
+    <string name="camera_problem_too_dark">Te donker - gaan na \'n ligter plek</string>
+    <string name="camera_problem_blurry">Onduidelik - hou die foon stil</string>
+    <string name="face_guidance_no_face">Pas jou gesig in die ovaal</string>
+    <string name="face_guidance_multiple_faces">Maak seker net jy is in die raam</string>
+    <string name="face_guidance_move_closer">Kom \'n bietjie nader</string>
+    <string name="face_guidance_move_back">Gaan \'n bietjie terug</string>
+    <string name="face_guidance_centre">Sentreer jou gesig in die ovaal</string>
+    <string name="face_guidance_look_straight">Kyk reguit na die kamera</string>
+    <string name="face_guidance_blink">Knipper stadig</string>
+    <string name="face_guidance_ready">Bly stil</string>
+
+    <!-- Sign in: face check -->
+    <string name="login_face_title">Gesigtoets</string>
+    <string name="login_face_heading">Bewys dat dit jy is</string>
+    <string name="login_face_description">Kyk reguit na die kamera en knipper stadig wanneer gevra. \'n Foto van jou sal nie hierdie toets slaag nie.</string>
+    <string name="login_back_to_sign_in">Terug na aanteken</string>
+    <string name="login_face_privacy">Die skandering word met jou registrasiefoto vergelyk en word nooit met iemand anders gedeel nie.</string>
+    <string name="login_face_matched">Gesig stem ooreen. Teken jou aan…</string>
+    <string name="login_face_locked">Rekening gesluit ná %1$d mislukte toetse. Probeer weer oor %2$s.</string>
+    <plurals name="login_face_no_match">
+        <item quantity="one">Gesig stem nie ooreen nie, probeer weer. Nog %1$d probeerslag voordat ons die rekening sluit.</item>
+        <item quantity="other">Gesig stem nie ooreen nie, probeer weer. Nog %1$d probeerslae voordat ons die rekening sluit.</item>
+    </plurals>
+    <string name="login_face_hint">Hou jou gesig in die ovaal en knipper stadig wanneer gevra.</string>
+
+    <!-- Voting: party selection and review -->
+    <string name="vote_choose_party">Kies jou party</string>
+    <string name="vote_select_one_party">Kies EEN party</string>
+    <string name="vote_back_to_review">Terug na oorsig</string>
+    <string name="vote_next_ballot">Volgende: %1$s stembrief</string>
+    <string name="vote_review_my_votes">Gaan my stemme na</string>
+    <string name="review_title">Gaan jou stem na</string>
+    <string name="review_subtitle">Gaan al %1$d stembriewe na</string>
+    <string name="review_final_warning">Jou stemme kan nie ná bevestiging verander word nie. Jy sal jou gesig weer skandeer om dit uit te bring.</string>
+    <string name="review_confirm_vote">Bevestig stem</string>
+    <string name="review_choose">Kies</string>
+    <string name="review_change">Verander</string>
+    <string name="review_not_chosen">Nog nie gekies nie</string>
+    <plurals name="review_error_face_mismatch">
+        <item quantity="one">Gesig stem nie ooreen nie. Jou stem is NIE ingedien nie. Nog %1$d probeerslag.</item>
+        <item quantity="other">Gesig stem nie ooreen nie. Jou stem is NIE ingedien nie. Nog %1$d probeerslae.</item>
+    </plurals>
+    <string name="review_error_face_locked">Gesig stem nie ooreen nie. Jou stem is NIE ingedien nie en stemming is gesluit. Kontak die OVK-hulplyn.</string>
+
+    <!-- Voting: face check -->
+    <string name="vote_face_title">Bevestig dat dit jy is</string>
+    <string name="vote_face_subtitle">Laaste stap</string>
+    <string name="vote_face_heading">Skandeer jou gesig om jou stem uit te bring</string>
+    <string name="vote_face_description">Kyk reguit na die kamera en knipper stadig wanneer gevra. Jou stemme word eers gestuur wanneer die skandering ooreenstem.</string>
+    <string name="vote_face_privacy">Die skandering bewys net dat jy die geregistreerde kieser is. Dit word nooit aan jou keuses gekoppel nie.</string>
+    <string name="vote_face_matched">Gesig stem ooreen. Bring jou stem uit…</string>
+
+    <!-- Voting: confirmation and receipts -->
+    <string name="confirmation_title">Jy het jou merk gemaak!</string>
+    <string name="confirmation_all_recorded">Al %1$d van jou stemme is aangeteken.</string>
+    <string name="confirmation_one_recorded">Jou stem is aangeteken.</string>
+    <string name="confirmation_receipt_label">%1$s stembriefkwitansie:</string>
+    <string name="confirmation_clip_label">%1$s stemkwitansie</string>
+    <string name="confirmation_keep_receipts">Hou hierdie kwitansies. Hulle wys nooit vir wie jy gestem het nie.</string>
+    <string name="confirmation_view_receipts">Bekyk kwitansies</string>
+    <string name="confirmation_view_receipt">Bekyk kwitansie</string>
+    <string name="election_name_sample">2026 Nasionale Verkiesing</string>
+    <string name="receipt_status_valid">Geldig</string>
+    <string name="receipt_title">Stemkwitansie</string>
+    <string name="receipt_title_plural">Stemkwitansies</string>
+    <string name="receipt_field_election">Verkiesing</string>
+    <string name="receipt_field_id">Kwitansie-ID</string>
+    <string name="receipt_field_status">Status</string>
+    <string name="receipt_field_ballot">Stembrief</string>
+    <string name="receipt_field_recorded">Aangeteken</string>
+    <string name="receipt_explainer">Hierdie kwitansie kan gebruik word om te verifieer dat jou stem aangeteken is, maar dit wys nie vir wie jy gestem het nie.</string>
+
+    <!-- Verify receipt -->
+    <string name="verify_title">Verifieer jou stem</string>
+    <string name="verify_heading">Bevestig jou stem</string>
+    <string name="verify_description">Voer die kwitansiekode in wat jy ná die stemming gekry het om te kontroleer dat jou stembrief aangeteken is.</string>
+    <string name="verify_placeholder">Kwitansiekode (AB7F-92K4-6ZP1-3QX8)</string>
+    <string name="verify_button">Verifieer kwitansie</string>
+    <string name="verify_paste">Plak van knipbord</string>
+    <string name="verify_idle_info">Jou kwitansie bewys dat jou stembrief getel is. Dit wys nooit vir wie jy gestem het nie.</string>
+    <string name="verify_not_found">Geen stem pas by daardie kwitansiekode nie. Kontroleer die kode en probeer weer.</string>
+    <string name="verify_found">Hierdie stem is aangeteken en getel.</string>
+
+    <!-- Splash and welcome -->
+    <string name="splash_title">Jou Stem. Jou Keuse.\nDie Toekoms Saam.</string>
+    <string name="splash_subtitle">\'n Grondliggende reg wat ons demokrasie onderhou.</string>
+    <string name="welcome_tagline">Jou stem. Jou keuse.\n\'n Sterker Suid-Afrika.</string>
+    <string name="welcome_get_started">Begin</string>
+
+    <!-- Sign in -->
+    <string name="login_title">Teken aan</string>
+    <string name="login_description">Voer jou Suid-Afrikaanse ID- of paspoortnommer in en verifieer dan jou gesig om aan te teken.</string>
+    <string name="login_with_face">Teken aan met gesigverifikasie</string>
+    <string name="login_face_info">Jou gesig word met jou registrasieskandering vergelyk. Geen wagwoord is nodig nie.</string>
+    <string name="login_no_account">Het jy nie \'n rekening nie?</string>
+    <string name="login_register">Registreer</string>
+
+    <!-- Form fields -->
+    <string name="field_full_name">Volle naam</string>
+    <string name="field_id_or_passport">ID-nommer / Paspoortnommer</string>
+    <string name="field_id_number">ID-nommer</string>
+    <string name="field_passport_number">Paspoortnommer</string>
+    <string name="field_cellphone">Selfoonnommer</string>
+    <string name="field_email_optional">E-posadres (opsioneel)</string>
+
+    <!-- Provinces -->
+    <string name="province_eastern_cape">Oos-Kaap</string>
+    <string name="province_free_state">Vrystaat</string>
+    <string name="province_gauteng">Gauteng</string>
+    <string name="province_kwazulu_natal">KwaZulu-Natal</string>
+    <string name="province_limpopo">Limpopo</string>
+    <string name="province_mpumalanga">Mpumalanga</string>
+    <string name="province_northern_cape">Noord-Kaap</string>
+    <string name="province_north_west">Noordwes</string>
+    <string name="province_western_cape">Wes-Kaap</string>
+
+    <!-- Registration -->
+    <string name="register_step_of">Stap %1$d van %2$d</string>
+    <string name="register_title">Skep jou rekening</string>
+    <string name="register_details_heading">Jou besonderhede</string>
+    <string name="register_details_description">Registreer met jou Suid-Afrikaanse ID of paspoort om jou stembrief te kry.</string>
+    <string name="register_next_steps_info">Volgende neem jy \'n foto van jou ID-dokument en skandeer dan jou gesig. Daardie skandering vervang \'n wagwoord wanneer jy aanteken.</string>
+    <string name="register_details_privacy">Jou besonderhede word net gebruik om te bevestig dat jy op die kieserslys is. Jou stembrief bly anoniem.</string>
+    <string name="register_have_account">Het jy reeds \'n rekening?</string>
+    <string name="register_sign_in">Teken aan</string>
+    <string name="register_verifying">Verifieer tans…</string>
+    <string name="register_verify_continue">Verifieer &amp; gaan voort</string>
+    <string name="address_heading">Jou adres</string>
+    <string name="address_street">Straatadres</string>
+    <string name="address_city">Stad of dorp</string>
+    <string name="address_postal_code">Poskode</string>
+    <string name="address_province">Provinsie</string>
+    <string name="address_province_hint">Jou provinsie bepaal watter provinsiale en streekstembriewe jy kry, so dit moet reg wees.</string>
+    <string name="register_otp_title">Bevestig jou selfoon</string>
+    <string name="register_otp_heading">Voer jou kode in</string>
+    <string name="register_otp_description">Dit bewys dat die selfoonnommer wat jy gegee het aan jou behoort.</string>
+    <string name="register_otp_submit">Verifieer en gaan voort</string>
+    <string name="register_otp_success">Selfoonnommer bevestig.</string>
+    <string name="register_otp_rates">Gewone netwerktariewe geld. Ons gebruik hierdie nommer net om te bevestig dat dit jy is.</string>
+    <string name="register_identity_title">Verifieer identiteit</string>
+    <string name="register_identity_heading">Identiteitsdokument</string>
+    <string name="register_identity_description">Kies jou dokumenttipe en neem \'n duidelike foto van die voorkant.</string>
+    <string name="register_document_type">Dokumenttipe</string>
+    <string name="register_document_national_id">Nasionale ID</string>
+    <string name="register_document_passport">Paspoort</string>
+    <string name="register_document_photo">Dokumentfoto</string>
+    <string name="register_document_captured_retake">Dokument vasgelê. Tik weer daarop om die foto weer te neem.</string>
+    <string name="register_document_hint">Lê die dokument plat, vul die raam en vermy glans op die fotoblad.</string>
+    <string name="register_save_verify_identity">Stoor &amp; verifieer identiteit</string>
+    <string name="register_document_captured">Dokument vasgelê</string>
+    <string name="register_document_tap_capture">Tik om die voorkant van die dokument te neem</string>
+    <string name="register_face_title">Gesigregistrasie</string>
+    <string name="register_face_heading">Skandeer jou gesig</string>
+    <string name="register_face_description">Hou jou foon op ooghoogte en hou jou gesig binne die raam.</string>
+    <string name="register_face_retake">Skandeer weer</string>
+    <string name="register_face_captured">Gesig vasgelê. Neem weer as jou gesig nie duidelik binne die raam was nie.</string>
+    <string name="register_face_camera_needed">Ons het die kamera nodig om jou gesig te skandeer. Niks word aangeteken voordat jy die sluiter tik nie.</string>
+    <string name="register_face_hint">Soek \'n goed beligte plek, haal hoede en sonbrille af en kyk reguit vorentoe.</string>
+    <string name="register_done_heading">Jy is geregistreer</string>
+    <string name="register_done_description">Jou besonderhede, ID-dokument en gesigskandering is vir verifikasie ingedien.</string>
+    <string name="register_done_welcome">Welkom, %1$s</string>
+    <string name="register_done_sign_in_hint">Jy kan nou aanteken met jou ID-nommer en \'n gesigskandering.</string>
+    <string name="register_done_privacy_title">Jou privaatheid is beskerm</string>
+    <string name="register_done_privacy_description">Jou identiteit is veilig en jou stem bly anoniem.</string>
+    <string name="register_done_one_vote_title">Een persoon. Een stem.</string>
+    <string name="register_done_one_vote_description">Jy kan net een keer in elke verkiesing stem.</string>
+    <string name="register_done_keep_id">Hou jou ID-nommer byderhand. Jy sal dit elke keer nodig hê wanneer jy aanteken.</string>
+    <string name="register_done_continue">Gaan voort na die app</string>
+
+    <!-- Privacy consent (POPIA) -->
+    <string name="consent_title">Privaatheid en toestemming</string>
+    <string name="consent_heading">Wat ons insamel en hoekom</string>
+    <string name="consent_description">Suid-Afrika se privaatheidswet (POPIA) sê ons moet jou dit vertel en jou toestemming kry voordat ons enigiets insamel.</string>
+    <string name="consent_no_photos_yet">Geen foto\'s word geneem en geen gesig word geskandeer voordat jy hieronder instem nie.</string>
+    <string name="consent_never_sell">Ons verkoop nooit jou inligting nie en ons deel nooit vir wie jy gestem het nie. Jou stembrief word apart van jou identiteit gestoor, so niemand kan die twee koppel nie. Jy mag jou toestemming enige tyd in Instellings terugtrek of vra dat ons jou data uitvee, maar jy kan nie daarsonder stem nie.</string>
+    <string name="consent_tick_to_continue">Merk die blokkie hierbo om voort te gaan.</string>
+    <string name="consent_how_long">Hoe lank ons dit hou: %1$s</string>
+    <string name="consent_statement">Ek het bogenoemde gelees en ek stem in dat die Verkiesingskommissie my persoonlike inligting vir kieserregistrasie en stemming insamel en gebruik.</string>
+    <string name="consent_retention_registered">Gehou solank jy as kieser geregistreer bly.</string>
+    <string name="consent_retention_30_days">Uitgevee sodra jou registrasie goedgekeur is, binne 30 dae.</string>
+    <string name="consent_id_label">Jou ID-nommer</string>
+    <string name="consent_id_purpose">Om te kontroleer dat jy op die kieserslys is en dat jy net een keer stem.</string>
+    <string name="consent_id_photo_label">\'n Foto van jou ID of paspoort</string>
+    <string name="consent_id_photo_purpose">Om te bevestig dat die ID-nommer wat jy gegee het aan \'n regte dokument behoort.</string>
+    <string name="consent_face_label">\'n Skandering van jou gesig</string>
+    <string name="consent_face_purpose">Om jou gesig met jou ID-foto te vergelyk en om jou sonder \'n wagwoord aan te teken.</string>
+    <string name="consent_address_label">Jou huisadres</string>
+    <string name="consent_address_purpose">Om jou in die regte stemdistrik te plaas, wat jou stembriewe bepaal.</string>
+    <string name="consent_phone_label">Jou selfoonnommer</string>
+    <string name="consent_phone_purpose">Om die eenmalige kode te stuur wat bevestig dat dit jy is wat aanteken.</string>
+
+    <!-- Home -->
+    <string name="home_greeting">Hallo, %1$s</string>
+    <string name="home_sample_election">2026 Plaaslike Regeringsverkiesing</string>
+    <string name="home_sample_closing">Sluit vandag om 21:00. Maak jou merk!</string>
+    <string name="home_sample_opening">Stemming open oor 2 dae · 07:00. Maak gereed!</string>
+    <string name="home_sample_receipt_summary">Aangeteken om 10:42 · Kwitansie-ID 7F3A-92KD</string>
+    <string name="home_vote_now">Stem nou</string>
+    <string name="home_made_your_mark">Jy het jou merk gemaak, %1$s!</string>
+    <string name="home_view_receipt">Bekyk stemkwitansie</string>
+    <string name="home_receipt_footnote">Jou kwitansie bewys dat jy gestem het. Dit wys nooit vir wie nie.</string>
+    <string name="home_remind_me">Herinner my</string>
+    <string name="home_action_station_title">Vind my stemlokaal</string>
+    <string name="home_action_station_description">Adres, ure en aanwysings</string>
+    <string name="home_action_info_title">Verkiesingsinligting en jou regte</string>
+    <string name="home_action_info_description">Hoe stemming werk, stap vir stap</string>
+    <string name="home_action_registration_title">Kontroleer my registrasie</string>
+    <string name="home_action_registration_description">Bevestig dat jou besonderhede korrek is</string>
+    <string name="home_action_report_title">Rapporteer \'n probleem</string>
+    <string name="home_action_report_description">Iets fout met jou stem?</string>
+
+    <!-- Info -->
+    <string name="info_title">Inligting</string>
+    <string name="info_subtitle">Alles wat jy nodig het voordat jy stem</string>
+    <string name="info_heading">Hoe stemming werk</string>
+    <string name="info_description">Kort gidse oor die stembrief, jou regte en jou privaatheid.</string>
+    <string name="info_rights_description">Die verkiesing, jou stembriewe en wat jy kan verwag</string>
+    <string name="info_privacy_title">Jou privaatheid</string>
+    <string name="info_privacy_description">Hoe jou stem anoniem en apart van jou bly</string>
+    <string name="info_help_title">Hulp en ondersteuning</string>
+    <string name="info_help_description">Aanteken, stem en jou kwitansie verifieer</string>
+
+    <!-- Status screens -->
+    <string name="already_voted_title">Reeds gestem</string>
+    <string name="already_voted_heading">Jy het reeds gestem</string>
+    <string name="already_voted_description">Jou stembrief is in. Elkeen kry een stem per verkiesing, so hierdie stembrief kan nie weer oopgemaak word nie.</string>
+    <string name="already_voted_clip_label">Stemkwitansie</string>
+    <string name="already_voted_receipt_info">Jou kwitansie bewys dat jou stembrief getel is. Dit wys niemand vir wie jy gestem het nie.</string>
+    <string name="already_voted_view_receipt">Bekyk my kwitansie</string>
+    <string name="already_voted_not_you">As jy nie hierdie stem uitgebring het nie, skakel dadelik die Verkiesingskommissie se hulplyn.</string>
+    <string name="already_voted_cast_at">Stem uitgebring %1$s</string>
+    <string name="closed_title">Stemming het gesluit</string>
+    <string name="closed_heading">Hierdie stembrief is gesluit</string>
+    <string name="closed_description">Stemming het geëindig, so geen stembriewe kan meer uitgebring word nie. Enige stem wat jy reeds gestuur het, tel steeds.</string>
+    <string name="closed_results_out">Die uitslae is bekend. Jy kan die telling vir elke stembrief sien.</string>
+    <string name="closed_results_expected">Uitslae word %1$s verwag.</string>
+    <string name="closed_results_counting">Stemme word getel. Uitslae verskyn hier sodra die Verkiesingskommissie dit publiseer.</string>
+    <string name="closed_view_results">Bekyk uitslae</string>
+    <string name="closed_results_not_published">Uitslae nog nie gepubliseer nie</string>
+    <string name="closed_keep_receipt">As jy gestem het, hou jou kwitansiekode. Jy kan steeds kontroleer dat jou stembrief getel is nadat die uitslae gepubliseer is.</string>
+    <string name="closed_voting_is_closed">Stemming is gesluit</string>
+    <string name="closed_voting_closed_on">Stemming het gesluit op</string>
+    <string name="closed_no_more_votes">Geen stemme word meer aanvaar nie</string>
+    <string name="no_election_title">Geen verkiesing oop nie</string>
+    <string name="no_election_heading">Niks om nou oor te stem nie</string>
+    <string name="no_election_description">Daar is tans geen verkiesing oop nie. Jou registrasie bly aktief, so jy hoef nie weer in te skryf nie.</string>
+    <string name="no_election_date_known">Jy sal op die dag vanaf hierdie app kan stem. Ons sal jou nader aan die tyd herinner.</string>
+    <string name="no_election_date_unknown">Ons sal jou laat weet sodra \'n datum aangekondig word.</string>
+    <string name="no_election_voting_info">Steminligting</string>
+    <string name="no_election_info_hint">Kontroleer jou stemdistrik, wat elke stembrief besluit en hoe jou stem anoniem bly.</string>
+    <string name="no_election_next">Volgende verkiesing</string>
+    <string name="no_election_next_opens">Volgende verkiesing open</string>
+    <string name="no_election_date_not_announced">Datum nog nie aangekondig nie</string>
+    <string name="offline_title">Geen internetverbinding nie</string>
+    <string name="offline_heading">Jy is vanlyn</string>
+    <string name="offline_description">Ons kon nie die Verkiesingskommissie bereik nie. Kontroleer jou Wi-Fi of mobiele data en probeer weer.</string>
+    <string name="offline_looking">Soek \'n verbinding…</string>
+    <string name="offline_hint_casting">Wanneer jy weer aanlyn is, maak die stembrief weer oop en maak jou merk. Niks wat jy gekies het, is gestuur nie.</string>
+    <string name="offline_hint_reading">Jy kan die steminligting vanlyn bly lees. Stemming het \'n verbinding nodig.</string>
+    <string name="offline_still_stuck">Steeds vas? Gaan na \'n plek met beter sein, skakel vliegtuigmodus af of probeer weer op Wi-Fi.</string>
+    <string name="offline_not_recorded_detail">Die stembrief het ons nooit bereik nie, so niks is getel nie en niks is opgebruik nie. Jy het steeds jou stem.</string>
+    <string name="server_error_title">Iets het verkeerd geloop</string>
+    <string name="server_error_heading">Die diens reageer nie</string>
+    <string name="server_error_description">Dit is \'n probleem aan ons kant, nie joune nie. Jou foon en jou verbinding is in orde.</string>
+    <string name="server_error_retrying">Probeer die Verkiesingskommissie weer…</string>
+    <string name="server_error_check_receipt">Kontroleer met my kwitansie</string>
+    <string name="server_error_reference">Verwysing %1$s — noem dit as jy die hulplyn skakel.</string>
+    <string name="server_error_keeps_happening">As dit aanhou gebeur, wag \'n paar minute en probeer weer, of stem by jou stemlokaal.</string>
+    <string name="server_error_not_recorded_detail">Die stembrief is nooit aanvaar nie, so niks is getel nie. Jy het steeds jou stem en jy kan weer probeer.</string>
+    <string name="server_error_recorded_detail">Jou stembrief is aanvaar en getel. Die fout het daarna gebeur, terwyl ons jou kwitansie gelaai het. Moenie weer stem nie.</string>
+    <string name="server_error_unknown_detail">Die verbinding het weggeval terwyl jou stembrief gestuur is. Moenie aanneem dat dit misluk het nie. Kontroleer jou kwitansie voordat jy weer probeer stem, sodat jy nie twee keer stem nie.</string>
+
+    <!-- Settings -->
+    <string name="settings_subtitle">Voorkeure, rekening &amp; app-opstelling</string>
+    <string name="settings_account_title">Rekening &amp; kieserprofiel</string>
+    <string name="settings_account_description">Bestuur jou registrasie en kieserbesonderhede</string>
+    <string name="settings_profile_title">Kieserprofiel</string>
+    <string name="settings_profile_description">Bekyk persoonlike besonderhede en geregistreerde adres</string>
+    <string name="settings_registration_title">Kontroleer registrasiestatus</string>
+    <string name="settings_registration_description">Bevestig jou status en stemdistrik</string>
+    <string name="settings_preferences_title">App-voorkeure</string>
+    <string name="settings_preferences_description">Pas taal en kennisgewingherinneringe aan</string>
+    <string name="settings_language_title">Taal</string>
+    <string name="settings_language_description">Kies jou voorkeurtaal</string>
+    <string name="settings_language_dialog_title">Kies taal</string>
+    <string name="settings_reminders_title">Verkiesingsherinneringe</string>
+    <string name="settings_reminders_description">Ontvang stemdagherinneringe en amptelike waarskuwings</string>
+    <string name="settings_security_title">Sekuriteit &amp; privaatheid</string>
+    <string name="settings_security_description">Biometrie- en stembriefprivaatheidinstellings</string>
+    <string name="settings_face_title">Gesigverifikasie</string>
+    <string name="settings_face_description">Vereis \'n gesigskandering voor stemming</string>
+    <string name="settings_privacy_title">Privaatheid &amp; databeskerming</string>
+    <string name="settings_privacy_description">Hoe jou stem geënkripteer en anoniem bly</string>
+    <string name="settings_help_section_title">Hulp &amp; inligting</string>
+    <string name="settings_help_section_description">Gidse, ondersteuning en probleme rapporteer</string>
+    <string name="settings_help_description">Stemgidse en antwoorde op algemene vrae</string>
+    <string name="settings_election_info_title">Verkiesingsinligting</string>
+    <string name="settings_election_info_description">Stemproses, reëls en kieserregte</string>
+    <string name="settings_report_title">Rapporteer \'n probleem</string>
+    <string name="settings_report_description">Meld tegniese probleme of kieserbekommernisse aan</string>
+    <string name="settings_logout_description">Teken uit jou kieserrekening uit</string>
+    <string name="settings_logout_confirm_title">Teken uit?</string>
+    <string name="settings_logout_confirm_body">Is jy seker jy wil op hierdie toestel uit jou kieserrekening teken?</string>
+    <string name="settings_footer_iec">Verkiesingskommissie van Suid-Afrika (OVK)</string>
+    <string name="settings_footer_version">Weergawe 1.0.0 • Bou 2026.1 • Veilige e-stemstelsel</string>
+
+    <!-- Profile -->
+    <string name="profile_subtitle">Bekyk en bestuur jou geregistreerde besonderhede</string>
+    <string name="profile_verified_voter">Geverifieerde geregistreerde kieser</string>
+    <string name="profile_identity_title">Geverifieerde identiteitsinligting</string>
+    <string name="profile_identity_description">Volle wettige name en Suid-Afrikaanse ID- / paspoortnommer</string>
+    <string name="profile_full_names">Volle name</string>
+    <string name="profile_id_or_passport">Nasionale ID- / paspoortnommer</string>
+    <string name="profile_district_status">Stemdistrikstatus</string>
+    <string name="profile_district_value">Aktief • Distrik %1$s (%2$s)</string>
+    <string name="profile_full_legal_names">Volle wettige name</string>
+    <string name="profile_full_legal_names_hint">Volle wettige name (bv. Thandi Nkosi)</string>
+    <string name="profile_id_hint">13-syfer SA ID-nommer</string>
+    <string name="profile_identity_face_warning">Biometriese gesigherkenning vereis: As jy jou wettige naam of ID-nommer verander, word \'n gesigskandering vereis.</string>
+    <string name="profile_contact_title">Kontakbesonderhede</string>
+    <string name="profile_contact_description">Jou geregistreerde selfoonnommer vir SMS-kennisgewings</string>
+    <string name="profile_phone_hint">Selfoonnommer (bv. 082 123 4567)</string>
+    <string name="profile_phone_otp_warning">Om jou selfoonnommer te verander, het jy \'n 6-syfer SMS-OTP-kode nodig.</string>
+    <string name="profile_address_title">Woonadres</string>
+    <string name="profile_address_description">Bepaal jou provinsiale en streekstembriewe</string>
+    <string name="profile_select_province">Kies provinsie</string>
+    <string name="profile_city_hint">Stad / dorp (bv. Johannesburg)</string>
+    <string name="profile_street_hint">Straatadres (bv. Marketstraat 124)</string>
+    <string name="profile_postal_hint">Poskode (bv. 2001)</string>
+    <string name="profile_verify_face_save">Verifieer gesig &amp; stoor veranderinge</string>
+    <string name="profile_save_changes">Stoor profielveranderinge</string>
+    <string name="profile_snackbar_address_updated">Woonadres suksesvol opgedateer</string>
+    <string name="profile_snackbar_identity_updated">Identiteit geverifieer. Volle naam en ID-nommer opgedateer!</string>
+    <string name="profile_snackbar_phone_updated">Selfoonnommer &amp; profiel suksesvol opgedateer</string>
+    <string name="profile_face_required_title">Gesigverifikasie vereis</string>
+    <string name="profile_face_required_body">Om jou wettige naam of ID-nommer op te dateer, voltooi asseblief \'n biometriese gesigskandering om jou identiteit te verifieer.</string>
+    <string name="profile_face_matching">Vergelyk biometriese gesigsjabloon…</string>
+    <string name="profile_face_hint">Hou die toestel op ooghoogte en plaas jou gesig in die ovaal.</string>
+    <string name="profile_scanning">Skandeer tans…</string>
+    <string name="profile_verify_face_and_save">Verifieer gesig &amp; stoor</string>
+    <string name="profile_otp_title">Verifieer selfoonverandering</string>
+    <string name="profile_otp_body">\'n 6-syfer SMS-OTP-kode is na %1$s gestuur. Voer dit hieronder in om jou foonnommerverandering te bevestig.</string>
+    <string name="profile_otp_not_received">Kode nie ontvang nie?</string>
+    <string name="profile_otp_resend_sms">Herstuur SMS</string>
+    <string name="profile_verify_and_save">Verifieer &amp; stoor</string>
+    <string name="profile_otp_incomplete">Voer asseblief die volle 6-syfer OTP-kode in</string>
+    <string name="profile_read_only">Slegs lees</string>
+</resources>
