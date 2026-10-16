@@ -1,0 +1,4 @@
+#!/bin/sh
+# Rejects commit messages that are not a single sentence.
+# Enable once per clone:  git config core.hooksPath .githooks
+exec "$(dirname "$0")/check-commit-msg.sh" "$1"
