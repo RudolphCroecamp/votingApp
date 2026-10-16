@@ -237,6 +237,10 @@ else {//create the mainDB
         .GetRequiredService<VotingDbContext>();
 
     MainDb.Database.Migrate();//create and add migrations to db
+
+    //FIX remove seeder in production
+    await DbSeeder.SeedAsync(MainDb);
+
 }
 
 
