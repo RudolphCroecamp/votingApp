@@ -34,6 +34,7 @@
     <!-- Shared components -->
     <string name="tab_home">Tuis</string>
     <string name="tab_vote">Stem</string>
+    <string name="tab_manifestos">Manifeste</string>
     <string name="tab_info">Inligting</string>
     <string name="tab_settings">Instellings</string>
     <string name="leader_photo_of">Foto van %1$s</string>
