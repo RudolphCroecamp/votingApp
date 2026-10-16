@@ -1,6 +1,7 @@
 package com.example.frontend.navigation
 
 import com.example.frontend.ui.Components.Ballot
+import com.example.frontend.ui.screens.Info.InfoTopic
 import kotlinx.serialization.Serializable
 
 sealed interface Screen {
@@ -47,6 +48,9 @@ sealed interface Screen {
     data object VerifyReceipt : Screen
     @Serializable
     data object Info : Screen
+    /** One Information topic (KAN-50). */
+    @Serializable
+    data class InfoDetail(val topic: InfoTopic) : Screen
     @Serializable
     data object Settings : Screen
     @Serializable
