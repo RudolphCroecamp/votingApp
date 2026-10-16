@@ -31,28 +31,6 @@ namespace votingBackend3.Services
             TokenLifetime = _configuration.GetValue<int>("TokenLifetime"!);
         }
 
-        //return true if the user has already voted in this election, false if they still need to vote, error when not registered for the election
-        //public async Task<bool> HasUserVoted(Guid voter_id, Guid election_id)
-        //{
-        //    var electionVoter = await _votingDbContext.election_voter
-        //        .FirstOrDefaultAsync(ev =>
-        //            ev.voter_id == voter_id &&
-        //            ev.election_id == election_id);
-
-        //    if (electionVoter == null)
-        //    {
-        //        throw new Exception("Voter is not registered for this election");
-        //    }
-
-        //    if(electionVoter.has_voted == true)
-        //    {
-        //        throw new Exception("Voter has already voted in this election");
-        //    }
-
-        //    return false;
-        //}
-
-
     // Checks whether the voter is eligible to vote in the specified election.
     public async Task<bool> IsUserEligibleToVote(Guid voter_id, Guid election_id)
         {
@@ -320,6 +298,33 @@ namespace votingBackend3.Services
             return vote_receipt;
         }
 
+
+
+        public async Task<ElectionVoter> RequestAccessToElection(Guid election_id, Guid voter_id)
+        {
+            //check if election exist
+            var electionExist = await _votingDbContext.election.AnyAsync(e => e.election_id == election_id);
+            if (!electionExist) throw new KeyNotFoundException("Election not found");
+
+            //check if user exist and is an voter
+            var isVoter = await _votingDbContext.auth.AnyAsync(a => a.voter_id == voter_id && a.role == "Voter");
+            if (!isVoter) throw new KeyNotFoundException("User does not exist or lack permissions");
+
+            ElectionVoter ev = new ElectionVoter
+            {
+                election_id = election_id,
+                voter_id = voter_id,
+                status = ElectionVoterStatus.Pending,
+                has_voted = false//default to false
+            };
+
+            //save changes to db
+            await _votingDbContext.election_voter.AddAsync(ev);
+            await _votingDbContext.SaveChangesAsync();
+
+
+            return ev;
+        }
 
 
 

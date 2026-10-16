@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using votingBackend3.Models.DTOs;
@@ -24,7 +25,6 @@ namespace votingBackend3.Controllers
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] login_requestDto request) {
-
             try
             {
                 var token = await _authService.Login(request);

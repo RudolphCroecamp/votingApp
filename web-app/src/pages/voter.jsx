@@ -574,28 +574,6 @@ export default function VoterDirectory() {
                                                             </button>
                                                         </div>
                                                     </td>
-
-                                                    {/* <button
-                                                                type="button"
-                                                                className={`btn btn-sm ${isAllowed
-                                                                    ? "btn-outline-danger"
-                                                                    : "btn-outline-success"
-                                                                    }`}
-                                                                disabled={
-                                                                    isUpdating ||
-                                                                    isAllowed === null ||
-                                                                    updatingId !== null
-                                                                }
-                                                                onClick={() =>
-                                                                    toggleVoterAccess(voter)
-                                                                }
-                                                            >
-                                                                {isUpdating
-                                                                    ? "Updating..."
-                                                                    : isAllowed
-                                                                        ? "Revoke access"
-                                                                        : "Restore access"}
-                                                            </button> */}
                                                 </tr>
                                             );
                                         })
