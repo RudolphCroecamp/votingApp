@@ -448,4 +448,6 @@
     <string name="info_privacy_3">Your face scan is never linked to your choices.</string>
     <string name="info_privacy_4">Under POPIA you may ask to see or correct your personal information.</string>
     <string name="home_receipt_summary">Recorded at %1$s · %2$d receipts</string>
+    <string name="parties_loading">Loading parties…</string>
+    <string name="parties_load_error">Couldn\'t load the parties. Check your connection and try again.</string>
 </resources>

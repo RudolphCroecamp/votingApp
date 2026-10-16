@@ -447,4 +447,6 @@
     <string name="info_privacy_3">Jou gesigskandering word nooit aan jou keuses gekoppel nie.</string>
     <string name="info_privacy_4">Onder POPIA mag jy vra om jou persoonlike inligting te sien of reg te stel.</string>
     <string name="home_receipt_summary">Aangeteken om %1$s · %2$d bewyse</string>
+    <string name="parties_loading">Partye word gelaai…</string>
+    <string name="parties_load_error">Kon nie die partye laai nie. Kontroleer jou verbinding en probeer weer.</string>
 </resources>
