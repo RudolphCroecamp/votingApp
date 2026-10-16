@@ -328,11 +328,11 @@ export default function ManageParties() {
     }
 
     return (
-        <div className="d-flex">
+        <div className="admin-layout">
             <Sidebar />
 
             <main
-                className="flex-grow-1 min-vh-100"
+                className="admin-content"
                 style={{
                     minWidth: 0,
                     marginLeft: SIDEBAR_WIDTH,

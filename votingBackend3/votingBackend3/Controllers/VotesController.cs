@@ -170,13 +170,46 @@ namespace votingBackend3.Controllers
         }
 
 
+        [HttpPost]
+        [Route("RequestAccessToElection")]
+        public async Task<IActionResult> RequestAccessToElection([FromBody] RequestElectionAccessDto request)
+        {
+            try
+            {
+                //get voter ID from claims
+                Guid voter_id = await GetVoterIDFromClaims();
+
+                var assignment = await _voteService.RequestAccessToElection(request.election_id, voter_id);
+
+                return Ok(new
+                {
+                    message = "Voter successfully requested access to election.",
+                    election_id = assignment.election_id,
+                    voter_id = assignment.voter_id,
+                    status = assignment.status,
+                    has_voted = false,
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+        }
+
+
+
         //get the voter's voter_id form jwt claims
-        public async Task<Guid> GetVoterIDFromClaims(){
+        public async Task<Guid> GetVoterIDFromClaims()
+        {
             var voterIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (!Guid.TryParse(voterIdClaim, out Guid voter_id))
             {
-                return Guid.Empty;
+                throw new Exception("Could not get voter_id form claims");
             }
 
             return voter_id;

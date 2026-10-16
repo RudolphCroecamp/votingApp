@@ -231,7 +231,7 @@ export default function ElectionResults() {
         <div className="admin-layout">
             <Sidebar />
 
-            <main className="admin-main election-results-page">
+            <main className="admin-content">
                 <div className="election-results-container">
                     <header className="page-header">
                         <div className="blockchain-check">
