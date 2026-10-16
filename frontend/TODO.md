@@ -21,12 +21,15 @@ buildTypes {
 No shrinking, no obfuscation, no resource stripping. Fine while marking, wrong before
 any real distribution.
 
-- [ ] Turn optimization back on for `release`
-- [ ] Enable resource shrinking (depends on code shrinking being on)
-- [ ] Add a `proguard-rules.pro` — check whether the kotlinx.serialization
+- [x] Turn optimization back on for `release`
+- [x] Enable resource shrinking (depends on code shrinking being on)
+- [x] Add a `proguard-rules.pro` — check whether the kotlinx.serialization
       serializers for `Screen` survive; `@Serializable` classes usually need a keep rule
-- [ ] Build a release APK and walk the whole flow, specifically navigation
+- [~] Build a release APK and walk the whole flow, specifically navigation
       (serializer stripping shows up as a runtime crash, not a build failure)
+      Done on an emulator up to Register step 4 and the sign-in face check. Home and the
+      vote flow need a real face scan to reach, so check those on a phone.
+      Found and fixed: ML Kit face detector was null under R8 (keep rules added).
 
 **Do this before item 2** — resource shrinking is what makes the unused assets a
 non-issue automatically.
