@@ -31,6 +31,8 @@ import com.example.frontend.ui.screens.Auth.LoginFaceScreen
 import com.example.frontend.ui.screens.Auth.LoginFaceViewModel
 import com.example.frontend.ui.screens.Auth.LoginScreen
 import com.example.frontend.ui.screens.Info.InfoScreen
+import com.example.frontend.ui.screens.Manifestos.ManifestosScreen
+import com.example.frontend.ui.screens.Manifestos.PartyDetailScreen
 import com.example.frontend.ui.screens.Profile.ProfileScreen
 import com.example.frontend.ui.screens.Settings.SettingsScreen
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
@@ -427,6 +429,25 @@ fun AppNavGraph(
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) }
             )
+        }
+
+        composable<Screen.Manifestos> {
+            ManifestosScreen(
+                onPartyClick = { party -> navController.navigate(Screen.PartyDetail(party.id)) },
+                selectedTab = currentTab,
+                onTabSelected = { openTab(it) }
+            )
+        }
+
+        composable<Screen.PartyDetail> { entry ->
+            val route = entry.toRoute<Screen.PartyDetail>()
+            val party = SampleParties.firstOrNull { it.id == route.partyId }
+            if (party == null) {
+                // Unknown id (stale link): leave instead of crashing.
+                LaunchedEffect(route.partyId) { navController.popBackStack() }
+            } else {
+                PartyDetailScreen(party = party, onBackClick = { navController.popBackStack() })
+            }
         }
 
         composable<Screen.Info> {

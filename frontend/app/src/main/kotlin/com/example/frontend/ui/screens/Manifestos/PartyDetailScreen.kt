@@ -41,8 +41,6 @@ import com.example.frontend.ui.theme.InfoContainer
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.Spacing
 
-// TODO: Add a type-safe route, e.g. data class PartyDetail(val partyId: String), to Screen.kt
-//       and look the party up by id in AppNavGraph (page 4: type-safe navigation).
 // TODO: Open this screen from each party on VotePartySelectionScreen as well.
 
 /** One party's logo, leader and numbered manifesto points (V-07). */
