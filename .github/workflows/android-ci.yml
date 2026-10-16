@@ -4,15 +4,34 @@ name: Android CI
 
 on:
   push:
-    paths: ["frontend/**", ".github/workflows/android-ci.yml"]
+    paths: ["frontend/**", ".github/workflows/android-ci.yml", ".githooks/**"]
   pull_request:
-    paths: ["frontend/**", ".github/workflows/android-ci.yml"]
 
 concurrency:
   group: android-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  commit-messages:
+    # Every commit in a pull request must have a one-sentence message.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: One sentence per commit message
+        run: |
+          status=0
+          for sha in $(git rev-list --no-merges ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}); do
+            git log -1 --format=%B "$sha" > /tmp/msg
+            if ! sh .githooks/check-commit-msg.sh /tmp/msg; then
+              echo "::error::Commit $sha needs a one-sentence message"
+              status=1
+            fi
+          done
+          exit $status
+
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
