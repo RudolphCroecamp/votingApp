@@ -32,10 +32,10 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
 import com.example.frontend.effects.pressScale
-import com.example.frontend.ui.Components.AppBottomBar
-import com.example.frontend.ui.Components.AppTopBar
-import com.example.frontend.ui.Components.BottomTab
-import com.example.frontend.ui.Components.LeaderAvatar
+import com.example.frontend.ui.components.AppBottomBar
+import com.example.frontend.ui.components.AppTopBar
+import com.example.frontend.ui.components.BottomTab
+import com.example.frontend.ui.components.LeaderAvatar
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText

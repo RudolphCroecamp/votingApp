@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.navigation.AppNavGraph
 import com.example.frontend.navigation.Screen
-import com.example.frontend.ui.Components.Ballot
+import com.example.frontend.ui.components.Ballot
 import com.example.frontend.ui.screens.Auth.LoginFaceUiState
 import com.example.frontend.ui.screens.Auth.checking
 import com.example.frontend.ui.screens.Auth.matched

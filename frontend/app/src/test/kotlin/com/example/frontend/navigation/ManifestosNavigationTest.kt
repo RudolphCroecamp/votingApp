@@ -8,7 +8,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.frontend.ui.Components.FullScreenLoading
+import com.example.frontend.ui.components.FullScreenLoading
 import com.example.frontend.ui.theme.FrontendTheme
 import org.junit.Assert.assertTrue
 import org.junit.Rule

@@ -6,7 +6,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
-import com.example.frontend.ui.Components.Ballot
+import com.example.frontend.ui.components.Ballot
 import com.example.frontend.ui.theme.FrontendTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule

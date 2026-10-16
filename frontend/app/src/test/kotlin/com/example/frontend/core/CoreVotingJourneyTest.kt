@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.navigation.AppNavGraph
 import com.example.frontend.navigation.Screen
-import com.example.frontend.ui.Components.BALLOT_ORDER
+import com.example.frontend.ui.components.BALLOT_ORDER
 import com.example.frontend.ui.screens.Vote.VoteFlowViewModel
 import com.example.frontend.ui.theme.FrontendTheme
 import org.junit.Assert.assertEquals

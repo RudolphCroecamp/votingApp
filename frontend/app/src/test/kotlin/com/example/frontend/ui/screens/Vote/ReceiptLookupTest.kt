@@ -1,6 +1,6 @@
 package com.example.frontend.ui.screens.Vote
 
-import com.example.frontend.ui.Components.Ballot
+import com.example.frontend.ui.components.Ballot
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
