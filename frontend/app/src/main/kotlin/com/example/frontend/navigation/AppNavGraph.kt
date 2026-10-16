@@ -35,6 +35,11 @@ import com.example.frontend.ui.screens.Info.InfoDetailScreen
 import com.example.frontend.ui.screens.Info.InfoTopic
 import com.example.frontend.ui.Components.HeroState
 import com.example.frontend.ui.screens.Manifestos.ManifestosScreen
+import com.example.frontend.ui.screens.Manifestos.PartiesLoadError
+import com.example.frontend.ui.screens.Manifestos.PartiesUiState
+import com.example.frontend.ui.screens.Manifestos.PartiesViewModel
+import com.example.frontend.ui.screens.Manifestos.partyById
+import com.example.frontend.ui.Components.FullScreenLoading
 import com.example.frontend.ui.screens.Manifestos.PartyDetailScreen
 import com.example.frontend.ui.screens.Profile.ProfileScreen
 import com.example.frontend.ui.screens.Settings.SettingsScreen
@@ -93,7 +98,9 @@ fun AppNavGraph(
     navController: NavHostController = rememberNavController(),
     registrationViewModel: RegistrationViewModel = viewModel(),
     // Activity-scoped so all three ballots, Review and the face check share it (KAN-17).
-    voteFlowViewModel: VoteFlowViewModel = viewModel()
+    voteFlowViewModel: VoteFlowViewModel = viewModel(),
+    // Activity-scoped so the list loads once for Manifestos and party detail (KAN-25).
+    partiesViewModel: PartiesViewModel = viewModel()
 ) {
     // Flow state that outlives a single destination. Anything a later screen
     // needs but cannot be derived from its own route lives here.
@@ -442,21 +449,34 @@ fun AppNavGraph(
         }
 
         composable<Screen.Manifestos> {
-            ManifestosScreen(
-                onPartyClick = { party -> navController.navigate(Screen.PartyDetail(party.id)) },
-                selectedTab = currentTab,
-                onTabSelected = { openTab(it) }
-            )
+            val partiesState by partiesViewModel.state.collectAsState()
+            when (val state = partiesState) {
+                PartiesUiState.Loading -> FullScreenLoading(label = stringResource(R.string.parties_loading))
+                PartiesUiState.Error -> PartiesLoadError(onRetry = partiesViewModel::retry)
+                is PartiesUiState.Loaded -> ManifestosScreen(
+                    parties = state.parties,
+                    onPartyClick = { party -> navController.navigate(Screen.PartyDetail(party.id)) },
+                    selectedTab = currentTab,
+                    onTabSelected = { openTab(it) }
+                )
+            }
         }
 
         composable<Screen.PartyDetail> { entry ->
             val route = entry.toRoute<Screen.PartyDetail>()
-            val party = SampleParties.firstOrNull { it.id == route.partyId }
-            if (party == null) {
-                // Unknown id (stale link): leave instead of crashing.
-                LaunchedEffect(route.partyId) { navController.popBackStack() }
-            } else {
-                PartyDetailScreen(party = party, onBackClick = { navController.popBackStack() })
+            val partiesState by partiesViewModel.state.collectAsState()
+            when (val state = partiesState) {
+                PartiesUiState.Loading -> FullScreenLoading(label = stringResource(R.string.parties_loading))
+                PartiesUiState.Error -> PartiesLoadError(onRetry = partiesViewModel::retry)
+                is PartiesUiState.Loaded -> {
+                    val party = state.partyById(route.partyId)
+                    if (party == null) {
+                        // Unknown id (stale link): leave instead of crashing.
+                        LaunchedEffect(route.partyId) { navController.popBackStack() }
+                    } else {
+                        PartyDetailScreen(party = party, onBackClick = { navController.popBackStack() })
+                    }
+                }
             }
         }
 

@@ -447,4 +447,6 @@
     <string name="info_privacy_3">Ukuskena kobuso bakho akuxhunyaniswa nezinqumo zakho.</string>
     <string name="info_privacy_4">Ngaphansi kwe-POPIA ungacela ukubona noma ukulungisa imininingwane yakho.</string>
     <string name="home_receipt_summary">Kubhalwe ngo-%1$s · amarisidi angu-%2$d</string>
+    <string name="parties_loading">Ilayisha amaqembu…</string>
+    <string name="parties_load_error">Ayikwazanga ukulayisha amaqembu. Hlola uxhumano lwakho bese uzama futhi.</string>
 </resources>
