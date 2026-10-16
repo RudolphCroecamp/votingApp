@@ -151,7 +151,7 @@ class ThreeBallotNavigationTest {
     }
 
     @Test
-    fun `after voting, vote now shows the receipts instead of new ballots`() {
+    fun `after voting, home shows the receipts instead of new ballots`() {
         startAtBallots()
         pick("African National Congress (ANC)", "Next: Regional ballot")
         pick("Democratic Alliance (DA)", "Next: Provincial ballot")
@@ -167,7 +167,9 @@ class ThreeBallotNavigationTest {
         compose.onNodeWithText("Done").performScrollTo().performClick()
         compose.waitForIdle()
         assertTrue(currentIs { it.hasRoute<Screen.Home>() })
-        compose.onAllNodesWithText("Vote now")[0].performScrollTo().performClick()
+        // Home swaps Vote now for the receipt card once the vote is cast (KAN-54).
+        compose.onNodeWithText("Vote now").assertDoesNotExist()
+        compose.onNodeWithText("View vote receipt").performScrollTo().performClick()
         compose.waitForIdle()
         assertTrue(currentIs { it.hasRoute<Screen.Receipt>() })
     }

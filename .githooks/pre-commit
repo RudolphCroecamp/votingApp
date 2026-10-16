@@ -1,0 +1,11 @@
+#!/bin/sh
+# Runs the core app tests before every commit that touches the Android app.
+# Enable once per clone:  git config core.hooksPath .githooks
+# Skip in an emergency:   git commit --no-verify
+if git diff --cached --name-only | grep -q '^frontend/'; then
+  echo "pre-commit: running core app tests..."
+  (cd frontend && ./gradlew --quiet --no-configuration-cache :app:testDebugUnitTest --tests 'com.example.frontend.core.*') || {
+    echo "pre-commit: core tests failed, commit stopped. Fix them or use --no-verify."
+    exit 1
+  }
+fi
