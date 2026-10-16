@@ -1,5 +1,6 @@
 package com.example.frontend.ui.Components
 
+import androidx.annotation.Keep
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -37,6 +38,8 @@ import com.example.frontend.ui.theme.StandardEasing
 import com.example.frontend.ui.theme.motionDuration
 import kotlinx.serialization.Serializable
 
+// @Keep: route argument; R8 must not rename it once minify is on (KAN-41).
+@Keep
 @Serializable
 enum class Ballot(@param:StringRes val titleRes: Int, @param:StringRes val shortLabelRes: Int) {
     National(R.string.ballot_national_title, R.string.ballot_national_short),

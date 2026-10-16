@@ -1,5 +1,6 @@
 package com.example.frontend.ui.screens.Vote
 
+import com.example.frontend.ui.Components.Ballot
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -16,7 +17,7 @@ class ReceiptLookupTest {
         assertTrue(result is ReceiptLookup.Found)
         result as ReceiptLookup.Found
         assertEquals(knownCode, result.receiptCode)
-        assertEquals("National Assembly", result.ballotTitle)
+        assertEquals(Ballot.National, result.ballot)
     }
 
     @Test
@@ -37,7 +38,7 @@ class ReceiptLookupTest {
     fun `a found receipt never says who the vote was for`() {
         val found = sampleLookup(knownCode) as ReceiptLookup.Found
         // Only these four fields exist; there is no party anywhere on a receipt.
-        val fields = listOf(found.receiptCode, found.ballotTitle, found.castAt, found.electionName)
+        val fields = listOf(found.receiptCode, found.ballot.name, found.castAt, found.electionName)
         assertTrue(fields.none { it.contains("Congress") || it.contains("Alliance") })
     }
 }

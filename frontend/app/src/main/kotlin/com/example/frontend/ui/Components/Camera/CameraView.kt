@@ -1,5 +1,7 @@
 package com.example.frontend.ui.Components.Camera
 
+import androidx.core.graphics.get
+import androidx.core.graphics.scale
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -287,10 +289,10 @@ private fun ShutterButton(enabled: Boolean = true, onClick: () -> Unit) {
     )
 }
 fun Bitmap.brightness(): Double {
-    val small = Bitmap.createScaledBitmap(this, 64, 64, true)
+    val small = scale(64, 64)
     var sum = 0.0
     for (x in 0 until 64) for (y in 0 until 64) {
-        val p = small.getPixel(x, y)
+        val p = small[x, y]
         sum += 0.299 * p.red + 0.587 * p.green + 0.114 * p.blue
     }
     return sum / (64 * 64)
@@ -298,10 +300,10 @@ fun Bitmap.brightness(): Double {
 
 /** Sharpness = how much neighbouring pixels differ. Low value = blurry. Tune threshold on a real phone. */
 fun Bitmap.sharpness(): Double {
-    val s = Bitmap.createScaledBitmap(this, 200, 200, true)
+    val s = scale(200, 200)
     var total = 0.0
     for (x in 1 until 199) for (y in 0 until 200) {
-        total += abs(s.getPixel(x, y).red - s.getPixel(x - 1, y).red)
+        total += abs(s[x, y].red - s[x - 1, y].red)
     }
     return total / (198 * 200)
 }
