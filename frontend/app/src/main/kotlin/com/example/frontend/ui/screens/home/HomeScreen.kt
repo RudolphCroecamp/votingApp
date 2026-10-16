@@ -82,6 +82,7 @@ fun HomeScreen(
     onHelp: () -> Unit = {},
     onSettings: () -> Unit = {},
     onVerifyVote: () -> Unit = {},
+    onViewReceipt: () -> Unit = onVerifyVote,
     onRemindMe: () -> Unit = {},
     onLogout: () -> Unit = {},
     backgroundColor: Color = PageBackground
@@ -190,7 +191,7 @@ fun HomeScreen(
                         title = stringResource(R.string.home_made_your_mark, displayName),
                         subtitle = receiptSummary,
                         actionLabel = stringResource(R.string.home_view_receipt),
-                        onAction = onVerifyVote,
+                        onAction = onViewReceipt,
                         footnote = stringResource(R.string.home_receipt_footnote),
                         modifier = Modifier.fillMaxWidth()
                     )

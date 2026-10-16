@@ -31,6 +31,9 @@ import com.example.frontend.ui.screens.Auth.LoginFaceScreen
 import com.example.frontend.ui.screens.Auth.LoginFaceViewModel
 import com.example.frontend.ui.screens.Auth.LoginScreen
 import com.example.frontend.ui.screens.Info.InfoScreen
+import com.example.frontend.ui.screens.Info.InfoDetailScreen
+import com.example.frontend.ui.screens.Info.InfoTopic
+import com.example.frontend.ui.Components.HeroState
 import com.example.frontend.ui.screens.Manifestos.ManifestosScreen
 import com.example.frontend.ui.screens.Manifestos.PartyDetailScreen
 import com.example.frontend.ui.screens.Profile.ProfileScreen
@@ -135,6 +138,8 @@ fun AppNavGraph(
             restoreState = true
         }
     }
+
+    fun openInfo(topic: InfoTopic) = navController.navigate(Screen.InfoDetail(topic))
 
     fun logout() {
         navController.navigate(Screen.Login) {
@@ -311,15 +316,20 @@ fun AppNavGraph(
             HomeScreen(
                 onVoteNow = { startVoting() },
                 voterName = registeredName,
+                heroState = if (voteState.hasVoted) HeroState.VoteCast else HeroState.VotingOpen,
+                receiptSummary = voteState.receipts.firstOrNull()?.let { first ->
+                    stringResource(R.string.home_receipt_summary, first.castAt, voteState.receipts.size)
+                } ?: "",
+                onViewReceipt = { navController.navigate(Screen.Receipt) },
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) },
-                onVotingStation = { navController.navigate(Screen.Info) },
-                onVotingInformation = { navController.navigate(Screen.Info) },
+                onVotingStation = { openInfo(InfoTopic.VotingStation) },
+                onVotingInformation = { openInfo(InfoTopic.Rights) },
                 onCheckRegistration = { navController.navigate(Screen.Profile) },
                 onRemindMe = { navController.navigate(Screen.Info) },
-                onReportProblem = { navController.navigate(Screen.Info) },
-                onPrivacy = { navController.navigate(Screen.Info) },
-                onHelp = { navController.navigate(Screen.Info) },
+                onReportProblem = { openInfo(InfoTopic.Help) },
+                onPrivacy = { openInfo(InfoTopic.Privacy) },
+                onHelp = { openInfo(InfoTopic.Help) },
                 onSettings = { navController.navigate(Screen.Settings) },
                 onVerifyVote = { navController.navigate(Screen.VerifyReceipt) },
                 onLogout = { logout() }
@@ -452,6 +462,19 @@ fun AppNavGraph(
 
         composable<Screen.Info> {
             InfoScreen(
+                onBackClick = { navController.popBackStack() },
+                onVotingInformation = { openInfo(InfoTopic.Rights) },
+                onVotingStation = { openInfo(InfoTopic.VotingStation) },
+                onPrivacy = { openInfo(InfoTopic.Privacy) },
+                onHelp = { openInfo(InfoTopic.Help) },
+                selectedTab = currentTab,
+                onTabSelected = { openTab(it) }
+            )
+        }
+
+        composable<Screen.InfoDetail> { entry ->
+            InfoDetailScreen(
+                topic = entry.toRoute<Screen.InfoDetail>().topic,
                 onBackClick = { navController.popBackStack() },
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) }

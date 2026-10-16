@@ -430,4 +430,21 @@
     <string name="profile_verify_and_save">Qinisekisa &amp; Londoloza</string>
     <string name="profile_otp_incomplete">Sicela ufake yonke ikhodi ye-OTP enezinombolo ezingu-6</string>
     <string name="profile_read_only">Ukufunda kuphela</string>
+    <string name="info_rights_1">Ungavota uma uyisakhamuzi saseNingizimu Afrika, uneminyaka eyi-18 noma ngaphezulu, futhi ubhalisile.</string>
+    <string name="info_rights_2">Ivoti lakho liyimfihlo. Akekho ongakubuka uvota noma afune ukwazi ukuthi uvotele bani.</string>
+    <string name="info_rights_3">Akekho ongakukhokhela, akusabise noma akuphoqe ukuthi uvotele iqembu.</string>
+    <string name="info_rights_4">Uma unokukhubazeka noma ungakwazi ukufunda, ungacela usizo lokuvota.</string>
+    <string name="info_station_1">Uvota esiteshini sokuvota lapho wabhalisa khona.</string>
+    <string name="info_station_2">Thumela inombolo yakho kamazisi nge-SMS ku-32810 (R1) noma ushayele *120*432# ukuze ubone isiteshi sakho sokuvota.</string>
+    <string name="info_station_3">Ungabheka futhi i-My Registration Details ku-www.elections.org.za.</string>
+    <string name="info_station_4">Phatha incwadi kamazisi eluhlaza enebhakhodi, ikhadi likamazisi elihlakaniphile noma isitifiketi sikamazisi sesikhashana esisebenzayo.</string>
+    <string name="info_help_1">Awukwazi ukungena? Hlola inombolo yakho kamazisi, bese uzama ukuhlolwa kobuso futhi ekukhanyeni okuhle.</string>
+    <string name="info_help_2">Ngemuva kokuhluleka kokuhlolwa kobuso ka-3 i-akhawunti yakho ivaleka imizuzu eyi-15.</string>
+    <string name="info_help_3">Amarisidi akho okuvota asesikrinini Sasekhaya ngaphansi kokuthi Buka irisidi lokuvota.</string>
+    <string name="info_help_4">Isikhungo Sokuxhumana seKhomishini Yokhetho: 0800 11 8000 (mahhala, 7am – 9pm phakathi nesonto).</string>
+    <string name="info_privacy_1">Siqoqa inombolo yakho kamazisi, isithombe sikamazisi, ukuskena ubuso, ikheli nenombolo kamakhalekhukhwini kuphela ukuze sikubhalise futhi siqinisekise ukuthi nguwe.</string>
+    <string name="info_privacy_2">Amarisidi akho afakazela ukuthi uvotile kodwa awakhombisi ukuthi uvotele bani.</string>
+    <string name="info_privacy_3">Ukuskena kobuso bakho akuxhunyaniswa nezinqumo zakho.</string>
+    <string name="info_privacy_4">Ngaphansi kwe-POPIA ungacela ukubona noma ukulungisa imininingwane yakho.</string>
+    <string name="home_receipt_summary">Kubhalwe ngo-%1$s · amarisidi angu-%2$d</string>
 </resources>

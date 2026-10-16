@@ -431,4 +431,21 @@
     <string name="profile_verify_and_save">Verify &amp; Save</string>
     <string name="profile_otp_incomplete">Please enter the full 6-digit OTP code</string>
     <string name="profile_read_only">Read only</string>
+    <string name="info_rights_1">You can vote if you are a South African citizen, 18 or older, and registered.</string>
+    <string name="info_rights_2">Your vote is secret. Nobody may watch you vote or demand to know who you voted for.</string>
+    <string name="info_rights_3">Nobody may pay, threaten or force you to vote for a party.</string>
+    <string name="info_rights_4">If you have a disability or cannot read, you may ask for help to vote.</string>
+    <string name="info_station_1">You vote at the voting station where you registered.</string>
+    <string name="info_station_2">SMS your ID number to 32810 (R1) or dial *120*432# to see your voting station.</string>
+    <string name="info_station_3">You can also check My Registration Details on www.elections.org.za.</string>
+    <string name="info_station_4">Bring your green barcoded ID book, smart ID card or valid temporary ID certificate.</string>
+    <string name="info_help_1">Can\'t sign in? Check your ID number, then try the face check again in good light.</string>
+    <string name="info_help_2">After 3 failed face checks your account locks for 15 minutes.</string>
+    <string name="info_help_3">Your vote receipts are on the Home screen under View vote receipt.</string>
+    <string name="info_help_4">Electoral Commission Contact Centre: 0800 11 8000 (toll-free, 7am – 9pm weekdays).</string>
+    <string name="info_privacy_1">We collect your ID number, ID photo, face scan, address and cellphone number only to register you and confirm it is you.</string>
+    <string name="info_privacy_2">Your receipts prove that you voted but never show who you voted for.</string>
+    <string name="info_privacy_3">Your face scan is never linked to your choices.</string>
+    <string name="info_privacy_4">Under POPIA you may ask to see or correct your personal information.</string>
+    <string name="home_receipt_summary">Recorded at %1$s · %2$d receipts</string>
 </resources>

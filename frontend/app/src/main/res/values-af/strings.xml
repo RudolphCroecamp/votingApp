@@ -430,4 +430,21 @@
     <string name="profile_verify_and_save">Verifieer &amp; stoor</string>
     <string name="profile_otp_incomplete">Voer asseblief die volle 6-syfer OTP-kode in</string>
     <string name="profile_read_only">Slegs lees</string>
+    <string name="info_rights_1">Jy kan stem as jy \'n Suid-Afrikaanse burger is, 18 jaar of ouer, en geregistreer is.</string>
+    <string name="info_rights_2">Jou stem is geheim. Niemand mag kyk hoe jy stem of eis om te weet vir wie jy gestem het nie.</string>
+    <string name="info_rights_3">Niemand mag jou betaal, dreig of dwing om vir \'n party te stem nie.</string>
+    <string name="info_rights_4">As jy \'n gestremdheid het of nie kan lees nie, mag jy vra vir hulp om te stem.</string>
+    <string name="info_station_1">Jy stem by die stemlokaal waar jy geregistreer het.</string>
+    <string name="info_station_2">SMS jou ID-nommer na 32810 (R1) of skakel *120*432# om jou stemlokaal te sien.</string>
+    <string name="info_station_3">Jy kan ook My Registrasiebesonderhede op www.elections.org.za nagaan.</string>
+    <string name="info_station_4">Bring jou groen ID-boek met strepieskode, slim ID-kaart of geldige tydelike ID-sertifikaat.</string>
+    <string name="info_help_1">Kan jy nie aanmeld nie? Kontroleer jou ID-nommer en probeer die gesigtoets weer in goeie lig.</string>
+    <string name="info_help_2">Na 3 mislukte gesigtoetse word jou rekening vir 15 minute gesluit.</string>
+    <string name="info_help_3">Jou stembewyse is op die Tuisskerm onder Bekyk stembewys.</string>
+    <string name="info_help_4">Verkiesingskommissie se kontaksentrum: 0800 11 8000 (tolvry, 07:00 – 21:00 weeksdae).</string>
+    <string name="info_privacy_1">Ons versamel jou ID-nommer, ID-foto, gesigskandering, adres en selfoonnommer slegs om jou te registreer en te bevestig dat dit jy is.</string>
+    <string name="info_privacy_2">Jou bewyse wys dat jy gestem het, maar nooit vir wie nie.</string>
+    <string name="info_privacy_3">Jou gesigskandering word nooit aan jou keuses gekoppel nie.</string>
+    <string name="info_privacy_4">Onder POPIA mag jy vra om jou persoonlike inligting te sien of reg te stel.</string>
+    <string name="home_receipt_summary">Aangeteken om %1$s · %2$d bewyse</string>
 </resources>

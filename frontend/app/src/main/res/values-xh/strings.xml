@@ -430,4 +430,21 @@
     <string name="profile_verify_and_save">Qinisekisa &amp; Gcina</string>
     <string name="profile_otp_incomplete">Nceda ufake yonke ikhowudi ye-OTP eneenombolo ezi-6</string>
     <string name="profile_read_only">Ukufunda kuphela</string>
+    <string name="info_rights_1">Ungavota ukuba ungummi woMzantsi Afrika, uneminyaka eli-18 nangaphezulu, kwaye ubhalisile.</string>
+    <string name="info_rights_2">Ivoti lakho liyimfihlo. Akukho mntu unokukubukela uvota okanye afune ukwazi ukuba uvotele bani.</string>
+    <string name="info_rights_3">Akukho mntu unokukuhlawula, akoyikise okanye akunyanzele ukuba uvotele umbutho.</string>
+    <string name="info_rights_4">Ukuba unokukhubazeka okanye awukwazi ukufunda, ungacela uncedo lokuvota.</string>
+    <string name="info_station_1">Uvota kwisikhululo sokuvota apho wabhalisa khona.</string>
+    <string name="info_station_2">Thumela inombolo yesazisi sakho nge-SMS ku-32810 (R1) okanye ucofe *120*432# ukuze ubone isikhululo sakho sokuvota.</string>
+    <string name="info_station_3">Ungajonga kwakhona i-My Registration Details ku-www.elections.org.za.</string>
+    <string name="info_station_4">Zisa incwadi yesazisi eluhlaza enebhakhowudi, ikhadi lesazisi elikrelekrele okanye isatifikethi sesazisi sethutyana esisebenzayo.</string>
+    <string name="info_help_1">Awukwazi ukungena? Jonga inombolo yesazisi sakho, uze uzame ukuhlolwa kobuso kwakhona kukukhanya okulungileyo.</string>
+    <string name="info_help_2">Emva kokusilela kokuhlolwa kobuso ka-3 iakhawunti yakho iyatshixwa imizuzu eli-15.</string>
+    <string name="info_help_3">Iirisithi zakho zokuvota zikwiskrini Sasekhaya phantsi kuka Jonga irisithi yokuvota.</string>
+    <string name="info_help_4">IZiko loQhagamshelwano leKomishoni yoNyulo: 0800 11 8000 (simahla, 7am – 9pm phakathi evekini).</string>
+    <string name="info_privacy_1">Siqokelela inombolo yesazisi sakho, ifoto yesazisi, ukuskena ubuso, idilesi nenombolo yeselfowuni kuphela ukuze sikubhalise kwaye siqinisekise ukuba nguwe.</string>
+    <string name="info_privacy_2">Iirisithi zakho zingqina ukuba uvotile kodwa azibonisi ukuba uvotele bani.</string>
+    <string name="info_privacy_3">Ukuskena kobuso bakho akuze kudityaniswe nezigqibo zakho.</string>
+    <string name="info_privacy_4">Phantsi kwe-POPIA ungacela ukubona okanye ukulungisa iinkcukacha zakho.</string>
+    <string name="home_receipt_summary">Kubhalwe ngo-%1$s · iirisithi ezi-%2$d</string>
 </resources>
