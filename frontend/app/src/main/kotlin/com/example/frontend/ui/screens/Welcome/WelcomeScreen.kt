@@ -41,10 +41,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.R
-import com.example.frontend.ui.Components.BrandHeader
-import com.example.frontend.ui.Components.ButtonVariant
-import com.example.frontend.ui.Components.DescriptionLabel
-import com.example.frontend.ui.Components.SimpleButton
+import com.example.frontend.ui.components.BrandHeader
+import com.example.frontend.ui.components.ButtonVariant
+import com.example.frontend.ui.components.DescriptionLabel
+import com.example.frontend.ui.components.SimpleButton
 import com.example.frontend.ui.theme.FlagBlack
 import com.example.frontend.ui.theme.FlagBlue
 import com.example.frontend.ui.theme.FlagGold

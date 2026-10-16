@@ -12,10 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.frontend.R
-import com.example.frontend.ui.Components.ButtonVariant
-import com.example.frontend.ui.Components.SimpleButton
-import com.example.frontend.ui.Components.StatusLabel
-import com.example.frontend.ui.Components.StatusType
+import com.example.frontend.ui.components.ButtonVariant
+import com.example.frontend.ui.components.SimpleButton
+import com.example.frontend.ui.components.StatusLabel
+import com.example.frontend.ui.components.StatusType
 import com.example.frontend.ui.theme.Spacing
 
 /** Shown when the party list fails to load; Retry tries again. */

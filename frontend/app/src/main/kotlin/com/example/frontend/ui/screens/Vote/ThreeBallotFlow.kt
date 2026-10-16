@@ -3,8 +3,8 @@ package com.example.frontend.ui.screens.Vote
 import androidx.lifecycle.SavedStateHandle
 import com.example.frontend.data.Party
 import androidx.lifecycle.ViewModel
-import com.example.frontend.ui.Components.BALLOT_ORDER
-import com.example.frontend.ui.Components.Ballot
+import com.example.frontend.ui.components.BALLOT_ORDER
+import com.example.frontend.ui.components.Ballot
 import com.example.frontend.ui.screens.Auth.FACE_MAX_ATTEMPTS
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

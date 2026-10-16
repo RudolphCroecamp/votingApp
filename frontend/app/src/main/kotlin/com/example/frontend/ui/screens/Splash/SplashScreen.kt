@@ -32,9 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.R
-import com.example.frontend.ui.Components.DescriptionLabel
-import com.example.frontend.ui.Components.FlagAccentBar
-import com.example.frontend.ui.Components.HeadingLabel
+import com.example.frontend.ui.components.DescriptionLabel
+import com.example.frontend.ui.components.FlagAccentBar
+import com.example.frontend.ui.components.HeadingLabel
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.PageBackground

@@ -2,14 +2,14 @@ package com.example.frontend.ui.screens.Registration
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.frontend.ui.Components.Otp.OtpState
-import com.example.frontend.ui.Components.Otp.maskDestination
-import com.example.frontend.ui.Components.Otp.rejected
-import com.example.frontend.ui.Components.Otp.sent
-import com.example.frontend.ui.Components.Otp.ticked
-import com.example.frontend.ui.Components.Otp.verified
-import com.example.frontend.ui.Components.Otp.verifying
-import com.example.frontend.ui.Components.Otp.withCode
+import com.example.frontend.ui.components.Otp.OtpState
+import com.example.frontend.ui.components.Otp.maskDestination
+import com.example.frontend.ui.components.Otp.rejected
+import com.example.frontend.ui.components.Otp.sent
+import com.example.frontend.ui.components.Otp.ticked
+import com.example.frontend.ui.components.Otp.verified
+import com.example.frontend.ui.components.Otp.verifying
+import com.example.frontend.ui.components.Otp.withCode
 import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

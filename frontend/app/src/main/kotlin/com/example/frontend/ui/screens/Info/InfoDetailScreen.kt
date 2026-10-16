@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.example.frontend.R
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
-import com.example.frontend.ui.Components.AppBottomBar
-import com.example.frontend.ui.Components.AppTopBar
-import com.example.frontend.ui.Components.BottomTab
+import com.example.frontend.ui.components.AppBottomBar
+import com.example.frontend.ui.components.AppTopBar
+import com.example.frontend.ui.components.BottomTab
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing

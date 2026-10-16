@@ -1,7 +1,7 @@
 package com.example.frontend.ui.screens.Registration
 
 import android.os.Looper
-import com.example.frontend.ui.Components.Otp.OtpError
+import com.example.frontend.ui.components.Otp.OtpError
 import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

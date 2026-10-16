@@ -2,7 +2,7 @@ package com.example.frontend.ui.screens.Registration
 
 import androidx.annotation.StringRes
 import com.example.frontend.R
-import com.example.frontend.ui.Components.Otp.OtpState
+import com.example.frontend.ui.components.Otp.OtpState
 
 const val REGISTRATION_STEPS = 6
 const val OTP_STEP = 2

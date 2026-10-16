@@ -91,8 +91,7 @@ Lint flags these; none are urgent and each risks churn.
 
 ## Smaller things noticed
 
-- [ ] `ui/Components/` uses a capital-C directory name while every other package
-      is lowercase — inconsistent, and an IDE rename is cheap
+- [x] `ui/Components/` renamed to lowercase `ui/components/` to match every other package (KAN-45)
 - [x] `AppFontFamily` in `ui/theme/Type.kt` was `FontFamily.SansSerif` (now Inter, KAN-46). Dropping a
       `.ttf` into `res/font/` and changing that one line moves the whole app onto
       a brand typeface

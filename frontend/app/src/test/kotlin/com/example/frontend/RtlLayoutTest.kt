@@ -11,7 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.LayoutDirection
 import com.example.frontend.data.SampleParties
-import com.example.frontend.ui.Components.BALLOT_ORDER
+import com.example.frontend.ui.components.BALLOT_ORDER
 import com.example.frontend.ui.screens.Auth.LoginScreen
 import com.example.frontend.ui.screens.Registration.RegistrationUiState
 import com.example.frontend.ui.screens.Registration.screens.RegisterScreen

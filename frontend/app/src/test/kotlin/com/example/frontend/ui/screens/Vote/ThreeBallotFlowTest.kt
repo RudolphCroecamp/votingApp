@@ -2,8 +2,8 @@ package com.example.frontend.ui.screens.Vote
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.frontend.data.SampleParties
-import com.example.frontend.ui.Components.BALLOT_ORDER
-import com.example.frontend.ui.Components.Ballot
+import com.example.frontend.ui.components.BALLOT_ORDER
+import com.example.frontend.ui.components.Ballot
 import com.example.frontend.ui.screens.Auth.FACE_MAX_ATTEMPTS
 import com.example.frontend.ui.screens.Auth.LoginFaceUiState
 import com.example.frontend.ui.screens.Auth.checking

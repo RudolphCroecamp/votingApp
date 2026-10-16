@@ -4,7 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.example.frontend.ui.Components.HeroState
+import com.example.frontend.ui.components.HeroState
 import com.example.frontend.ui.theme.FrontendTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule

@@ -1,6 +1,6 @@
 package com.example.frontend.navigation
 
-import com.example.frontend.ui.Components.Ballot
+import com.example.frontend.ui.components.Ballot
 import com.example.frontend.ui.screens.Info.InfoTopic
 import kotlinx.serialization.Serializable
 

@@ -28,8 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.frontend.R
-import com.example.frontend.ui.Components.AppTextField
-import com.example.frontend.ui.Components.DescriptionLabel
+import com.example.frontend.ui.components.AppTextField
+import com.example.frontend.ui.components.DescriptionLabel
 import com.example.frontend.ui.screens.Registration.POSTAL_CODE_LENGTH
 import com.example.frontend.ui.screens.Registration.Province
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
