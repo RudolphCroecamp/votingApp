@@ -1,7 +1,7 @@
 #!/bin/sh
 # Checks that a commit message is exactly one sentence on one line.
 # Usage: check-commit-msg.sh <file-with-message>
-# Used by the commit-msg hook and by CI, so both apply the same rule.
+# Used by the commit-messages job in CI.
 msg=$(grep -v '^#' "$1" | sed -e 's/[[:space:]]*$//' | sed -e '/^$/d')
 
 case "$msg" in
