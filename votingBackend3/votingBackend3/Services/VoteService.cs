@@ -67,7 +67,7 @@ namespace votingBackend3.Services
 
                 //check if the user has already voted in this election, if so, do not allow them to vote again
                 bool hasvoted = await IsUserEligibleToVote(voter_id, election_id);
-                if (hasvoted) throw new Exception("Voter has already voted in this election");
+                if (!hasvoted) throw new Exception("Voter has already voted in this election");
 
                 //create the token
                 var token = RandomNumberGenerator.GetBytes(32);

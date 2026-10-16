@@ -229,6 +229,9 @@ if (nodeRole == "node")
         .GetRequiredService<BlockchainService>();
 
     await blockchainService.AddgenesisBlock();
+
+    //FIX remove seeder in production
+    await DbSeeder.SeedBlockchainAsync(blockchainDb);
 }
 else {//create the mainDB
     using var scope = app.Services.CreateScope();
@@ -240,7 +243,7 @@ else {//create the mainDB
 
     //FIX remove seeder in production
     await DbSeeder.SeedAsync(MainDb);
-
+    await DbSeeder.SeedExtendedAsync(MainDb);
 }
 
 
@@ -272,3 +275,4 @@ app.Run();
 
 
 
+//FIX votingtokendto in db for some reason

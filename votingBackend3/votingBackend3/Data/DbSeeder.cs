@@ -1,6 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 using votingBackend3.Models.Entities;
 
 namespace votingBackend3.Data
@@ -294,5 +296,178 @@ namespace votingBackend3.Data
 
             await context.SaveChangesAsync();
         }
+
+
+
+        //seed
+
+        public static async Task SeedExtendedAsync(VotingDbContext context)
+        {
+            var now = DateTime.UtcNow;
+
+            // 1. Voting tokens
+            // Development-only raw tokens for testing.
+            // These are NOT associated with a voter in the database.
+            var testTokens = new[]
+            {
+        new
+        {
+            Id = Guid.Parse("50000000-0000-0000-0000-000000000001"),
+            RawToken = "DEV_TEST_VOTE_TOKEN_001"
+        },
+        new
+        {
+            Id = Guid.Parse("50000000-0000-0000-0000-000000000002"),
+            RawToken = "DEV_TEST_VOTE_TOKEN_002"
+        }
+    };
+
+            foreach (var item in testTokens)
+            {
+                if (!await context.voting_token.AnyAsync(
+                    t => t.token_id == item.Id))
+                {
+                    var hash = Convert.ToBase64String(
+                        SHA256.HashData(
+                            Encoding.UTF8.GetBytes(item.RawToken)));
+
+                    context.voting_token.Add(new VotingToken
+                    {
+                        token_id = item.Id,
+                        TokenHash = hash,
+                        election_id = ElectionId,
+                        IssuedAt = now,
+                        isUsed = false
+                    });
+                }
+            }
+
+            // 2. Sample election document metadata
+            var documents = new[]
+            {
+        new DocumentInfo
+        {
+            fileId = Guid.Parse(
+                "60000000-0000-0000-0000-000000000001"),
+            voter_id = Voter1Id,
+            FileName = "sample_voter_document_001.pdf",
+            fileType = "application/pdf",
+            uploadDate = now.AddDays(-5)
+        },
+        new DocumentInfo
+        {
+            fileId = Guid.Parse(
+                "60000000-0000-0000-0000-000000000002"),
+            voter_id = Voter2Id,
+            FileName = "sample_voter_document_002.pdf",
+            fileType = "application/pdf",
+            uploadDate = now.AddDays(-2)
+        }
+    };
+
+            foreach (var document in documents)
+            {
+                if (!await context.DocumentInfo.AnyAsync(
+                    d => d.fileId == document.fileId))
+                {
+                    context.DocumentInfo.Add(document);
+                }
+            }
+
+            // 3. Sample authentication sessions
+            var sessions = new[]
+            {
+        new AuthSession
+        {
+            jti = Guid.Parse(
+                "70000000-0000-0000-0000-000000000001"),
+            voter_id = Voter1Id,
+            created_at = now.AddMinutes(-10),
+            expires_at = now.AddHours(2),
+            revoked_at = null
+        },
+        new AuthSession
+        {
+            jti = Guid.Parse(
+                "70000000-0000-0000-0000-000000000002"),
+            voter_id = Voter2Id,
+            created_at = now.AddDays(-2),
+            expires_at = now.AddDays(-1),
+            revoked_at = null
+        },
+        new AuthSession
+        {
+            jti = Guid.Parse(
+                "70000000-0000-0000-0000-000000000003"),
+            voter_id = Voter3Id,
+            created_at = now.AddHours(-5),
+            expires_at = now.AddHours(19),
+            revoked_at = now.AddHours(-1)
+        }
+    };
+
+            foreach (var session in sessions)
+            {
+                if (!await context.auth_sessions.AnyAsync(
+                    s => s.jti == session.jti))
+                {
+                    context.auth_sessions.Add(session);
+                }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+
+
+
+
+
+
+
+
+        //seed blockchain
+        public static async Task SeedBlockchainAsync(BlocksDbContext context)
+        {
+            // Ensure the chain has a genesis block.
+            if (!await context.blocks.AnyAsync())
+            {
+                var genesis = new Block(
+                    0,
+                    DateTime.UtcNow,
+                    "genesis block",
+                    "");
+
+                context.blocks.Add(genesis);
+                await context.SaveChangesAsync();
+            }
+
+            var testData = new[]
+            {
+        "SEED_TEST_BLOCK_1",
+        "SEED_TEST_BLOCK_2"
+    };
+
+            foreach (var data in testData)
+            {
+                // Don't append a duplicate if this test block exists.
+                if (await context.blocks.AnyAsync(b => b.Data == data))
+                    continue;
+
+                var latest = await context.blocks
+                    .OrderByDescending(b => b.index)
+                    .FirstAsync();
+
+                var nextBlock = new Block(
+                    latest.index + 1,
+                    DateTime.UtcNow,
+                    data,
+                    latest.hash);
+
+                context.blocks.Add(nextBlock);
+                await context.SaveChangesAsync();
+            }
+        }
+
     }
 }
