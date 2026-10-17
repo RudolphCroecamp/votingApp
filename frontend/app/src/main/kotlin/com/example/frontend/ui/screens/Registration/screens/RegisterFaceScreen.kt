@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -92,6 +93,10 @@ fun RegisterFaceScreen(
     // Capture state lives here: the screen owns the camera, the view model owns the result.
     var capture by remember { mutableStateOf<CaptureState>(CaptureState.Framing) }
 
+    LaunchedEffect(uiState.isRegistered) {
+        if (uiState.isRegistered) onContinue()
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
@@ -147,8 +152,13 @@ fun RegisterFaceScreen(
             }
 
             StatusLabel(
-                message = statusMessage(captured, cameraGranted, capture),
-                type = if (captured) StatusType.Success else StatusType.Info,
+                message = uiState.errorRes?.let { stringResource(it) }
+                    ?: statusMessage(captured, cameraGranted, capture),
+                type = when {
+                    uiState.errorRes != null -> StatusType.Error
+                    captured -> StatusType.Success
+                    else -> StatusType.Info
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -157,10 +167,7 @@ fun RegisterFaceScreen(
                     label = stringResource(
                         if (uiState.isLoading) R.string.register_verifying else R.string.register_verify_continue
                     ),
-                    onClick = {
-                        onEvent(RegistrationUiEvent.OnVerifyFaceSubmitted)
-                        onContinue()
-                    },
+                    onClick = { onEvent(RegistrationUiEvent.OnVerifyFaceSubmitted) },
                     modifier = Modifier.fillMaxWidth(),
                     variant = ButtonVariant.Tertiary,
                     enabled = uiState.canSubmitFace
