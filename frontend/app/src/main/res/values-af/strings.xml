@@ -232,8 +232,10 @@
     <string name="register_document_captured_retake">Dokument vasgelê. Tik weer daarop om die foto weer te neem.</string>
     <string name="register_document_hint">Lê die dokument plat, vul die raam en vermy glans op die fotoblad.</string>
     <string name="register_save_verify_identity">Stoor &amp; verifieer identiteit</string>
-    <string name="register_document_captured">Dokument vasgelê</string>
     <string name="register_document_tap_capture">Tik om die voorkant van die dokument te neem</string>
+    <string name="register_document_tap_capture_back">Tik om die agterkant van die dokument te neem</string>
+    <string name="register_document_front_captured">Voorkant vasgelê</string>
+    <string name="register_document_back_captured">Agterkant vasgelê</string>
     <string name="register_face_title">Gesigregistrasie</string>
     <string name="register_face_heading">Skandeer jou gesig</string>
     <string name="register_face_description">Hou jou foon op ooghoogte en hou jou gesig binne die raam.</string>
@@ -449,4 +451,9 @@
     <string name="home_receipt_summary">Aangeteken om %1$s · %2$d bewyse</string>
     <string name="parties_loading">Partye word gelaai…</string>
     <string name="parties_load_error">Kon nie die partye laai nie. Kontroleer jou verbinding en probeer weer.</string>
+    <string name="error_network">Kan nie die bediener bereik nie. Gaan jou verbinding na en probeer weer.</string>
+    <string name="error_server">Iets het aan ons kant verkeerd geloop. Probeer asseblief weer.</string>
+    <string name="login_error_blocked">Hierdie rekening is geblokkeer. Kontak die IEC-hulplyn.</string>
+    <string name="register_error_exists">Hierdie ID-nommer is reeds geregistreer. Teken eerder aan.</string>
+    <string name="register_error_invalid">Sommige van jou besonderhede is nie aanvaar nie. Gaan dit na en probeer weer.</string>
 </resources>

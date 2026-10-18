@@ -1,7 +1,14 @@
 package com.example.frontend.ui.screens.Auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.frontend.data.AppContainer
+import com.example.frontend.data.auth.AuthException
+import com.example.frontend.data.auth.AuthRepository
+import com.example.frontend.data.auth.TokenStore
+import com.example.frontend.data.face.FaceEmbedder
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,9 +17,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-private const val DEMO_ENROLLED_ID = "0203015800085"
+private const val TAG = "LoginFace"
 
-class LoginFaceViewModel : ViewModel() {
+class LoginFaceViewModel(
+    private val authRepository: AuthRepository = AppContainer.authRepository,
+    private val faceEmbedder: FaceEmbedder = AppContainer.faceEmbedder,
+    private val tokenStore: TokenStore = AppContainer.tokenStore
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginFaceUiState())
     val uiState: StateFlow<LoginFaceUiState> = _uiState.asStateFlow()
@@ -26,7 +37,7 @@ class LoginFaceViewModel : ViewModel() {
 
     fun onEvent(event: LoginFaceUiEvent) {
         when (event) {
-            is LoginFaceUiEvent.OnFaceCaptured -> matchFace()
+            is LoginFaceUiEvent.OnFaceCaptured -> matchFace(event.imagePath)
             is LoginFaceUiEvent.OnCaptureProblem -> _uiState.update {
                 it.withCaptureProblem(event.messageRes)
             }
@@ -34,13 +45,21 @@ class LoginFaceViewModel : ViewModel() {
         }
     }
 
-    private fun matchFace() {
+    private fun matchFace(imagePath: String) {
         if (!_uiState.value.cameraActive) return
         viewModelScope.launch {
             _uiState.update { it.checking() }
-            delay(1200) // Simulate the backend matching the scan against the registration photo
-            _uiState.update { state ->
-                if (state.idNumber == DEMO_ENROLLED_ID) state.matched() else state.rejected()
+            try {
+                val embedding = faceEmbedder.embed(decodePhoto(imagePath))
+                tokenStore.save(authRepository.login(_uiState.value.idNumber, embedding))
+                _uiState.update { it.matched() }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: AuthException.InvalidCredentials) {
+                _uiState.update { it.rejected() }
+            } catch (e: Exception) {
+                Log.w(TAG, "Face login failed", e)
+                _uiState.update { it.withCaptureProblem(e.toMessageRes()) }
             }
             startLockTicker()
         }

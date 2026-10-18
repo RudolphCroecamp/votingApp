@@ -232,8 +232,10 @@
     <string name="register_document_captured_retake">Umqulu uthathiwe. Wuthephe futhi ukuze uthathe kabusha isithombe.</string>
     <string name="register_document_hint">Beka umqulu phansi uthi wambe, ugcwalise uzimele, futhi ugweme ukukhazimula ekhasini lesithombe.</string>
     <string name="register_save_verify_identity">Londoloza &amp; Qinisekisa Ubuwena</string>
-    <string name="register_document_captured">Umqulu uthathiwe</string>
     <string name="register_document_tap_capture">Thepha ukuze uthathe ingxenye yangaphambili yomqulu</string>
+    <string name="register_document_tap_capture_back">Thepha ukuze uthathe ingxenye yangemuva yomqulu</string>
+    <string name="register_document_front_captured">Ingxenye yangaphambili ithathiwe</string>
+    <string name="register_document_back_captured">Ingxenye yangemuva ithathiwe</string>
     <string name="register_face_title">Ukubhaliswa Kobuso</string>
     <string name="register_face_heading">Skena Ubuso Bakho</string>
     <string name="register_face_description">Bamba ifoni yakho ezingeni lamehlo futhi ugcine ubuso bakho ngaphakathi kozimele.</string>
@@ -449,4 +451,9 @@
     <string name="home_receipt_summary">Kubhalwe ngo-%1$s · amarisidi angu-%2$d</string>
     <string name="parties_loading">Ilayisha amaqembu…</string>
     <string name="parties_load_error">Ayikwazanga ukulayisha amaqembu. Hlola uxhumano lwakho bese uzama futhi.</string>
+    <string name="error_network">Asikwazi ukufinyelela iseva. Hlola uxhumano lwakho bese uzama futhi.</string>
+    <string name="error_server">Kukhona okungahambanga kahle ngasohlangothini lwethu. Sicela uzame futhi.</string>
+    <string name="login_error_blocked">Le akhawunti ivinjiwe. Xhumana nolayini wosizo we-IEC.</string>
+    <string name="register_error_exists">Le nombolo kamazisi isibhalisiwe. Ngena esikhundleni salokho.</string>
+    <string name="register_error_invalid">Eminye imininingwane yakho ayamukelwanga. Yihlole bese uzama futhi.</string>
 </resources>

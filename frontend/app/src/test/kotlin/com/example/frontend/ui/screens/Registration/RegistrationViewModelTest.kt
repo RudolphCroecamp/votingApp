@@ -84,6 +84,17 @@ class RegistrationViewModelTest {
     }
 
     @Test
+    fun `full names split into first names and surname`() {
+        fillDetails()
+        send(RegistrationUiEvent.OnFullNamesChanged("  Thandi  Grace Nkosi "))
+        assertEquals("Thandi Grace", state.firstName)
+        assertEquals("Nkosi", state.lastName)
+
+        send(RegistrationUiEvent.OnFullNamesChanged("Thandi"))
+        assertFalse("a surname is required", state.canSubmitDetails)
+    }
+
+    @Test
     fun `email is optional`() {
         fillDetails()
         assertEquals("", state.email)

@@ -233,8 +233,10 @@
     <string name="register_document_captured_retake">Document captured. Tap it again to retake the photo.</string>
     <string name="register_document_hint">Lay the document flat, fill the frame, and avoid glare on the photo page.</string>
     <string name="register_save_verify_identity">Save &amp; Verify Identity</string>
-    <string name="register_document_captured">Document captured</string>
     <string name="register_document_tap_capture">Tap to capture front of document</string>
+    <string name="register_document_tap_capture_back">Tap to capture back of document</string>
+    <string name="register_document_front_captured">Front captured</string>
+    <string name="register_document_back_captured">Back captured</string>
     <string name="register_face_title">Face Registration</string>
     <string name="register_face_heading">Scan Your Face</string>
     <string name="register_face_description">Hold your phone at eye level and keep your face inside the frame.</string>
@@ -450,4 +452,9 @@
     <string name="home_receipt_summary">Recorded at %1$s · %2$d receipts</string>
     <string name="parties_loading">Loading parties…</string>
     <string name="parties_load_error">Couldn\'t load the parties. Check your connection and try again.</string>
+    <string name="error_network">Can\'t reach the server. Check your connection and try again.</string>
+    <string name="error_server">Something went wrong on our side. Please try again.</string>
+    <string name="login_error_blocked">This account has been blocked. Contact the IEC helpline.</string>
+    <string name="register_error_exists">This ID number is already registered. Sign in instead.</string>
+    <string name="register_error_invalid">Some of your details were not accepted. Check them and try again.</string>
 </resources>

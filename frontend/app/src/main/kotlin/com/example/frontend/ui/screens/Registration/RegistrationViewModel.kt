@@ -1,7 +1,14 @@
 package com.example.frontend.ui.screens.Registration
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.frontend.data.AppContainer
+import com.example.frontend.data.auth.AuthException
+import com.example.frontend.data.auth.AuthRepository
+import com.example.frontend.data.auth.RegistrationForm
+import com.example.frontend.data.auth.TokenStore
+import com.example.frontend.data.face.FaceEmbedder
 import com.example.frontend.ui.components.Otp.OtpState
 import com.example.frontend.ui.components.Otp.maskDestination
 import com.example.frontend.ui.components.Otp.rejected
@@ -11,6 +18,9 @@ import com.example.frontend.ui.components.Otp.verified
 import com.example.frontend.ui.components.Otp.verifying
 import com.example.frontend.ui.components.Otp.withCode
 import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
+import com.example.frontend.ui.screens.Auth.decodePhoto
+import com.example.frontend.ui.screens.Auth.toMessageRes
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,10 +28,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 
 private const val STUB_OTP_CODE = "123456"
+private const val TAG = "Registration"
 
-class RegistrationViewModel : ViewModel() {
+class RegistrationViewModel(
+    private val authRepository: AuthRepository = AppContainer.authRepository,
+    private val faceEmbedder: FaceEmbedder = AppContainer.faceEmbedder,
+    private val tokenStore: TokenStore = AppContainer.tokenStore
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState: StateFlow<RegistrationUiState> = _uiState.asStateFlow()
@@ -56,15 +72,24 @@ class RegistrationViewModel : ViewModel() {
 
             is RegistrationUiEvent.OnDocumentTypeSelected -> _uiState.update { it.copy(documentType = event.type) }
             is RegistrationUiEvent.OnDocumentNumberChanged -> _uiState.update { it.copy(documentNumber = event.number) }
-            is RegistrationUiEvent.OnDocumentCaptured -> _uiState.update { it.copy(documentFrontImagePath = event.imagePath) }
-
-            is RegistrationUiEvent.OnFaceCaptured -> _uiState.update { it.copy(capturedFaceImagePath = event.imagePath) }
-            RegistrationUiEvent.OnFaceRetake -> _uiState.update {
-                it.copy(capturedFaceImagePath = null, isFaceVerified = false)
+            is RegistrationUiEvent.OnDocumentCaptured -> _uiState.update {
+                when (event.side) {
+                    DocumentSide.FRONT -> it.copy(documentFrontImagePath = event.imagePath)
+                    DocumentSide.BACK -> it.copy(documentBackImagePath = event.imagePath)
+                }
             }
 
-            RegistrationUiEvent.OnVerifyFaceSubmitted -> processFaceVerification()
-            RegistrationUiEvent.OnSaveIdentityDetails -> saveIdentityToSystem()
+            is RegistrationUiEvent.OnFaceCaptured -> _uiState.update {
+                it.copy(capturedFaceImagePath = event.imagePath, errorRes = null)
+            }
+            RegistrationUiEvent.OnFaceRetake -> _uiState.update {
+                it.copy(capturedFaceImagePath = null, isFaceVerified = false, errorRes = null)
+            }
+
+            RegistrationUiEvent.OnVerifyFaceSubmitted -> submitRegistration()
+            RegistrationUiEvent.OnSaveIdentityDetails -> _uiState.update {
+                if (it.canSubmitIdentity) it.copy(currentStep = 5) else it
+            }
             RegistrationUiEvent.OnRegistrationComplete -> {
                 otpTicker?.cancel()
                 _uiState.value = RegistrationUiState()
@@ -115,25 +140,56 @@ class RegistrationViewModel : ViewModel() {
         }
     }
 
-    private fun saveIdentityToSystem() {
+    private fun submitRegistration() {
+        val state = _uiState.value
+        val facePath = state.capturedFaceImagePath ?: return
+        val frontPath = state.documentFrontImagePath ?: return
+        val backPath = state.documentBackImagePath ?: return
+        val province = state.province ?: return
+        val postalCode = state.postalCode.toIntOrNull() ?: return
+        if (!state.canSubmitFace) return
+
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            delay(500) // Simulate processing
-            _uiState.update { it.copy(isLoading = false, currentStep = 5) }
+            _uiState.update { it.copy(isLoading = true, errorRes = null) }
+            try {
+                val embedding = faceEmbedder.embed(decodePhoto(facePath))
+                authRepository.register(
+                    RegistrationForm(
+                        idNumber = state.idNumber,
+                        firstName = state.firstName,
+                        lastName = state.lastName,
+                        province = province.apiName,
+                        city = state.city.trim(),
+                        street = state.street.trim(),
+                        postalCode = postalCode,
+                        faceEmbedding = embedding,
+                        idFront = File(frontPath),
+                        idBack = File(backPath)
+                    )
+                )
+                signIn(state.idNumber, embedding)
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        isFaceVerified = true,
+                        isRegistered = true,
+                        currentStep = REGISTRATION_STEPS
+                    )
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "Registration failed", e)
+                _uiState.update { it.copy(isLoading = false, errorRes = e.toMessageRes()) }
+            }
         }
     }
 
-    private fun processFaceVerification() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            delay(1000) // Simulate ML / Biometric face matching against ID document
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    isFaceVerified = true,
-                    currentStep = 6
-                )
-            }
+    private suspend fun signIn(idNumber: String, embedding: DoubleArray) {
+        try {
+            tokenStore.save(authRepository.login(idNumber, embedding))
+        } catch (e: AuthException) {
+            Log.w(TAG, "Registered, but automatic sign-in failed", e)
         }
     }
 }
