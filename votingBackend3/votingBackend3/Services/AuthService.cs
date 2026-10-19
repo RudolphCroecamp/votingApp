@@ -38,14 +38,11 @@ namespace votingBackend3.Services
                 // Stop if no account matches the supplied ID.
                 if(user == null) throw new UnauthorizedAccessException("Invalid credentials provided");
 
-                // Stop if the account is blocked
-                if (!user.allowed) throw new UnauthorizedAccessException("This user's account has been blocked");
-
                 //check if user is allowed access to the services
-                if (user.allowed == false) throw new UnauthorizedAccessException("User does not have access to the service");
+                if (!user.allowed) throw new UnauthorizedAccessException("User does not have access to the service");
 
                 //block admin request
-                if(user.role == "Admin") throw new UnauthorizedAccessException("User does not have suffiecient priviliges to these services");
+                if(user.role == "Admin") throw new UnauthorizedAccessException("User does not have sufficient priviliges to these services");
 
                 // Embeddings must have equal lengths to be compared.
                 if (user.face_embedding.Length != creds.face_embedding.Length) throw new UnauthorizedAccessException("Invalid credentials provided");
@@ -80,14 +77,11 @@ namespace votingBackend3.Services
                 // Stop if no account matches the supplied ID.
                 if (user == null) throw new UnauthorizedAccessException("Invalid credentials provided");
 
-                // Stop if the account is blocked
-                if (!user.allowed) throw new UnauthorizedAccessException("This user's account has been blocked");
-
                 //check if user is allowed access to the services
-                if (user.allowed == false) throw new UnauthorizedAccessException("This user's account has been blocked");
+                if (!user.allowed) throw new UnauthorizedAccessException("User does not have access to the service");
 
                 //block voter request
-                if (user.role == "Voter") throw new UnauthorizedAccessException("User does not have suffiecient priviliges to these services");
+                if (user.role == "Voter") throw new UnauthorizedAccessException("User does not have sufficient priviliges to these services");
 
                 //check password
                 var passwordHasher = new PasswordHasher<object>();

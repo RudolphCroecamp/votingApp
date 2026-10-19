@@ -35,6 +35,11 @@ enum class IdentityDocumentType {
     PASSPORT
 }
 
+enum class DocumentSide {
+    FRONT,
+    BACK
+}
+
 data class RegistrationUiState(
     val currentStep: Int = 1,
     val fullNames: String = "",
@@ -53,16 +58,28 @@ data class RegistrationUiState(
     val documentType: IdentityDocumentType = IdentityDocumentType.NATIONAL_ID,
     val documentNumber: String = "",
     val documentFrontImagePath: String? = null,
+    val documentBackImagePath: String? = null,
 
     // Face Verification Details
     val capturedFaceImagePath: String? = null,
     val isFaceVerified: Boolean = false,
+    val isRegistered: Boolean = false,
 
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    @param:StringRes val errorRes: Int? = null
 ) {
+    private val nameParts: List<String>
+        get() = fullNames.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+
+    val firstName: String
+        get() = nameParts.dropLast(1).joinToString(" ")
+
+    val lastName: String
+        get() = if (nameParts.size > 1) nameParts.last() else ""
+
     val canSubmitDetails: Boolean
-        get() = fullNames.isNotBlank() &&
+        get() = firstName.isNotEmpty() &&
+            lastName.isNotEmpty() &&
             idNumber.isNotBlank() &&
             phone.isNotBlank() &&
             province != null &&
@@ -80,6 +97,7 @@ data class RegistrationUiState(
         get() = hasConsented &&
             documentNumber.isNotBlank() &&
             documentFrontImagePath != null &&
+            documentBackImagePath != null &&
             !isLoading
 
     val canSubmitFace: Boolean
@@ -108,7 +126,7 @@ sealed interface RegistrationUiEvent {
     // Identity Verification Events
     data class OnDocumentTypeSelected(val type: IdentityDocumentType) : RegistrationUiEvent
     data class OnDocumentNumberChanged(val number: String) : RegistrationUiEvent
-    data class OnDocumentCaptured(val imagePath: String) : RegistrationUiEvent
+    data class OnDocumentCaptured(val side: DocumentSide, val imagePath: String) : RegistrationUiEvent
     data object OnSaveIdentityDetails : RegistrationUiEvent
 
     // Face Verification Events

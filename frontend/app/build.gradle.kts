@@ -12,11 +12,13 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     androidResources {
         // Lists values-af/zu/xh in the system "App languages" screen (Android 13+).
         generateLocaleConfig = true
+        noCompress += "tflite"
     }
 
     defaultConfig {
@@ -27,6 +29,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "API_BASE_URL",
+            "\"${providers.gradleProperty("apiBaseUrl").getOrElse("http://10.0.2.2:5000/")}\""
+        )
     }
 
     buildTypes {
@@ -93,6 +101,8 @@ dependencies {
     implementation(libs.navigation.compose)
     // Type-safe navigation routes need generated serializers at runtime.
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp)
+    implementation(libs.litert)
 
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)

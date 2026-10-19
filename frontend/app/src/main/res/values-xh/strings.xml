@@ -232,8 +232,10 @@
     <string name="register_document_captured_retake">Uxwebhu luthathiwe. Lucofe kwakhona ukuze uthathe ifoto kwakhona.</string>
     <string name="register_document_hint">Beka uxwebhu lucwecwe, ugcwalise isakhelo, kwaye uphephe ukukhazimla kwiphepha lefoto.</string>
     <string name="register_save_verify_identity">Gcina &amp; Qinisekisa Isazisi</string>
-    <string name="register_document_captured">Uxwebhu luthathiwe</string>
     <string name="register_document_tap_capture">Cofa ukuze uthathe icala langaphambili loxwebhu</string>
+    <string name="register_document_tap_capture_back">Cofa ukuze uthathe icala langasemva loxwebhu</string>
+    <string name="register_document_front_captured">Icala langaphambili lithathiwe</string>
+    <string name="register_document_back_captured">Icala langasemva lithathiwe</string>
     <string name="register_face_title">Ubhaliso Lobuso</string>
     <string name="register_face_heading">Skena Ubuso Bakho</string>
     <string name="register_face_description">Bamba ifowuni yakho kwinqanaba lamehlo kwaye ugcine ubuso bakho ngaphakathi kwesakhelo.</string>
@@ -449,4 +451,9 @@
     <string name="home_receipt_summary">Kubhalwe ngo-%1$s · iirisithi ezi-%2$d</string>
     <string name="parties_loading">Ilayisha imibutho…</string>
     <string name="parties_load_error">Ayikwazanga ukulayisha imibutho. Jonga uqhagamshelo lwakho uze uzame kwakhona.</string>
+    <string name="error_network">Asikwazi ukufikelela kwiseva. Jonga uqhagamshelo lwakho uze uzame kwakhona.</string>
+    <string name="error_server">Kukho into engahambanga kakuhle kwicala lethu. Nceda uzame kwakhona.</string>
+    <string name="login_error_blocked">Le akhawunti ivaliwe. Qhagamshelana nomnxeba woncedo we-IEC.</string>
+    <string name="register_error_exists">Le nombolo yesazisi sele ibhalisiwe. Ngena endaweni yoko.</string>
+    <string name="register_error_invalid">Ezinye zeenkcukacha zakho azamkelwanga. Zijonge uze uzame kwakhona.</string>
 </resources>

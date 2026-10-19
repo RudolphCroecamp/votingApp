@@ -1,12 +1,16 @@
 package com.example.frontend.ui.screens.Registration.screens
 
+import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,8 +28,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.graphics.Color
@@ -38,21 +50,31 @@ import com.example.frontend.ui.screens.Auth.PASSPORT_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.components.AppTextField
 import com.example.frontend.ui.components.AppTopBar
 import com.example.frontend.ui.components.ButtonVariant
+import com.example.frontend.ui.components.Camera.CameraCaptureStates
+import com.example.frontend.ui.components.Camera.CameraView
+import com.example.frontend.ui.components.Camera.CaptureState
+import com.example.frontend.ui.components.Camera.evaluateCapture
+import com.example.frontend.ui.components.Camera.rememberCameraPermission
 import com.example.frontend.ui.components.DescriptionLabel
 import com.example.frontend.ui.components.StatusLabel
 import com.example.frontend.ui.components.SimpleButton
 import com.example.frontend.ui.components.StatusType
 import com.example.frontend.ui.components.SuccessCheckmarkBadge
+import com.example.frontend.ui.screens.Registration.DocumentSide
 import com.example.frontend.ui.screens.Registration.IdentityDocumentType
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
 import com.example.frontend.ui.screens.Registration.RegistrationUiState
+import com.example.frontend.ui.theme.BrandNavyDeep
 import com.example.frontend.ui.theme.CardBorder
 import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
-/** Simulated capture path until CameraX is wired up. */
-private const val CAPTURED_DOCUMENT_PATH = "path/to/captured_document.jpg"
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+private const val PREVIEW_DOCUMENT_PATH = "path/to/captured_document.jpg"
 
 @Composable
 fun RegisterIdentityScreen(
@@ -63,6 +85,21 @@ fun RegisterIdentityScreen(
     modifier: Modifier = Modifier,
     backgroundColor: Color = PageBackground
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val inPreview = LocalInspectionMode.current
+    val (cameraGranted, requestCamera) = rememberCameraPermission()
+
+    var capturingSide by remember { mutableStateOf<DocumentSide?>(null) }
+    var capture by remember { mutableStateOf<CaptureState>(CaptureState.Framing) }
+    val bothCaptured = uiState.documentFrontImagePath != null && uiState.documentBackImagePath != null
+
+    fun startCapture(side: DocumentSide) {
+        if (!cameraGranted) requestCamera()
+        capture = CaptureState.Framing
+        capturingSide = side
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
@@ -134,19 +171,63 @@ fun RegisterIdentityScreen(
                 style = MaterialTheme.typography.labelLarge
             )
 
-            DocumentCaptureBox(
-                captured = uiState.documentFrontImagePath != null,
-                onCapture = { onEvent(RegistrationUiEvent.OnDocumentCaptured(CAPTURED_DOCUMENT_PATH)) },
-                modifier = Modifier.fillMaxWidth()
-            )
+            val side = capturingSide
+            if (side != null && cameraGranted && !inPreview) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(0.85f)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(BrandNavyDeep)
+                ) {
+                    CameraView(
+                        mode = CameraCaptureStates.ID_DOCUMENT,
+                        state = capture,
+                        onPhotoTaken = { photo -> capture = evaluateCapture(photo) },
+                        onRetake = { capture = CaptureState.Framing },
+                        onConfirm = {
+                            val photo = (capture as? CaptureState.Captured)?.photo
+                            if (photo != null) {
+                                capture = CaptureState.Uploading
+                                scope.launch {
+                                    val path = saveDocumentImage(context, photo, side)
+                                    onEvent(RegistrationUiEvent.OnDocumentCaptured(side, path))
+                                    capturingSide = null
+                                }
+                            }
+                        },
+                        onError = { messageRes -> capture = CaptureState.Problem(messageRes) }
+                    )
+                }
+            } else {
+                DocumentCaptureBox(
+                    captured = uiState.documentFrontImagePath != null,
+                    capturedLabel = stringResource(R.string.register_document_front_captured),
+                    captureLabel = stringResource(R.string.register_document_tap_capture),
+                    onCapture = { startCapture(DocumentSide.FRONT) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                DocumentCaptureBox(
+                    captured = uiState.documentBackImagePath != null,
+                    capturedLabel = stringResource(R.string.register_document_back_captured),
+                    captureLabel = stringResource(R.string.register_document_tap_capture_back),
+                    onCapture = { startCapture(DocumentSide.BACK) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
+            val problem = (capture as? CaptureState.Problem)?.takeIf { capturingSide != null }
             StatusLabel(
-                message = if (uiState.documentFrontImagePath != null) {
-                    stringResource(R.string.register_document_captured_retake)
-                } else {
-                    stringResource(R.string.register_document_hint)
+                message = when {
+                    problem != null -> stringResource(problem.messageRes)
+                    bothCaptured -> stringResource(R.string.register_document_captured_retake)
+                    else -> stringResource(R.string.register_document_hint)
                 },
-                type = if (uiState.documentFrontImagePath != null) StatusType.Success else StatusType.Info,
+                type = when {
+                    problem != null -> StatusType.Error
+                    bothCaptured -> StatusType.Success
+                    else -> StatusType.Info
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -160,7 +241,7 @@ fun RegisterIdentityScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 variant = ButtonVariant.Tertiary,
-                enabled = uiState.canSubmitIdentity
+                enabled = uiState.canSubmitIdentity && capturingSide == null
             )
 
             if (uiState.isLoading) {
@@ -200,9 +281,22 @@ private fun DocumentOptionChip(
     }
 }
 
+private suspend fun saveDocumentImage(context: Context, photo: Bitmap, side: DocumentSide): String =
+    withContext(Dispatchers.IO) {
+        val name = when (side) {
+            DocumentSide.FRONT -> "id_front.jpg"
+            DocumentSide.BACK -> "id_back.jpg"
+        }
+        val file = File(context.cacheDir, name)
+        file.outputStream().use { out -> photo.compress(Bitmap.CompressFormat.JPEG, 85, out) }
+        file.absolutePath
+    }
+
 @Composable
 private fun DocumentCaptureBox(
     captured: Boolean,
+    capturedLabel: String,
+    captureLabel: String,
     onCapture: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -224,7 +318,7 @@ private fun DocumentCaptureBox(
             ) {
                 if (captured) {
                     SuccessCheckmarkBadge(size = 48.dp)
-                    DescriptionLabel(text = stringResource(R.string.register_document_captured), color = MutedText)
+                    DescriptionLabel(text = capturedLabel, color = MutedText)
                 } else {
                     Icon(
                         imageVector = Icons.Default.CameraAlt,
@@ -232,7 +326,7 @@ private fun DocumentCaptureBox(
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(36.dp)
                     )
-                    DescriptionLabel(text = stringResource(R.string.register_document_tap_capture), color = MutedText)
+                    DescriptionLabel(text = captureLabel, color = MutedText)
                 }
             }
         }
@@ -260,7 +354,8 @@ private fun RegisterIdentityScreenCapturedPreview() {
             uiState = RegistrationUiState(
                 documentType = IdentityDocumentType.PASSPORT,
                 documentNumber = "A01234567",
-                documentFrontImagePath = CAPTURED_DOCUMENT_PATH
+                documentFrontImagePath = PREVIEW_DOCUMENT_PATH,
+                documentBackImagePath = PREVIEW_DOCUMENT_PATH
             ),
             onEvent = {},
             onBackClick = {},
