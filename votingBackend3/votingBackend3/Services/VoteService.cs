@@ -328,6 +328,82 @@ namespace votingBackend3.Services
 
 
 
+
+        public async Task<List<Election>> GetElections(int limit = 10, int page = 0)
+        {
+            if (limit < 1 || limit > 100) throw new ArgumentOutOfRangeException(nameof(limit), "Limit must be between 1 and 100.");
+
+            if (page < 0) throw new ArgumentOutOfRangeException(nameof(page), "Page cannot be negative.");
+
+            return await _votingDbContext.election
+                .AsNoTracking()
+                .OrderBy(e => e.start_date)
+                .ThenBy(e => e.election_id)
+                .Skip(page * limit)
+                .Take(limit)
+                .ToListAsync();
+        }
+
+        public async Task<List<Party>> GetParties(int limit = 10, int page = 0)
+        {
+            if (limit < 1 || limit > 100) throw new ArgumentOutOfRangeException(nameof(limit), "Limit must be between 1 and 100.");
+
+            if (page < 0) throw new ArgumentOutOfRangeException(nameof(page), "Page cannot be negative.");
+
+            return await _votingDbContext.party
+                .AsNoTracking()
+                .OrderBy(p => p.name)
+                .ThenBy(p => p.party_id)
+                .Skip(page * limit)
+                .Take(limit)
+                .ToListAsync();
+        }
+
+
+
+        public async Task<ElectionDto> GetElectionById(Guid election_id)
+        {
+
+            var election = await _votingDbContext.election
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.election_id == election_id);
+
+            if (election == null)
+                throw new KeyNotFoundException("Election does not exist");
+
+            return new ElectionDto
+            {
+                election_id = election.election_id,
+                election_name = election.election_name,
+                election_type = election.election_type,
+                start_date = election.start_date,
+                end_date = election.end_date,
+                isActive = election.isActive
+            };
+        }
+
+        public async Task<PartyDto> GetPartyById(Guid party_id)
+        {
+            var party = await _votingDbContext.party
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.party_id == party_id);
+
+            if (party == null)
+                throw new KeyNotFoundException("Party does not exist");
+
+            return new PartyDto
+            {
+                party_id = party.party_id,
+                name = party.name,
+                abbreviation = party.abbreviation,
+                description = party.description,
+                allowed = party.allowed,
+                created_at = party.created_at
+            };
+        }
+
+
+
     }
 }
 

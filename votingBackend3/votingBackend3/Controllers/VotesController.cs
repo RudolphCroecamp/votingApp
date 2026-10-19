@@ -216,5 +216,122 @@ namespace votingBackend3.Controllers
 
         }
 
+
+
+
+        [HttpGet]
+        [Route("get_elections")]
+        public async Task<IActionResult> GetElections([FromQuery] int limit = 10, [FromQuery] int page = 0)
+        {
+            try
+            {
+                List<Election> elecions = await _voteService.GetElections(limit, page);
+
+                return Ok(new
+                {
+                    message = "Elections Information",
+                    elections = elecions
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new
+                {
+                    message = $"Error: {ex.Message}"
+                });
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("get_parties")]
+        public async Task<IActionResult> GetParties([FromQuery] int limit = 10, [FromQuery] int page = 0)
+        {
+            try
+            {
+                List<Party> parties = await _voteService.GetParties(limit, page);
+
+                return Ok(new
+                {
+                    message = "Parties Information",
+                    parties = parties
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest(new
+                {
+                    message = $"Error: {ex.Message}"
+                });
+            }
+
+        }
+
+
+        [HttpGet("election_by_id/{election_id:guid}")]
+        public async Task<IActionResult> GetElectionById([FromRoute] Guid election_id)
+        {
+            try
+            {
+                var election = await _voteService.GetElectionById(election_id);
+
+                return Ok(new
+                {
+                    message = "Election information",
+                    election = election
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving election: {ex}");
+
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred while retrieving the election."
+                });
+            }
+        }
+
+        [HttpGet("party_by_id/{party_id:guid}")]
+        public async Task<IActionResult> GetPartyById([FromRoute] Guid party_id)
+        {
+            try
+            {
+                var party = await _voteService.GetPartyById(party_id);
+
+                return Ok(new
+                {
+                    message = "Party information",
+                    party = party
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving party: {ex}");
+
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred while retrieving the party."
+                });
+            }
+        }
+
+
+
+
+
+
+
     }
 }

@@ -61,9 +61,6 @@ namespace votingBackend3.Services
 
         public async Task<ElectionDto> GetElectionById(Guid election_id)
         {
-            Console.WriteLine("///////////////////////////////////////////////////////////////////////////////////////////////////////////");
-            Console.WriteLine("///////////////////////////////////////////////////////////////////////////////////////////////////////////");
-            Console.WriteLine(election_id);
 
             var election = await _votingDbContext.election
                 .AsNoTracking()
@@ -85,11 +82,6 @@ namespace votingBackend3.Services
 
         public async Task<PartyDto> GetPartyById(Guid party_id)
         {
-
-            Console.WriteLine("///////////////////////////////////////////////////////////////////////////////////////////////////////////");
-            Console.WriteLine("///////////////////////////////////////////////////////////////////////////////////////////////////////////");
-            Console.WriteLine(party_id);
-
             var party = await _votingDbContext.party
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.party_id == party_id);
