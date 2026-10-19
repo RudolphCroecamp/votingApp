@@ -9,20 +9,10 @@ import com.example.frontend.data.auth.AuthRepository
 import com.example.frontend.data.auth.RegistrationForm
 import com.example.frontend.data.auth.TokenStore
 import com.example.frontend.data.face.FaceEmbedder
-import com.example.frontend.ui.components.Otp.OtpState
-import com.example.frontend.ui.components.Otp.maskDestination
-import com.example.frontend.ui.components.Otp.rejected
-import com.example.frontend.ui.components.Otp.sent
-import com.example.frontend.ui.components.Otp.ticked
-import com.example.frontend.ui.components.Otp.verified
-import com.example.frontend.ui.components.Otp.verifying
-import com.example.frontend.ui.components.Otp.withCode
 import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.screens.Auth.decodePhoto
 import com.example.frontend.ui.screens.Auth.toMessageRes
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +20,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 
-private const val STUB_OTP_CODE = "123456"
 private const val TAG = "Registration"
 
 class RegistrationViewModel(
@@ -41,8 +30,6 @@ class RegistrationViewModel(
 
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState: StateFlow<RegistrationUiState> = _uiState.asStateFlow()
-
-    private var otpTicker: Job? = null
 
     fun onEvent(event: RegistrationUiEvent) {
         when (event) {
@@ -62,11 +49,6 @@ class RegistrationViewModel(
                     _uiState.update { it.copy(postalCode = event.value) }
                 }
             }
-            is RegistrationUiEvent.OnOtpChanged -> _uiState.update {
-                it.copy(otp = it.otp.withCode(event.value))
-            }
-            RegistrationUiEvent.OnOtpRequested -> sendOtp()
-            RegistrationUiEvent.OnOtpSubmitted -> verifyOtp()
 
             is RegistrationUiEvent.OnConsentChanged -> _uiState.update { it.copy(hasConsented = event.granted) }
 
@@ -88,54 +70,15 @@ class RegistrationViewModel(
 
             RegistrationUiEvent.OnVerifyFaceSubmitted -> submitRegistration()
             RegistrationUiEvent.OnSaveIdentityDetails -> _uiState.update {
-                if (it.canSubmitIdentity) it.copy(currentStep = 5) else it
+                if (it.canSubmitIdentity) it.copy(currentStep = 4) else it
             }
-            RegistrationUiEvent.OnRegistrationComplete -> {
-                otpTicker?.cancel()
-                _uiState.value = RegistrationUiState()
-            }
+            RegistrationUiEvent.OnRegistrationComplete -> _uiState.value = RegistrationUiState()
 
             RegistrationUiEvent.OnNextStepClicked -> _uiState.update {
                 it.copy(currentStep = (it.currentStep + 1).coerceAtMost(REGISTRATION_STEPS))
             }
             RegistrationUiEvent.OnPreviousStepClicked -> _uiState.update {
                 it.copy(currentStep = (it.currentStep - 1).coerceAtLeast(1))
-            }
-        }
-    }
-
-    private fun sendOtp() {
-        _uiState.update { state ->
-            state.copy(otp = state.otp.sent(destination = maskDestination(state.phone)))
-        }
-        startOtpTicker()
-    }
-
-    private fun verifyOtp() {
-        if (!_uiState.value.otp.canSubmit) return
-        viewModelScope.launch {
-            _uiState.update { it.copy(otp = it.otp.verifying()) }
-            delay(600) // Simulate the server checking the code
-            val entered = _uiState.value.otp.code
-            _uiState.update { state ->
-                val otp: OtpState = if (entered == STUB_OTP_CODE) {
-                    state.otp.verified()
-                } else {
-                    state.otp.rejected()
-                }
-                state.copy(otp = otp)
-            }
-            startOtpTicker()
-        }
-    }
-
-    private fun startOtpTicker() {
-        otpTicker?.cancel()
-        if (!_uiState.value.otp.needsTicking) return
-        otpTicker = viewModelScope.launch {
-            while (_uiState.value.otp.needsTicking) {
-                delay(1_000)
-                _uiState.update { it.copy(otp = it.otp.ticked()) }
             }
         }
     }

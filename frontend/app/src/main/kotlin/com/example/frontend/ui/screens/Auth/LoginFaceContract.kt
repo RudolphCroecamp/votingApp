@@ -65,3 +65,9 @@ sealed interface LoginFaceUiEvent {
     data class OnCaptureProblem(@param:StringRes val messageRes: Int) : LoginFaceUiEvent
     data object OnRetry : LoginFaceUiEvent
 }
+
+fun formatCountdown(totalSeconds: Int): String {
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return if (minutes > 0) "%d:%02d".format(minutes, seconds) else "${seconds}s"
+}

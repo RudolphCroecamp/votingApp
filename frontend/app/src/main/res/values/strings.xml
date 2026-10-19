@@ -51,25 +51,6 @@
     <string name="home_verified_voter">Verified voter</string>
     <string name="language_change">Change language</string>
 
-    <!-- SMS code (OTP) -->
-    <string name="otp_verify_code">Verify code</string>
-    <string name="otp_code_confirmed">Code confirmed.</string>
-    <string name="otp_destination_fallback">your cellphone</string>
-    <string name="otp_sent_to" tools:ignore="PluralsCandidate">We sent a %1$d digit code to %2$s.</string>
-    <string name="otp_expires_in">This code expires in %1$s.</string>
-    <string name="otp_checking">Checking your code…</string>
-    <string name="otp_did_not_get_it">Did not get it?</string>
-    <string name="otp_resend_locked">Resend locked</string>
-    <string name="otp_resend_in">Resend in %1$s</string>
-    <string name="otp_resend_code">Resend code</string>
-    <string name="otp_input_description" tools:ignore="PluralsCandidate">Enter the %1$d digit code</string>
-    <plurals name="otp_error_wrong_code">
-        <item quantity="one">That code is not right. %1$d try left before we lock the step.</item>
-        <item quantity="other">That code is not right. %1$d tries left before we lock the step.</item>
-    </plurals>
-    <string name="otp_error_expired">That code has expired. Tap resend to get a new one.</string>
-    <string name="otp_error_too_many">Too many wrong codes. Try again in %1$s.</string>
-
     <!-- Camera -->
     <string name="camera_captured_photo">Captured photo</string>
     <string name="camera_fit_id">Fit your ID in the frame</string>
@@ -217,12 +198,6 @@
     <string name="address_postal_code">Postal Code</string>
     <string name="address_province">Province</string>
     <string name="address_province_hint">Your province decides which provincial and regional ballots you get, so it has to be right.</string>
-    <string name="register_otp_title">Confirm your cellphone</string>
-    <string name="register_otp_heading">Enter your code</string>
-    <string name="register_otp_description">This proves the cellphone number you gave us belongs to you.</string>
-    <string name="register_otp_submit">Verify and continue</string>
-    <string name="register_otp_success">Cellphone number confirmed.</string>
-    <string name="register_otp_rates">Standard network rates apply. We only use this number to confirm it is you.</string>
     <string name="register_identity_title">Verify Identity</string>
     <string name="register_identity_heading">Identity Document</string>
     <string name="register_identity_description">Pick your document type and capture a clear photo of the front.</string>
@@ -275,7 +250,7 @@
     <string name="consent_address_label">Your home address</string>
     <string name="consent_address_purpose">To place you in the right voting district, which decides your ballots.</string>
     <string name="consent_phone_label">Your cellphone number</string>
-    <string name="consent_phone_purpose">To send the one-time code that confirms it is you signing in.</string>
+    <string name="consent_phone_purpose">So we can contact you about your registration.</string>
 
     <!-- Home -->
     <string name="home_greeting">Hi, %1$s</string>
@@ -408,7 +383,6 @@
     <string name="profile_contact_title">Contact Information</string>
     <string name="profile_contact_description">Your registered cellphone number for SMS notifications</string>
     <string name="profile_phone_hint">Cellphone number (e.g. 082 123 4567)</string>
-    <string name="profile_phone_otp_warning">Changing your cellphone number requires a 6-digit SMS OTP code.</string>
     <string name="profile_address_title">Residential Address</string>
     <string name="profile_address_description">Determines your provincial and regional ballot allocation</string>
     <string name="profile_select_province">Select province</string>
@@ -426,12 +400,6 @@
     <string name="profile_face_hint">Hold device at eye level and position your face in the oval.</string>
     <string name="profile_scanning">Scanning…</string>
     <string name="profile_verify_face_and_save">Verify Face &amp; Save</string>
-    <string name="profile_otp_title">Verify Cellphone Change</string>
-    <string name="profile_otp_body">A 6-digit SMS OTP code was sent to %1$s. Enter it below to confirm your phone number change.</string>
-    <string name="profile_otp_not_received">Didn\'t receive code?</string>
-    <string name="profile_otp_resend_sms">Resend SMS</string>
-    <string name="profile_verify_and_save">Verify &amp; Save</string>
-    <string name="profile_otp_incomplete">Please enter the full 6-digit OTP code</string>
     <string name="profile_read_only">Read only</string>
     <string name="info_rights_1">You can vote if you are a South African citizen, 18 or older, and registered.</string>
     <string name="info_rights_2">Your vote is secret. Nobody may watch you vote or demand to know who you voted for.</string>

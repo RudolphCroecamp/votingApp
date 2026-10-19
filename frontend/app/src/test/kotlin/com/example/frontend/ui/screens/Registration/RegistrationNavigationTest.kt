@@ -59,15 +59,15 @@ class RegistrationNavigationTest {
     }
 
     @Test
-    fun `continue goes to the SMS code step and back returns to details`() {
+    fun `continue goes to the consent step and back returns to details`() {
         startAtDetails()
         compose.onNodeWithText("Your Details").assertIsDisplayed()
 
         compose.onNodeWithText("Continue").performScrollTo().performClick()
         compose.waitForIdle()
 
-        assertTrue(currentIs { it.hasRoute<Screen.RegisterOtp>() })
-        compose.onNodeWithText("Enter your code").assertIsDisplayed()
+        assertTrue(currentIs { it.hasRoute<Screen.PrivacyConsent>() })
+        compose.onNodeWithText("What we collect and why").assertIsDisplayed()
         assertEquals(2, registration.uiState.value.currentStep)
 
         tapBack()
@@ -94,8 +94,7 @@ class RegistrationNavigationTest {
     fun `consent step back goes to the step before it`() {
         startAtDetails()
         compose.runOnIdle {
-            registration.onEvent(RegistrationUiEvent.OnNextStepClicked) // now on step 2 (SMS code)
-            registration.onEvent(RegistrationUiEvent.OnNextStepClicked) // step 3 (consent)
+            registration.onEvent(RegistrationUiEvent.OnNextStepClicked) // step 2 (consent)
             nav.navigate(Screen.PrivacyConsent)
         }
         compose.waitForIdle()
@@ -104,6 +103,6 @@ class RegistrationNavigationTest {
         tapBack()
 
         assertTrue(currentIs { it.hasRoute<Screen.Register>() })
-        assertEquals(2, registration.uiState.value.currentStep)
+        assertEquals(1, registration.uiState.value.currentStep)
     }
 }

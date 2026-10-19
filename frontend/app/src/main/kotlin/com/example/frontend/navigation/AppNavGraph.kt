@@ -49,7 +49,6 @@ import com.example.frontend.ui.screens.PrivacyConsent.PrivacyConsentScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterDoneScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterFaceScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterIdentityScreen
-import com.example.frontend.ui.screens.Registration.screens.RegisterOtpScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterScreen
 import com.example.frontend.ui.screens.Splash.SplashScreen
 import com.example.frontend.ui.screens.Vote.SampleReceipts
@@ -238,29 +237,10 @@ fun AppNavGraph(
                 onEvent = registrationViewModel::onEvent,
                 onContinue = {
                     registrationViewModel.onEvent(RegistrationUiEvent.OnNextStepClicked)
-                    registrationViewModel.onEvent(RegistrationUiEvent.OnOtpRequested)
-                    navController.navigate(Screen.RegisterOtp)
+                    navController.navigate(Screen.PrivacyConsent)
                 },
                 onSignIn = { navController.popBackStack() },
                 onBackClick = { navController.popBackStack() }
-            )
-        }
-
-        composable<Screen.RegisterOtp> {
-            RegisterOtpScreen(
-                uiState = registrationState,
-                onEvent = registrationViewModel::onEvent,
-                onBackClick = {
-                    registrationViewModel.onEvent(RegistrationUiEvent.OnPreviousStepClicked)
-                    navController.popBackStack()
-                },
-                onContinue = {
-                    registrationViewModel.onEvent(RegistrationUiEvent.OnNextStepClicked)
-                    navController.navigate(Screen.PrivacyConsent) {
-                        // The number is confirmed, so Back should not land on a dead code screen.
-                        popUpTo<Screen.RegisterOtp> { inclusive = true }
-                    }
-                }
             )
         }
 

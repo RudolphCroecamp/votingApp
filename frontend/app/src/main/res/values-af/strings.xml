@@ -50,25 +50,6 @@
     <string name="home_verified_voter">Geverifieerde kieser</string>
     <string name="language_change">Verander taal</string>
 
-    <!-- SMS code (OTP) -->
-    <string name="otp_verify_code">Verifieer kode</string>
-    <string name="otp_code_confirmed">Kode bevestig.</string>
-    <string name="otp_destination_fallback">jou selfoon</string>
-    <string name="otp_sent_to">Ons het \'n %1$d-syfer-kode na %2$s gestuur.</string>
-    <string name="otp_expires_in">Hierdie kode verval oor %1$s.</string>
-    <string name="otp_checking">Kontroleer jou kode…</string>
-    <string name="otp_did_not_get_it">Nie ontvang nie?</string>
-    <string name="otp_resend_locked">Herstuur gesluit</string>
-    <string name="otp_resend_in">Herstuur oor %1$s</string>
-    <string name="otp_resend_code">Herstuur kode</string>
-    <string name="otp_input_description">Voer die %1$d-syfer-kode in</string>
-    <plurals name="otp_error_wrong_code">
-        <item quantity="one">Daardie kode is verkeerd. Nog %1$d probeerslag voordat ons die stap sluit.</item>
-        <item quantity="other">Daardie kode is verkeerd. Nog %1$d probeerslae voordat ons die stap sluit.</item>
-    </plurals>
-    <string name="otp_error_expired">Daardie kode het verval. Tik herstuur vir \'n nuwe een.</string>
-    <string name="otp_error_too_many">Te veel verkeerde kodes. Probeer weer oor %1$s.</string>
-
     <!-- Camera -->
     <string name="camera_captured_photo">Geneemde foto</string>
     <string name="camera_fit_id">Pas jou ID in die raam</string>
@@ -216,12 +197,6 @@
     <string name="address_postal_code">Poskode</string>
     <string name="address_province">Provinsie</string>
     <string name="address_province_hint">Jou provinsie bepaal watter provinsiale en streekstembriewe jy kry, so dit moet reg wees.</string>
-    <string name="register_otp_title">Bevestig jou selfoon</string>
-    <string name="register_otp_heading">Voer jou kode in</string>
-    <string name="register_otp_description">Dit bewys dat die selfoonnommer wat jy gegee het aan jou behoort.</string>
-    <string name="register_otp_submit">Verifieer en gaan voort</string>
-    <string name="register_otp_success">Selfoonnommer bevestig.</string>
-    <string name="register_otp_rates">Gewone netwerktariewe geld. Ons gebruik hierdie nommer net om te bevestig dat dit jy is.</string>
     <string name="register_identity_title">Verifieer identiteit</string>
     <string name="register_identity_heading">Identiteitsdokument</string>
     <string name="register_identity_description">Kies jou dokumenttipe en neem \'n duidelike foto van die voorkant.</string>
@@ -274,7 +249,7 @@
     <string name="consent_address_label">Jou huisadres</string>
     <string name="consent_address_purpose">Om jou in die regte stemdistrik te plaas, wat jou stembriewe bepaal.</string>
     <string name="consent_phone_label">Jou selfoonnommer</string>
-    <string name="consent_phone_purpose">Om die eenmalige kode te stuur wat bevestig dat dit jy is wat aanteken.</string>
+    <string name="consent_phone_purpose">Sodat ons jou oor jou registrasie kan kontak.</string>
 
     <!-- Home -->
     <string name="home_greeting">Hallo, %1$s</string>
@@ -407,7 +382,6 @@
     <string name="profile_contact_title">Kontakbesonderhede</string>
     <string name="profile_contact_description">Jou geregistreerde selfoonnommer vir SMS-kennisgewings</string>
     <string name="profile_phone_hint">Selfoonnommer (bv. 082 123 4567)</string>
-    <string name="profile_phone_otp_warning">Om jou selfoonnommer te verander, het jy \'n 6-syfer SMS-OTP-kode nodig.</string>
     <string name="profile_address_title">Woonadres</string>
     <string name="profile_address_description">Bepaal jou provinsiale en streekstembriewe</string>
     <string name="profile_select_province">Kies provinsie</string>
@@ -425,12 +399,6 @@
     <string name="profile_face_hint">Hou die toestel op ooghoogte en plaas jou gesig in die ovaal.</string>
     <string name="profile_scanning">Skandeer tans…</string>
     <string name="profile_verify_face_and_save">Verifieer gesig &amp; stoor</string>
-    <string name="profile_otp_title">Verifieer selfoonverandering</string>
-    <string name="profile_otp_body">\'n 6-syfer SMS-OTP-kode is na %1$s gestuur. Voer dit hieronder in om jou foonnommerverandering te bevestig.</string>
-    <string name="profile_otp_not_received">Kode nie ontvang nie?</string>
-    <string name="profile_otp_resend_sms">Herstuur SMS</string>
-    <string name="profile_verify_and_save">Verifieer &amp; stoor</string>
-    <string name="profile_otp_incomplete">Voer asseblief die volle 6-syfer OTP-kode in</string>
     <string name="profile_read_only">Slegs lees</string>
     <string name="info_rights_1">Jy kan stem as jy \'n Suid-Afrikaanse burger is, 18 jaar of ouer, en geregistreer is.</string>
     <string name="info_rights_2">Jou stem is geheim. Niemand mag kyk hoe jy stem of eis om te weet vir wie jy gestem het nie.</string>

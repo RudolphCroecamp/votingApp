@@ -65,7 +65,7 @@ fun RegisterDoneScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RegisterStepHeader(
-                step = 6,
+                step = 5,
                 heading = stringResource(R.string.register_done_heading),
                 description = stringResource(R.string.register_done_description)
             )

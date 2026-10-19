@@ -1,7 +1,5 @@
 package com.example.frontend.ui.screens.Registration
 
-import android.os.Looper
-import com.example.frontend.ui.components.Otp.OtpError
 import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -10,14 +8,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
-import java.time.Duration
 
 /**
- * Registration state machine (KAN-43): step counter, field limits, the details gate
- * and the SMS code check. Robolectric supplies the main looper the view model's
- * coroutines run on, so simulated server delays can be fast-forwarded.
+ * Registration state machine (KAN-43): step counter, field limits and the details gate.
+ * Robolectric supplies the main looper the view model's coroutines run on.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [36])
@@ -27,9 +22,6 @@ class RegistrationViewModelTest {
     private val state get() = viewModel.uiState.value
 
     private fun send(vararg events: RegistrationUiEvent) = events.forEach(viewModel::onEvent)
-
-    /** Runs the simulated network delays queued on the main looper. */
-    private fun advance(millis: Long) = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(millis))
 
     private fun fillDetails() = send(
         RegistrationUiEvent.OnFullNamesChanged("Thandi Nkosi"),
@@ -131,39 +123,5 @@ class RegistrationViewModelTest {
         fillDetails()
         send(RegistrationUiEvent.OnPostalCodeChanged("200"))
         assertFalse(state.canSubmitDetails)
-    }
-
-    // --- SMS code ---------------------------------------------------------------
-
-    @Test
-    fun `requesting a code masks the phone number`() {
-        send(RegistrationUiEvent.OnPhoneChanged("0821234567"), RegistrationUiEvent.OnOtpRequested)
-        assertEquals("•••• ••• 4567", state.otp.destination)
-        assertTrue(state.otp.expirySecondsRemaining > 0)
-    }
-
-    @Test
-    fun `the right code verifies the number`() {
-        send(RegistrationUiEvent.OnPhoneChanged("0821234567"), RegistrationUiEvent.OnOtpRequested)
-        send(RegistrationUiEvent.OnOtpChanged("123456"), RegistrationUiEvent.OnOtpSubmitted)
-        assertTrue("checking while the server answers", state.otp.isVerifying)
-
-        advance(700)
-
-        assertTrue(state.otp.isVerified)
-        assertNull(state.otp.error)
-    }
-
-    @Test
-    fun `a wrong code is rejected and uses up an attempt`() {
-        send(RegistrationUiEvent.OnPhoneChanged("0821234567"), RegistrationUiEvent.OnOtpRequested)
-        send(RegistrationUiEvent.OnOtpChanged("000000"), RegistrationUiEvent.OnOtpSubmitted)
-
-        advance(700)
-
-        assertFalse(state.otp.isVerified)
-        assertEquals(OtpError.WrongCode, state.otp.error)
-        assertEquals(1, state.otp.attemptsUsed)
-        assertEquals("", state.otp.code)
     }
 }
