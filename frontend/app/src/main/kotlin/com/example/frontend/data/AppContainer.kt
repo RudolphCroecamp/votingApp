@@ -18,6 +18,7 @@ import com.example.frontend.data.election.PrefsReminderStore
 import com.example.frontend.data.election.ReminderScheduler
 import com.example.frontend.data.election.ReminderStore
 import com.example.frontend.data.election.WorkManagerReminderScheduler
+import com.example.frontend.data.station.CachingVotingStationFinder
 import com.example.frontend.data.station.FallbackVotingStationFinder
 import com.example.frontend.data.station.NominatimVotingStationFinder
 import com.example.frontend.data.station.OverpassVotingStationFinder
@@ -62,10 +63,12 @@ object AppContainer {
     val addressLocator: AddressLocator by lazy { GeocoderAddressLocator(appContext) }
 
     val votingStationFinder: VotingStationFinder by lazy {
-        FallbackVotingStationFinder(
-            listOf(
-                OverpassVotingStationFinder(appContext.packageName),
-                NominatimVotingStationFinder(appContext.packageName)
+        CachingVotingStationFinder(
+            FallbackVotingStationFinder(
+                listOf(
+                    OverpassVotingStationFinder(appContext.packageName),
+                    NominatimVotingStationFinder(appContext.packageName)
+                )
             )
         )
     }

@@ -10,8 +10,9 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -39,6 +40,9 @@ import com.example.frontend.ui.screens.Auth.LoginFaceScreen
 import com.example.frontend.ui.screens.Auth.LoginFaceViewModel
 import com.example.frontend.ui.screens.Auth.LoginScreen
 import com.example.frontend.ui.screens.Info.InfoScreen
+import com.example.frontend.ui.screens.Info.ElectionGuideScreen
+import com.example.frontend.ui.screens.Info.HelpAction
+import com.example.frontend.ui.screens.Info.HelpFaqScreen
 import com.example.frontend.ui.screens.Info.InfoDetailScreen
 import com.example.frontend.ui.screens.Info.InfoTopic
 import com.example.frontend.ui.screens.Manifestos.ManifestosScreen
@@ -121,6 +125,8 @@ private fun tabFor(destination: NavDestination?): BottomTab = when {
     destination.hasRoute<Screen.Manifestos>() -> BottomTab.Manifestos
     destination.hasRoute<Screen.PartyDetail>() -> BottomTab.Manifestos
     destination.hasRoute<Screen.Info>() -> BottomTab.Info
+    destination.hasRoute<Screen.InfoDetail>() -> BottomTab.Info
+    destination.hasRoute<Screen.Profile>() -> BottomTab.Settings
     destination.hasRoute<Screen.Settings>() -> BottomTab.Settings
     destination.hasRoute<Screen.ReportProblem>() -> BottomTab.Settings
     else -> BottomTab.Vote
@@ -149,13 +155,13 @@ fun AppNavGraph(
     var registeredProvince by remember { mutableStateOf("") }
     var registeredPostalCode by remember { mutableStateOf("") }
 
-    val registrationState by registrationViewModel.uiState.collectAsState()
-    val voteState by voteFlowViewModel.state.collectAsState()
-    val sessionState by sessionViewModel.state.collectAsState()
-    val signedInProfile by sessionViewModel.profile.collectAsState()
-    val electionsState by electionViewModel.state.collectAsState()
-    val reminderSettings by electionViewModel.settings.collectAsState()
-    val nextReminder by electionViewModel.nextReminder.collectAsState()
+    val registrationState by registrationViewModel.uiState.collectAsStateWithLifecycle()
+    val voteState by voteFlowViewModel.state.collectAsStateWithLifecycle()
+    val sessionState by sessionViewModel.state.collectAsStateWithLifecycle()
+    val signedInProfile by sessionViewModel.profile.collectAsStateWithLifecycle()
+    val electionsState by electionViewModel.state.collectAsStateWithLifecycle()
+    val reminderSettings by electionViewModel.settings.collectAsStateWithLifecycle()
+    val nextReminder by electionViewModel.nextReminder.collectAsStateWithLifecycle()
 
     LaunchedEffect(sessionState) {
         if (sessionState == SessionState.SignedIn) electionViewModel.refresh()
@@ -183,11 +189,20 @@ fun AppNavGraph(
         navController.navigate(target)
     }
 
-    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
-    val currentTab = tabFor(currentDestination)
+    // Read through State objects, never as plain values: the NavHost graph builder
+    // below captures them, and a plain value that changes on every navigation would
+    // make Compose rebuild the whole graph each time a screen opens.
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentTab by remember { derivedStateOf { tabFor(backStackEntry?.destination) } }
+
+    // Set just before a bottom-bar navigation so the transition cross-fades instead of
+    // pushing. A plain holder, not State: reading it must not trigger recomposition.
+    val tabSwitch = remember { object { var pending = false } }
+    LaunchedEffect(backStackEntry) { tabSwitch.pending = false }
 
     fun openTab(tab: BottomTab) {
-        if (tabFor(currentDestination) == tab) return
+        if (currentTab == tab) return
+        tabSwitch.pending = true
         if (tab == BottomTab.Vote) {
             startVoting()
             return
@@ -250,7 +265,7 @@ fun AppNavGraph(
         if (animate) spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = NAV_SPRING_STIFFNESS) else snap()
 
     fun isPeerSwitch(from: NavDestination, to: NavDestination): Boolean =
-        (from.isTabRoot() && to.isTabRoot()) || from.isSessionRoot() || to.isSessionRoot()
+        tabSwitch.pending || (from.isTabRoot() && to.isTabRoot()) || from.isSessionRoot() || to.isSessionRoot()
 
     NavHost(
         navController = navController,
@@ -336,7 +351,7 @@ fun AppNavGraph(
         composable<Screen.LoginFace> { entry ->
             val route = entry.toRoute<Screen.LoginFace>()
             val faceViewModel: LoginFaceViewModel = viewModel()
-            val faceState by faceViewModel.uiState.collectAsState()
+            val faceState by faceViewModel.uiState.collectAsStateWithLifecycle()
 
             LaunchedEffect(route.idNumber) { faceViewModel.start(route.idNumber) }
 
@@ -505,7 +520,7 @@ fun AppNavGraph(
 
         composable<Screen.VoteFaceCheck> {
             val faceViewModel: VoteFaceCheckViewModel = viewModel()
-            val faceState by faceViewModel.uiState.collectAsState()
+            val faceState by faceViewModel.uiState.collectAsStateWithLifecycle()
 
             LaunchedEffect(registeredIdNumber) { faceViewModel.start(registeredIdNumber) }
 
@@ -568,7 +583,7 @@ fun AppNavGraph(
         }
 
         composable<Screen.Manifestos> {
-            val partiesState by partiesViewModel.state.collectAsState()
+            val partiesState by partiesViewModel.state.collectAsStateWithLifecycle()
             when (val state = partiesState) {
                 PartiesUiState.Loading -> FullScreenLoading(label = stringResource(R.string.parties_loading))
                 PartiesUiState.Error -> PartiesLoadError(onRetry = partiesViewModel::retry)
@@ -583,7 +598,7 @@ fun AppNavGraph(
 
         composable<Screen.PartyDetail> { entry ->
             val route = entry.toRoute<Screen.PartyDetail>()
-            val detailState by partiesViewModel.detail.collectAsState()
+            val detailState by partiesViewModel.detail.collectAsStateWithLifecycle()
             LaunchedEffect(route.partyId) { partiesViewModel.openParty(route.partyId) }
             when (val state = detailState.takeIf { it.partyId == route.partyId }) {
                 null, is PartyDetailUiState.Loading ->
@@ -602,7 +617,7 @@ fun AppNavGraph(
             InfoScreen(
                 onBackClick = { navController.popBackStack() },
                 onVotingInformation = { openInfo(InfoTopic.Rights) },
-                onVotingStation = { openInfo(InfoTopic.VotingStation) },
+                onVotingStation = { navController.navigate(Screen.VotingStation) },
                 onPrivacy = { openInfo(InfoTopic.Privacy) },
                 onHelp = { openInfo(InfoTopic.Help) },
                 selectedTab = currentTab,
@@ -611,12 +626,36 @@ fun AppNavGraph(
         }
 
         composable<Screen.InfoDetail> { entry ->
-            InfoDetailScreen(
-                topic = entry.toRoute<Screen.InfoDetail>().topic,
-                onBackClick = { navController.popBackStack() },
-                selectedTab = currentTab,
-                onTabSelected = { openTab(it) }
-            )
+            when (val topic = entry.toRoute<Screen.InfoDetail>().topic) {
+                InfoTopic.Rights -> ElectionGuideScreen(
+                    onBackClick = { navController.popBackStack() },
+                    selectedTab = currentTab,
+                    onTabSelected = { openTab(it) }
+                )
+                InfoTopic.Help -> HelpFaqScreen(
+                    onBackClick = { navController.popBackStack() },
+                    onAction = { action ->
+                        when (action) {
+                            HelpAction.Settings -> navController.navigate(Screen.Settings)
+                            HelpAction.Profile -> navController.navigate(Screen.Profile)
+                            HelpAction.VerifyVote -> navController.navigate(Screen.VerifyReceipt)
+                            HelpAction.VotingStation -> navController.navigate(Screen.VotingStation)
+                            HelpAction.ReportProblem -> navController.navigate(Screen.ReportProblem)
+                            HelpAction.ElectionGuide -> openInfo(InfoTopic.Rights)
+                            // Dialling and the website are handled inside the screen.
+                            HelpAction.CallIec, HelpAction.Website -> Unit
+                        }
+                    },
+                    selectedTab = currentTab,
+                    onTabSelected = { openTab(it) }
+                )
+                else -> InfoDetailScreen(
+                    topic = topic,
+                    onBackClick = { navController.popBackStack() },
+                    selectedTab = currentTab,
+                    onTabSelected = { openTab(it) }
+                )
+            }
         }
 
         composable<Screen.Settings> {
@@ -624,9 +663,9 @@ fun AppNavGraph(
                 onBackClick = { navController.popBackStack() },
                 onProfileClick = { navController.navigate(Screen.Profile) },
                 onCheckRegistrationClick = { navController.navigate(Screen.Profile) },
-                onVotingInformationClick = { navController.navigate(Screen.Info) },
-                onPrivacyClick = { navController.navigate(Screen.Info) },
-                onHelpClick = { navController.navigate(Screen.Info) },
+                onVotingInformationClick = { openInfo(InfoTopic.Rights) },
+                onPrivacyClick = { openInfo(InfoTopic.Privacy) },
+                onHelpClick = { openInfo(InfoTopic.Help) },
                 onReportProblemClick = { navController.navigate(Screen.ReportProblem) },
                 onLogoutClick = { logout() },
                 remindersEnabled = reminderSettings.enabled,
@@ -641,7 +680,7 @@ fun AppNavGraph(
 
         composable<Screen.VotingStation> {
             val stationViewModel: VotingStationViewModel = viewModel()
-            val stationState by stationViewModel.state.collectAsState()
+            val stationState by stationViewModel.state.collectAsStateWithLifecycle()
             val address = registeredAddressLine(
                 street = registeredStreet,
                 city = registeredCity,

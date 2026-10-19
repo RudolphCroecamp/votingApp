@@ -94,8 +94,16 @@ class GeocoderAddressLocator(context: Context) : AddressLocator {
 
     private val geocoder = Geocoder(context.applicationContext, Locale.forLanguageTag("en-ZA"))
 
+    // The registered address rarely changes; skip the network round trip on reopen.
+    private val known = java.util.concurrent.ConcurrentHashMap<String, GeoPoint>()
+
     override suspend fun locate(address: String): GeoPoint? {
         if (!Geocoder.isPresent() || address.isBlank()) return null
+        known[address]?.let { return it }
+        return geocode(address)?.also { known[address] = it }
+    }
+
+    private suspend fun geocode(address: String): GeoPoint? {
         val found: List<Address> =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 suspendCancellableCoroutine { continuation ->

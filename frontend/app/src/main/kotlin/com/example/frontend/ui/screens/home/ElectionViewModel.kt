@@ -19,9 +19,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.LocalDateTime
 
 private const val TAG = "Elections"
+private val REFRESH_AFTER: Duration = Duration.ofMinutes(5)
 
 sealed interface ElectionsState {
     data object Loading : ElectionsState
@@ -50,12 +52,17 @@ class ElectionViewModel(
     val nextReminder: StateFlow<PlannedReminder?> = _nextReminder.asStateFlow()
 
     private var loadJob: Job? = null
+    private var loadedAt: LocalDateTime? = null
 
-    fun refresh() {
+    /** Home calls this on every visit; a list fetched in the last few minutes is reused. */
+    fun refresh(force: Boolean = false) {
         if (loadJob?.isActive == true) return
+        val fresh = loadedAt?.let { Duration.between(it, now()) < REFRESH_AFTER } == true
+        if (!force && fresh && _state.value is ElectionsState.Loaded) return
         loadJob = viewModelScope.launch {
             try {
                 _state.value = ElectionsState.Loaded(repository.upcoming())
+                loadedAt = now()
                 reschedule()
             } catch (e: CancellationException) {
                 throw e
@@ -77,6 +84,7 @@ class ElectionViewModel(
     /** Signing out: forget the schedule and stop pending notifications. */
     fun clear() {
         loadJob?.cancel()
+        loadedAt = null
         _state.value = ElectionsState.Loading
         _nextReminder.value = null
         scheduler.cancelAll()

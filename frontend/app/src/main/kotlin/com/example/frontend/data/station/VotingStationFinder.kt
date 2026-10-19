@@ -2,7 +2,11 @@ package com.example.frontend.data.station
 
 import com.example.frontend.data.address.GeoPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -248,17 +252,49 @@ class NominatimVotingStationFinder(
     }
 }
 
-/** Tries each finder in turn; only fails when all of them do. */
-class FallbackVotingStationFinder(private val finders: List<VotingStationFinder>) : VotingStationFinder {
-    override suspend fun nearby(near: GeoPoint): List<VotingStation> {
-        var failure: StationLookupException? = null
-        for (finder in finders) {
-            try {
-                return finder.nearby(near)
-            } catch (e: StationLookupException) {
-                failure = e
+/**
+ * Asks every finder at once and returns the first one, in list order, that succeeds.
+ * Overpass knows about tagged polling stations but is often overloaded; Nominatim is
+ * steady. Running them side by side means a slow Overpass costs at most [budgetMillis]
+ * instead of stacking its timeouts in front of the fallback.
+ */
+class FallbackVotingStationFinder(
+    private val finders: List<VotingStationFinder>,
+    private val budgetMillis: Long = 10_000L
+) : VotingStationFinder {
+    override suspend fun nearby(near: GeoPoint): List<VotingStation> = coroutineScope {
+        val attempts = finders.map { finder ->
+            async {
+                try {
+                    Result.success(withTimeout(budgetMillis) { finder.nearby(near) })
+                } catch (e: TimeoutCancellationException) {
+                    Result.failure(StationLookupException("Timed out", e))
+                } catch (e: StationLookupException) {
+                    Result.failure(e)
+                }
             }
         }
-        throw failure ?: StationLookupException("No map service configured")
+        var failure: Throwable? = null
+        for (attempt in attempts) {
+            val result = attempt.await()
+            if (result.isSuccess) {
+                attempts.forEach { it.cancel() }
+                return@coroutineScope result.getOrThrow()
+            }
+            failure = result.exceptionOrNull()
+        }
+        throw failure as? StationLookupException ?: StationLookupException("No map service configured")
+    }
+}
+
+/** Remembers results for this app session so reopening the map is instant. */
+class CachingVotingStationFinder(private val delegate: VotingStationFinder) : VotingStationFinder {
+    private val cache = java.util.concurrent.ConcurrentHashMap<String, List<VotingStation>>()
+
+    override suspend fun nearby(near: GeoPoint): List<VotingStation> {
+        // ~10 m grid: the same registered address always lands on the same key.
+        val key = "%.4f,%.4f".format(java.util.Locale.ROOT, near.latitude, near.longitude)
+        cache[key]?.let { return it }
+        return delegate.nearby(near).also { if (it.isNotEmpty()) cache[key] = it }
     }
 }
