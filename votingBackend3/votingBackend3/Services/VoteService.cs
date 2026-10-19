@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
-using System.Security.Claims;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using votingBackend3.Data;
@@ -400,6 +397,30 @@ namespace votingBackend3.Services
                 allowed = party.allowed,
                 created_at = party.created_at
             };
+        }
+
+
+        // Get all election parties with pagination
+        public async Task<List<Party>> GetElectionParties(Guid election_id, int limit, int page)
+        {
+            if (limit < 1 || limit > 100) throw new ArgumentOutOfRangeException(nameof(limit), "Limit must be between 1 and 100.");
+
+            if (page < 0) throw new ArgumentOutOfRangeException(nameof(page), "Page cannot be negative.");
+
+            var electionExists = await _votingDbContext.election.AnyAsync(e => e.election_id == election_id);
+
+            if (!electionExists) throw new KeyNotFoundException("Election not found.");
+
+            var parties = await _votingDbContext.party
+                .Where(p => _votingDbContext.election_party.Any(ep =>
+                    ep.party_id == p.party_id &&
+                    ep.election_id == election_id))
+                .OrderBy(p => p.name) // Consistent ordering for pagination
+                .Skip((page) * limit)
+                .Take(limit)
+                .ToListAsync();
+
+            return parties;
         }
 
 

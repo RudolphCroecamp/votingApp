@@ -328,6 +328,36 @@ namespace votingBackend3.Controllers
         }
 
 
+        [HttpGet]
+        [Route("get_election_parties/{election_id:guid}")]
+        public async Task<IActionResult> GetElectionParties([FromRoute] Guid election_id, [FromQuery] int limit = 10, [FromQuery] int page = 0)
+        {
+            try
+            {
+                var parties = await _voteService.GetElectionParties(election_id, limit, page);
+
+                return Ok(new
+                {
+                    message = "Election parties retrieved successfully.",
+                    parties = parties
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return BadRequest(new
+                {
+                    message = "Failed to retrieve election parties."
+                });
+            }
+        }
+
+
 
 
 

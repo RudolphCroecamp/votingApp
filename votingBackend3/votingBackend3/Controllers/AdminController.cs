@@ -496,11 +496,11 @@ namespace votingBackend3.Controllers
 
         [HttpGet]
         [Route("get_election_parties/{election_id:guid}")]
-        public async Task<IActionResult> GetElectionParties(Guid election_id)
+        public async Task<IActionResult> GetElectionParties([FromRoute] Guid election_id, [FromQuery] int limit = 10, [FromQuery] int page = 0)
         {
             try
             {
-                var parties = await _adminService.GetElectionParties(election_id);
+                var parties = await _adminService.GetElectionParties(election_id, limit, page);
 
                 return Ok(new
                 {

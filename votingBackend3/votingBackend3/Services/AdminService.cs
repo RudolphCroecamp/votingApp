@@ -374,17 +374,28 @@ namespace votingBackend3.Services
         }
 
 
-        //get all the election parties
-        public async Task<List<Party>> GetElectionParties(Guid election_id)
+        // Get all election parties with pagination
+        public async Task<List<Party>> GetElectionParties(Guid election_id, int limit, int page)
         {
-            var electionExists = await _votingDbContext.election.AnyAsync(e => e.election_id == election_id);
+            var electionExists = await _votingDbContext.election
+                .AnyAsync(e => e.election_id == election_id);
 
-            if (!electionExists)throw new KeyNotFoundException("Election not found.");
+            if (!electionExists)
+                throw new KeyNotFoundException("Election not found.");
+
+            if (limit <= 0)
+                throw new ArgumentException("Limit must be greater than 0.");
+
+            if (page <= 0)
+                throw new ArgumentException("Page must be greater than 0.");
 
             var parties = await _votingDbContext.party
                 .Where(p => _votingDbContext.election_party.Any(ep =>
                     ep.party_id == p.party_id &&
                     ep.election_id == election_id))
+                .OrderBy(p => p.name) // Consistent ordering for pagination
+                .Skip((page - 1) * limit)
+                .Take(limit)
                 .ToListAsync();
 
             return parties;
