@@ -60,7 +60,7 @@ import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
 
-const val PRIVACY_CONSENT_STEP = 3
+const val PRIVACY_CONSENT_STEP = 2
 
 data class ConsentDataItem(
     val icon: ImageVector,

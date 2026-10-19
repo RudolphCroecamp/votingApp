@@ -2,10 +2,8 @@ package com.example.frontend.ui.screens.Registration
 
 import androidx.annotation.StringRes
 import com.example.frontend.R
-import com.example.frontend.ui.components.Otp.OtpState
 
-const val REGISTRATION_STEPS = 6
-const val OTP_STEP = 2
+const val REGISTRATION_STEPS = 5
 const val POSTAL_CODE_LENGTH = 4
 
 /**
@@ -50,7 +48,6 @@ data class RegistrationUiState(
     val street: String = "",
     val city: String = "",
     val postalCode: String = "",
-    val otp: OtpState = OtpState(),
 
     val hasConsented: Boolean = false,
 
@@ -87,9 +84,6 @@ data class RegistrationUiState(
             city.isNotBlank() &&
             postalCode.length == POSTAL_CODE_LENGTH
 
-    val canSubmitOtp: Boolean
-        get() = otp.canSubmit
-
     val canSubmitConsent: Boolean
         get() = hasConsented && !isLoading
 
@@ -117,9 +111,6 @@ sealed interface RegistrationUiEvent {
     data class OnStreetChanged(val value: String) : RegistrationUiEvent
     data class OnCityChanged(val value: String) : RegistrationUiEvent
     data class OnPostalCodeChanged(val value: String) : RegistrationUiEvent
-    data class OnOtpChanged(val value: String) : RegistrationUiEvent
-    data object OnOtpRequested : RegistrationUiEvent
-    data object OnOtpSubmitted : RegistrationUiEvent
 
     data class OnConsentChanged(val granted: Boolean) : RegistrationUiEvent
 

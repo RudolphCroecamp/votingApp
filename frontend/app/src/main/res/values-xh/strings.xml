@@ -50,25 +50,6 @@
     <string name="home_verified_voter">Umvoti oqinisekisiweyo</string>
     <string name="language_change">Tshintsha ulwimi</string>
 
-    <!-- SMS code (OTP) -->
-    <string name="otp_verify_code">Qinisekisa ikhowudi</string>
-    <string name="otp_code_confirmed">Ikhowudi iqinisekisiwe.</string>
-    <string name="otp_destination_fallback">iselfowuni yakho</string>
-    <string name="otp_sent_to">Sithumele ikhowudi eneenombolo ezi-%1$d ku-%2$s.</string>
-    <string name="otp_expires_in">Le khowudi iphelelwa lixesha emva kwe-%1$s.</string>
-    <string name="otp_checking">Ijonga ikhowudi yakho…</string>
-    <string name="otp_did_not_get_it">Awuyifumananga?</string>
-    <string name="otp_resend_locked">Ukuthumela kwakhona kutshixiwe</string>
-    <string name="otp_resend_in">Thumela kwakhona emva kwe-%1$s</string>
-    <string name="otp_resend_code">Thumela ikhowudi kwakhona</string>
-    <string name="otp_input_description">Faka ikhowudi eneenombolo ezi-%1$d</string>
-    <plurals name="otp_error_wrong_code">
-        <item quantity="one">Loo khowudi ayichanekanga. Ushiyelwe ngumzamo o-%1$d phambi kokuba sitshixe eli nyathelo.</item>
-        <item quantity="other">Loo khowudi ayichanekanga. Ushiyelwe yimizamo e-%1$d phambi kokuba sitshixe eli nyathelo.</item>
-    </plurals>
-    <string name="otp_error_expired">Loo khowudi iphelelwe lixesha. Cofa ukuthumela kwakhona ukuze ufumane entsha.</string>
-    <string name="otp_error_too_many">Iikhowudi ezingachanekanga zininzi kakhulu. Zama kwakhona emva kwe-%1$s.</string>
-
     <!-- Camera -->
     <string name="camera_captured_photo">Ifoto ethathiweyo</string>
     <string name="camera_fit_id">Faka i-ID yakho ngaphakathi kwesakhelo</string>
@@ -216,12 +197,6 @@
     <string name="address_postal_code">Ikhowudi yeposi</string>
     <string name="address_province">Iphondo</string>
     <string name="address_province_hint">Iphondo lakho ligqiba ukuba ngawaphi amaphepha okuvota ephondo nawommandla oza kuwafumana, ngoko kufuneka lichaneke.</string>
-    <string name="register_otp_title">Qinisekisa iselfowuni yakho</string>
-    <string name="register_otp_heading">Faka ikhowudi yakho</string>
-    <string name="register_otp_description">Oku kungqina ukuba inombolo yeselfowuni osinike yona yeyakho.</string>
-    <string name="register_otp_submit">Qinisekisa uze uqhubeke</string>
-    <string name="register_otp_success">Inombolo yeselfowuni iqinisekisiwe.</string>
-    <string name="register_otp_rates">Kusebenza amaxabiso aqhelekileyo enethiwekhi. Sisebenzisa le nombolo kuphela ukuqinisekisa ukuba nguwe.</string>
     <string name="register_identity_title">Qinisekisa Isazisi</string>
     <string name="register_identity_heading">Uxwebhu Lwesazisi</string>
     <string name="register_identity_description">Khetha uhlobo loxwebhu lwakho uze uthathe ifoto ecacileyo yangaphambili.</string>
@@ -274,7 +249,7 @@
     <string name="consent_address_label">Idilesi yakho yasekhaya</string>
     <string name="consent_address_purpose">Ukukubeka kwisithili sokuvota esichanekileyo, esigqiba amaphepha akho okuvota.</string>
     <string name="consent_phone_label">Inombolo yakho yeselfowuni</string>
-    <string name="consent_phone_purpose">Ukuthumela ikhowudi yexesha elinye eqinisekisa ukuba nguwe ongenayo.</string>
+    <string name="consent_phone_purpose">Ukuze sikwazi ukuqhagamshelana nawe malunga nobhaliso lwakho.</string>
 
     <!-- Home -->
     <string name="home_greeting">Molo, %1$s</string>
@@ -407,7 +382,6 @@
     <string name="profile_contact_title">Iinkcukacha Zoqhagamshelwano</string>
     <string name="profile_contact_description">Inombolo yakho yeselfowuni ebhalisiweyo yezaziso ze-SMS</string>
     <string name="profile_phone_hint">Inombolo yeselfowuni (umz. 082 123 4567)</string>
-    <string name="profile_phone_otp_warning">Ukutshintsha inombolo yakho yeselfowuni kufuna ikhowudi ye-SMS OTP eneenombolo ezi-6.</string>
     <string name="profile_address_title">Idilesi Yokuhlala</string>
     <string name="profile_address_description">Igqiba amaphepha akho okuvota ephondo nawommandla</string>
     <string name="profile_select_province">Khetha iphondo</string>
@@ -425,12 +399,6 @@
     <string name="profile_face_hint">Bamba isixhobo kwinqanaba lamehlo uze ubeke ubuso bakho ngaphakathi kwesangqa.</string>
     <string name="profile_scanning">Iyaskena…</string>
     <string name="profile_verify_face_and_save">Qinisekisa Ubuso &amp; Gcina</string>
-    <string name="profile_otp_title">Qinisekisa Utshintsho Lweselfowuni</string>
-    <string name="profile_otp_body">Ikhowudi ye-SMS OTP eneenombolo ezi-6 ithunyelwe ku-%1$s. Yifake ngezantsi ukuze uqinisekise utshintsho lwenombolo yakho yefowuni.</string>
-    <string name="profile_otp_not_received">Awuyifumananga ikhowudi?</string>
-    <string name="profile_otp_resend_sms">Thumela i-SMS kwakhona</string>
-    <string name="profile_verify_and_save">Qinisekisa &amp; Gcina</string>
-    <string name="profile_otp_incomplete">Nceda ufake yonke ikhowudi ye-OTP eneenombolo ezi-6</string>
     <string name="profile_read_only">Ukufunda kuphela</string>
     <string name="info_rights_1">Ungavota ukuba ungummi woMzantsi Afrika, uneminyaka eli-18 nangaphezulu, kwaye ubhalisile.</string>
     <string name="info_rights_2">Ivoti lakho liyimfihlo. Akukho mntu unokukubukela uvota okanye afune ukwazi ukuba uvotele bani.</string>

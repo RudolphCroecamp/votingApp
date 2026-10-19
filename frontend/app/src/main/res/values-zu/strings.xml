@@ -50,25 +50,6 @@
     <string name="home_verified_voter">Umvoti oqinisekisiwe</string>
     <string name="language_change">Shintsha ulimi</string>
 
-    <!-- SMS code (OTP) -->
-    <string name="otp_verify_code">Qinisekisa ikhodi</string>
-    <string name="otp_code_confirmed">Ikhodi iqinisekisiwe.</string>
-    <string name="otp_destination_fallback">iselula yakho</string>
-    <string name="otp_sent_to">Sithumele ikhodi enezinombolo ezingu-%1$d ku-%2$s.</string>
-    <string name="otp_expires_in">Le khodi iphelelwa yisikhathi ngemuva kuka-%1$s.</string>
-    <string name="otp_checking">Ihlola ikhodi yakho…</string>
-    <string name="otp_did_not_get_it">Awuyitholanga?</string>
-    <string name="otp_resend_locked">Ukuthumela futhi kuvaliwe</string>
-    <string name="otp_resend_in">Thumela futhi ngemuva kuka-%1$s</string>
-    <string name="otp_resend_code">Thumela ikhodi futhi</string>
-    <string name="otp_input_description">Faka ikhodi enezinombolo ezingu-%1$d</string>
-    <plurals name="otp_error_wrong_code">
-        <item quantity="one">Leyo khodi ayilungile. Usele nomzamo o-%1$d ngaphambi kokuthi sivale lesi sinyathelo.</item>
-        <item quantity="other">Leyo khodi ayilungile. Usele nemizamo engu-%1$d ngaphambi kokuthi sivale lesi sinyathelo.</item>
-    </plurals>
-    <string name="otp_error_expired">Leyo khodi iphelelwe yisikhathi. Thepha ukuthumela futhi ukuze uthole entsha.</string>
-    <string name="otp_error_too_many">Amakhodi angalungile maningi kakhulu. Zama futhi ngemuva kuka-%1$s.</string>
-
     <!-- Camera -->
     <string name="camera_captured_photo">Isithombe esithathiwe</string>
     <string name="camera_fit_id">Faka i-ID yakho ngaphakathi kozimele</string>
@@ -216,12 +197,6 @@
     <string name="address_postal_code">Ikhodi yeposi</string>
     <string name="address_province">Isifundazwe</string>
     <string name="address_province_hint">Isifundazwe sakho sinquma ukuthi yimaphi amaphepha okuvota esifundazwe nawesifunda ozowathola, ngakho kufanele kube kulungile.</string>
-    <string name="register_otp_title">Qinisekisa iselula yakho</string>
-    <string name="register_otp_heading">Faka ikhodi yakho</string>
-    <string name="register_otp_description">Lokhu kufakazela ukuthi inombolo yeselula osinike yona ngeyakho.</string>
-    <string name="register_otp_submit">Qinisekisa bese uqhubeka</string>
-    <string name="register_otp_success">Inombolo yeselula iqinisekisiwe.</string>
-    <string name="register_otp_rates">Kusebenza amanani ajwayelekile enethiwekhi. Sisebenzisa le nombolo kuphela ukuqinisekisa ukuthi nguwe.</string>
     <string name="register_identity_title">Qinisekisa Ubuwena</string>
     <string name="register_identity_heading">Umqulu Wobuwena</string>
     <string name="register_identity_description">Khetha uhlobo lomqulu wakho bese uthatha isithombe esicacile sangaphambili.</string>
@@ -274,7 +249,7 @@
     <string name="consent_address_label">Ikheli lakho lasekhaya</string>
     <string name="consent_address_purpose">Ukukufaka esigodini sokuvota esifanele, esinquma amaphepha akho okuvota.</string>
     <string name="consent_phone_label">Inombolo yakho yeselula</string>
-    <string name="consent_phone_purpose">Ukuthumela ikhodi yesikhathi esisodwa eqinisekisa ukuthi nguwe ongenayo.</string>
+    <string name="consent_phone_purpose">Ukuze sikwazi ukuxhumana nawe mayelana nokubhalisa kwakho.</string>
 
     <!-- Home -->
     <string name="home_greeting">Sawubona, %1$s</string>
@@ -407,7 +382,6 @@
     <string name="profile_contact_title">Imininingwane Yokuxhumana</string>
     <string name="profile_contact_description">Inombolo yakho yeselula ebhalisiwe yezaziso ze-SMS</string>
     <string name="profile_phone_hint">Inombolo yeselula (isb. 082 123 4567)</string>
-    <string name="profile_phone_otp_warning">Ukushintsha inombolo yakho yeselula kudinga ikhodi ye-SMS OTP enezinombolo ezingu-6.</string>
     <string name="profile_address_title">Ikheli Lokuhlala</string>
     <string name="profile_address_description">Linquma amaphepha akho okuvota esifundazwe nawesifunda</string>
     <string name="profile_select_province">Khetha isifundazwe</string>
@@ -425,12 +399,6 @@
     <string name="profile_face_hint">Bamba idivayisi ezingeni lamehlo bese ubeka ubuso bakho ngaphakathi kwesiyingi.</string>
     <string name="profile_scanning">Iyaskena…</string>
     <string name="profile_verify_face_and_save">Qinisekisa Ubuso &amp; Londoloza</string>
-    <string name="profile_otp_title">Qinisekisa Ukushintsha Kweselula</string>
-    <string name="profile_otp_body">Ikhodi ye-SMS OTP enezinombolo ezingu-6 ithunyelwe ku-%1$s. Yifake ngezansi ukuze uqinisekise ukushintsha kwenombolo yakho yefoni.</string>
-    <string name="profile_otp_not_received">Awuyitholanga ikhodi?</string>
-    <string name="profile_otp_resend_sms">Thumela i-SMS futhi</string>
-    <string name="profile_verify_and_save">Qinisekisa &amp; Londoloza</string>
-    <string name="profile_otp_incomplete">Sicela ufake yonke ikhodi ye-OTP enezinombolo ezingu-6</string>
     <string name="profile_read_only">Ukufunda kuphela</string>
     <string name="info_rights_1">Ungavota uma uyisakhamuzi saseNingizimu Afrika, uneminyaka eyi-18 noma ngaphezulu, futhi ubhalisile.</string>
     <string name="info_rights_2">Ivoti lakho liyimfihlo. Akekho ongakubuka uvota noma afune ukwazi ukuthi uvotele bani.</string>

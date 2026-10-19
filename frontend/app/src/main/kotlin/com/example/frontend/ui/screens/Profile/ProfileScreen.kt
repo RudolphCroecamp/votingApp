@@ -50,7 +50,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,7 +77,6 @@ import com.example.frontend.ui.components.AppTextField
 import com.example.frontend.ui.components.AppTopBar
 import com.example.frontend.ui.components.BottomTab
 import com.example.frontend.ui.components.ButtonVariant
-import com.example.frontend.ui.components.Otp.formatCountdown
 import com.example.frontend.ui.components.SectionHeading
 import com.example.frontend.ui.components.SimpleButton
 import com.example.frontend.ui.screens.Registration.Province
@@ -162,17 +160,10 @@ fun ProfileScreen(
     var faceVerifiedSuccess by remember { mutableStateOf(false) }
     var faceScanError by remember { mutableStateOf<String?>(null) }
 
-    // OTP Modal states for Cellphone update
-    var showOtpDialog by remember { mutableStateOf(false) }
-    var otpCode by remember { mutableStateOf("") }
-    var otpError by remember { mutableStateOf<Int?>(null) }
-
     // Resolved up front: snackbars are shown from coroutines, outside composition.
     val addressUpdatedMessage = stringResource(R.string.profile_snackbar_address_updated)
     val identityUpdatedMessage = stringResource(R.string.profile_snackbar_identity_updated)
     val phoneUpdatedMessage = stringResource(R.string.profile_snackbar_phone_updated)
-    var isVerifyingOtp by remember { mutableStateOf(false) }
-    var countdownSeconds by remember { mutableStateOf(30) }
 
     val identityHasChanged = (fullName.trim() != currentFullName.trim() || idNumber.trim() != currentIdNumber.trim()) &&
         fullName.isNotBlank() && idNumber.isNotBlank()
@@ -192,14 +183,6 @@ fun ProfileScreen(
         postalCode.isNotBlank()
 
     val hasPendingChanges = (identityHasChanged || phoneHasChanged || addressHasChanged) && isFormValid
-
-    // Countdown timer effect for OTP dialog
-    LaunchedEffect(showOtpDialog, countdownSeconds) {
-        if (showOtpDialog && countdownSeconds > 0) {
-            delay(1000L)
-            countdownSeconds--
-        }
-    }
 
     Scaffold(
         modifier = modifier,
@@ -427,30 +410,6 @@ fun ProfileScreen(
                     keyboardType = KeyboardType.Phone,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Surface(
-                    color = WarningContainer,
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = null,
-                            tint = WarningText,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Text(
-                            text = stringResource(R.string.profile_phone_otp_warning),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = WarningText
-                        )
-                    }
-                }
             }
 
             // Section 3: Registered Address Details (Editable)
@@ -557,10 +516,11 @@ fun ProfileScreen(
                             showFaceScanDialog = true
                             faceScanError = null
                         } else if (phoneHasChanged) {
-                            showOtpDialog = true
-                            countdownSeconds = 30
-                            otpCode = ""
-                            otpError = null
+                            currentPhone = phone
+                            scope.launch {
+                                snackbarHostState.showSnackbar(phoneUpdatedMessage)
+                            }
+                            onSaveProfile(true, phone)
                         } else {
                             scope.launch {
                                 snackbarHostState.showSnackbar(addressUpdatedMessage)
@@ -702,11 +662,10 @@ fun ProfileScreen(
                             isEditingIdentity = false
                             onSaveIdentity(fullName, idNumber)
 
-                            // If phone also changed, trigger OTP
                             if (phoneHasChanged) {
-                                showOtpDialog = true
-                                countdownSeconds = 30
-                                otpCode = ""
+                                currentPhone = phone
+                                snackbarHostState.showSnackbar(phoneUpdatedMessage)
+                                onSaveProfile(true, phone)
                             } else {
                                 snackbarHostState.showSnackbar(identityUpdatedMessage)
                                 onSaveProfile(false, phone)
@@ -733,130 +692,6 @@ fun ProfileScreen(
         )
     }
 
-    // OTP Verification Dialog for Phone Change
-    if (showOtpDialog) {
-        AlertDialog(
-            onDismissRequest = {
-                showOtpDialog = false
-                otpCode = ""
-                otpError = null
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = null,
-                    tint = BrandNavy,
-                    modifier = Modifier.size(28.dp)
-                )
-            },
-            title = {
-                Text(
-                    text = stringResource(R.string.profile_otp_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = BrandNavy
-                )
-            },
-            text = {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(Spacing.item),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.profile_otp_body, phone),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MutedText,
-                        textAlign = TextAlign.Center
-                    )
-
-                    AppTextField(
-                        value = otpCode,
-                        onValueChange = {
-                            if (it.length <= 6) {
-                                otpCode = it
-                                otpError = null
-                            }
-                        },
-                        placeholder = "0 0 0 0 0 0",
-                        keyboardType = KeyboardType.Number,
-                        maxLength = 6,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    if (otpError != null) {
-                        Text(
-                            text = stringResource(otpError!!),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = if (countdownSeconds > 0) {
-                                stringResource(R.string.otp_resend_in, formatCountdown(countdownSeconds))
-                            } else {
-                                stringResource(R.string.profile_otp_not_received)
-                            },
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MutedText
-                        )
-                        TextButton(
-                            enabled = countdownSeconds == 0,
-                            onClick = {
-                                countdownSeconds = 30
-                                otpCode = ""
-                                otpError = null
-                            }
-                        ) {
-                            Text(
-                                stringResource(R.string.profile_otp_resend_sms),
-                                color = if (countdownSeconds == 0) BrandNavy else MutedText
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                SimpleButton(
-                    label = stringResource(
-                        if (isVerifyingOtp) R.string.register_verifying else R.string.profile_verify_and_save
-                    ),
-                    onClick = {
-                        if (otpCode.length == 6) {
-                            isVerifyingOtp = true
-                            scope.launch {
-                                delay(600) // Simulate OTP verification check
-                                showOtpDialog = false
-                                isVerifyingOtp = false
-                                currentPhone = phone
-                                snackbarHostState.showSnackbar(phoneUpdatedMessage)
-                                onSaveProfile(true, phone)
-                            }
-                        } else {
-                            otpError = R.string.profile_otp_incomplete
-                        }
-                    },
-                    enabled = otpCode.length == 6 && !isVerifyingOtp,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showOtpDialog = false
-                        otpCode = ""
-                        otpError = null
-                    }
-                ) {
-                    Text(stringResource(R.string.action_cancel), color = BrandNavy)
-                }
-            }
-        )
-    }
 }
 
 /** Component for displaying read-only identity detail rows. */

@@ -51,7 +51,6 @@ import com.example.frontend.ui.components.Camera.evaluateFaceCapture
 import com.example.frontend.ui.components.Camera.rememberCameraPermission
 import com.example.frontend.ui.components.DescriptionLabel
 import com.example.frontend.ui.components.IndeterminateLinearIndicator
-import com.example.frontend.ui.components.Otp.formatCountdown
 import com.example.frontend.ui.components.SectionHeading
 import com.example.frontend.ui.components.SimpleButton
 import com.example.frontend.ui.components.StatusLabel

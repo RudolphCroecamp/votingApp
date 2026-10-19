@@ -112,7 +112,7 @@ fun RegisterFaceScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RegisterStepHeader(
-                step = 5,
+                step = 4,
                 heading = stringResource(R.string.register_face_heading),
                 description = stringResource(R.string.register_face_description)
             )

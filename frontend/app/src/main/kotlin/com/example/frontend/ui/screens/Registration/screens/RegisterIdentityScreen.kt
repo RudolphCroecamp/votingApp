@@ -115,7 +115,7 @@ fun RegisterIdentityScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RegisterStepHeader(
-                step = 4,
+                step = 3,
                 heading = stringResource(R.string.register_identity_heading),
                 description = stringResource(R.string.register_identity_description)
             )
