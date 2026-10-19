@@ -142,10 +142,10 @@ namespace votingBackend3.Data
 
             var passwords = new[]
             {
-                "Admin123!ChangeMe",
-                "Voter123!ChangeMe",
-                "Voter123!ChangeMe",
-                "Voter123!ChangeMe"
+                "Admin1234!@",
+                "Voter1234!@",
+                "Voter1234!@",
+                "Voter1234!@"
             };
 
             for (int i = 0; i < accounts.Length; i++)
@@ -539,17 +539,17 @@ namespace votingBackend3.Data
             // These are NOT associated with a voter in the database.
             var testTokens = new[]
             {
-        new
-        {
-            Id = Guid.Parse("50000000-0000-0000-0000-000000000001"),
-            RawToken = "DEV_TEST_VOTE_TOKEN_001"
-        },
-        new
-        {
-            Id = Guid.Parse("50000000-0000-0000-0000-000000000002"),
-            RawToken = "DEV_TEST_VOTE_TOKEN_002"
-        }
-    };
+                new
+                {
+                    Id = Guid.Parse("50000000-0000-0000-0000-000000000001"),
+                    RawToken = "DEV_TEST_VOTE_TOKEN_001"
+                },
+                new
+                {
+                    Id = Guid.Parse("50000000-0000-0000-0000-000000000002"),
+                    RawToken = "DEV_TEST_VOTE_TOKEN_002"
+                }
+            };
 
             foreach (var item in testTokens)
             {
@@ -574,25 +574,25 @@ namespace votingBackend3.Data
             // 2. Sample election document metadata
             var documents = new[]
             {
-        new DocumentInfo
-        {
-            fileId = Guid.Parse(
-                "60000000-0000-0000-0000-000000000001"),
-            voter_id = Voter1Id,
-            FileName = "sample_voter_document_001.pdf",
-            fileType = "application/pdf",
-            uploadDate = now.AddDays(-5)
-        },
-        new DocumentInfo
-        {
-            fileId = Guid.Parse(
-                "60000000-0000-0000-0000-000000000002"),
-            voter_id = Voter2Id,
-            FileName = "sample_voter_document_002.pdf",
-            fileType = "application/pdf",
-            uploadDate = now.AddDays(-2)
-        }
-    };
+                new DocumentInfo
+                {
+                    fileId = Guid.Parse(
+                        "60000000-0000-0000-0000-000000000001"),
+                    voter_id = Voter1Id,
+                    FileName = "sample_voter_document_001.pdf",
+                    fileType = "application/pdf",
+                    uploadDate = now.AddDays(-5)
+                },
+                new DocumentInfo
+                {
+                    fileId = Guid.Parse(
+                        "60000000-0000-0000-0000-000000000002"),
+                    voter_id = Voter2Id,
+                    FileName = "sample_voter_document_002.pdf",
+                    fileType = "application/pdf",
+                    uploadDate = now.AddDays(-2)
+                }
+            };
 
             foreach (var document in documents)
             {
@@ -606,34 +606,34 @@ namespace votingBackend3.Data
             // 3. Sample authentication sessions
             var sessions = new[]
             {
-        new AuthSession
-        {
-            jti = Guid.Parse(
-                "70000000-0000-0000-0000-000000000001"),
-            voter_id = Voter1Id,
-            created_at = now.AddMinutes(-10),
-            expires_at = now.AddHours(2),
-            revoked_at = null
-        },
-        new AuthSession
-        {
-            jti = Guid.Parse(
-                "70000000-0000-0000-0000-000000000002"),
-            voter_id = Voter2Id,
-            created_at = now.AddDays(-2),
-            expires_at = now.AddDays(-1),
-            revoked_at = null
-        },
-        new AuthSession
-        {
-            jti = Guid.Parse(
-                "70000000-0000-0000-0000-000000000003"),
-            voter_id = Voter3Id,
-            created_at = now.AddHours(-5),
-            expires_at = now.AddHours(19),
-            revoked_at = now.AddHours(-1)
-        }
-    };
+                new AuthSession
+                {
+                    jti = Guid.Parse(
+                        "70000000-0000-0000-0000-000000000001"),
+                    voter_id = Voter1Id,
+                    created_at = now.AddMinutes(-10),
+                    expires_at = now.AddHours(2),
+                    revoked_at = null
+                },
+                new AuthSession
+                {
+                    jti = Guid.Parse(
+                        "70000000-0000-0000-0000-000000000002"),
+                    voter_id = Voter2Id,
+                    created_at = now.AddDays(-2),
+                    expires_at = now.AddDays(-1),
+                    revoked_at = null
+                },
+                new AuthSession
+                {
+                    jti = Guid.Parse(
+                        "70000000-0000-0000-0000-000000000003"),
+                    voter_id = Voter3Id,
+                    created_at = now.AddHours(-5),
+                    expires_at = now.AddHours(19),
+                    revoked_at = now.AddHours(-1)
+                }
+            };
 
             foreach (var session in sessions)
             {
@@ -673,9 +673,9 @@ namespace votingBackend3.Data
 
             var testData = new[]
             {
-        "SEED_TEST_BLOCK_1",
-        "SEED_TEST_BLOCK_2"
-    };
+                "SEED_TEST_BLOCK_1",
+                "SEED_TEST_BLOCK_2"
+            };
 
             foreach (var data in testData)
             {
