@@ -117,12 +117,22 @@ private fun PartyHeaderCard(party: Party) {
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center
             )
-            Text(
-                text = party.slogan,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MutedText,
-                textAlign = TextAlign.Center
-            )
+            if (party.slogan.isNotBlank()) {
+                Text(
+                    text = party.slogan,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MutedText,
+                    textAlign = TextAlign.Center
+                )
+            }
+            if (party.description.isNotBlank()) {
+                Text(
+                    text = party.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

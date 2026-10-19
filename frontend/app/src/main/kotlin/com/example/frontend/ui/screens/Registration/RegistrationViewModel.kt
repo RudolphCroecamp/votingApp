@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frontend.data.AppContainer
+import com.example.frontend.data.address.AddressSuggester
+import com.example.frontend.data.address.AddressSuggestion
 import com.example.frontend.data.auth.AuthException
 import com.example.frontend.data.auth.AuthRepository
 import com.example.frontend.data.auth.RegistrationForm
@@ -13,6 +15,8 @@ import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.screens.Auth.decodePhoto
 import com.example.frontend.ui.screens.Auth.toMessageRes
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,12 +25,17 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 private const val TAG = "Registration"
+private const val ADDRESS_MIN_QUERY = 4
+private const val ADDRESS_DEBOUNCE_MS = 400L
 
 class RegistrationViewModel(
     private val authRepository: AuthRepository = AppContainer.authRepository,
     private val faceEmbedder: FaceEmbedder = AppContainer.faceEmbedder,
-    private val tokenStore: TokenStore = AppContainer.tokenStore
+    private val tokenStore: TokenStore = AppContainer.tokenStore,
+    private val addressSuggester: AddressSuggester = AppContainer.addressSuggester
 ) : ViewModel() {
+
+    private var suggestJob: Job? = null
 
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState: StateFlow<RegistrationUiState> = _uiState.asStateFlow()
@@ -42,7 +51,12 @@ class RegistrationViewModel(
             is RegistrationUiEvent.OnPhoneChanged -> _uiState.update { it.copy(phone = event.value) }
             is RegistrationUiEvent.OnEmailChanged -> _uiState.update { it.copy(email = event.value) }
             is RegistrationUiEvent.OnProvinceSelected -> _uiState.update { it.copy(province = event.province) }
-            is RegistrationUiEvent.OnStreetChanged -> _uiState.update { it.copy(street = event.value) }
+            is RegistrationUiEvent.OnStreetChanged -> {
+                _uiState.update { it.copy(street = event.value) }
+                suggestAddresses(event.value)
+            }
+            is RegistrationUiEvent.OnAddressSuggestionPicked -> pickAddress(event.suggestion)
+            RegistrationUiEvent.OnDetailsSubmitAttempted -> _uiState.update { it.copy(showDetailsIssues = true) }
             is RegistrationUiEvent.OnCityChanged -> _uiState.update { it.copy(city = event.value) }
             is RegistrationUiEvent.OnPostalCodeChanged -> {
                 if (event.value.length <= POSTAL_CODE_LENGTH) {
@@ -72,7 +86,8 @@ class RegistrationViewModel(
             RegistrationUiEvent.OnSaveIdentityDetails -> _uiState.update {
                 if (it.canSubmitIdentity) it.copy(currentStep = 4) else it
             }
-            RegistrationUiEvent.OnRegistrationComplete -> _uiState.value = RegistrationUiState()
+            RegistrationUiEvent.OnRegistrationStarted,
+            RegistrationUiEvent.OnRegistrationComplete -> reset()
 
             RegistrationUiEvent.OnNextStepClicked -> _uiState.update {
                 it.copy(currentStep = (it.currentStep + 1).coerceAtMost(REGISTRATION_STEPS))
@@ -80,6 +95,54 @@ class RegistrationViewModel(
             RegistrationUiEvent.OnPreviousStepClicked -> _uiState.update {
                 it.copy(currentStep = (it.currentStep - 1).coerceAtLeast(1))
             }
+        }
+    }
+
+    private fun reset() {
+        suggestJob?.cancel()
+        val state = _uiState.value
+        listOfNotNull(state.documentFrontImagePath, state.documentBackImagePath, state.capturedFaceImagePath)
+            .forEach { File(it).delete() }
+        _uiState.value = RegistrationUiState()
+    }
+
+    private fun suggestAddresses(query: String) {
+        suggestJob?.cancel()
+        if (query.trim().length < ADDRESS_MIN_QUERY) {
+            _uiState.update { it.copy(addressSuggestions = emptyList()) }
+            return
+        }
+        suggestJob = viewModelScope.launch {
+            delay(ADDRESS_DEBOUNCE_MS)
+            val found = try {
+                addressSuggester.suggest(query.trim())
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "Address lookup failed", e)
+                emptyList()
+            }
+            _uiState.update { if (it.street == query) it.copy(addressSuggestions = found) else it }
+        }
+    }
+
+    private fun pickAddress(suggestion: AddressSuggestion) {
+        suggestJob?.cancel()
+        _uiState.update { state ->
+            val typedNumber = Regex("^\\d+[A-Za-z]?\\b").find(state.street.trim())?.value
+            val street = when {
+                suggestion.street.isBlank() -> state.street
+                typedNumber != null && !suggestion.street.first().isDigit() -> "$typedNumber ${suggestion.street}"
+                else -> suggestion.street
+            }
+            val postal = suggestion.postalCode.filter { it.isDigit() }
+            state.copy(
+                street = street,
+                city = suggestion.city.ifBlank { state.city },
+                postalCode = if (postal.length == POSTAL_CODE_LENGTH) postal else state.postalCode,
+                province = Province.fromApiName(suggestion.province) ?: state.province,
+                addressSuggestions = emptyList()
+            )
         }
     }
 
@@ -105,6 +168,7 @@ class RegistrationViewModel(
                         city = state.city.trim(),
                         street = state.street.trim(),
                         postalCode = postalCode,
+                        phone = state.phone.trim(),
                         faceEmbedding = embedding,
                         idFront = File(frontPath),
                         idBack = File(backPath)

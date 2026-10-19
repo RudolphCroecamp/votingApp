@@ -7,12 +7,11 @@ package com.example.frontend.data
 fun interface PartyRepository {
     /** Every party on the ballot. Throws when the list can't be loaded. */
     suspend fun parties(): List<Party>
+
+    suspend fun party(id: String): Party? = parties().firstOrNull { it.id == id }
 }
 
-/**
- * Serves [SampleParties] until the backend exposes a voter-facing party endpoint
- * (today only AdminController/get_parties exists, behind admin auth).
- */
+/** Serves the built-in [SampleParties]; used when the backend can't be reached. */
 object SamplePartyRepository : PartyRepository {
     override suspend fun parties(): List<Party> = SampleParties
 }

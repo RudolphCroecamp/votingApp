@@ -11,7 +11,8 @@ data class Party(
     // New fields default to empty so existing callers keep compiling.
     val leaderName: String = "",
     @DrawableRes val leaderPhoto: Int? = null, // null -> initials avatar
-    val manifestoPoints: List<String> = emptyList()
+    val manifestoPoints: List<String> = emptyList(),
+    val description: String = ""
 )
 
 // Sample data until the backend serves parties.

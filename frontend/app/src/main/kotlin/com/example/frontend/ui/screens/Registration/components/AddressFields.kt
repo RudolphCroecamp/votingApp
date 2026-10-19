@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.MarkunreadMailbox
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -28,8 +29,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.frontend.R
+import com.example.frontend.data.address.AddressSuggestion
 import com.example.frontend.ui.components.AppTextField
 import com.example.frontend.ui.components.DescriptionLabel
+import com.example.frontend.ui.screens.Registration.DetailsIssue
 import com.example.frontend.ui.screens.Registration.POSTAL_CODE_LENGTH
 import com.example.frontend.ui.screens.Registration.Province
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
@@ -45,6 +48,9 @@ fun AddressFields(
     onEvent: (RegistrationUiEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val issues = if (uiState.showDetailsIssues) uiState.detailsIssues else emptyList()
+    fun errorFor(issue: DetailsIssue): Int? = issue.messageRes.takeIf { issue in issues }
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.item)
@@ -58,15 +64,17 @@ fun AddressFields(
         ProvinceDropdown(
             selected = uiState.province,
             onSelect = { onEvent(RegistrationUiEvent.OnProvinceSelected(it)) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            errorRes = errorFor(DetailsIssue.PROVINCE_MISSING)
         )
 
-        AppTextField(
+        StreetSearchField(
             value = uiState.street,
+            suggestions = uiState.addressSuggestions,
             onValueChange = { onEvent(RegistrationUiEvent.OnStreetChanged(it)) },
-            placeholder = stringResource(R.string.address_street),
-            modifier = Modifier.fillMaxWidth(),
-            leadingIcon = Icons.Default.Home
+            onPick = { onEvent(RegistrationUiEvent.OnAddressSuggestionPicked(it)) },
+            errorRes = errorFor(DetailsIssue.STREET_MISSING),
+            modifier = Modifier.fillMaxWidth()
         )
 
         AppTextField(
@@ -74,7 +82,8 @@ fun AddressFields(
             onValueChange = { onEvent(RegistrationUiEvent.OnCityChanged(it)) },
             placeholder = stringResource(R.string.address_city),
             modifier = Modifier.fillMaxWidth(),
-            leadingIcon = Icons.Default.LocationCity
+            leadingIcon = Icons.Default.LocationCity,
+            errorText = errorFor(DetailsIssue.CITY_MISSING)?.let { stringResource(it) }
         )
 
         AppTextField(
@@ -84,7 +93,8 @@ fun AddressFields(
             modifier = Modifier.fillMaxWidth(),
             leadingIcon = Icons.Default.MarkunreadMailbox,
             keyboardType = KeyboardType.Number,
-            maxLength = POSTAL_CODE_LENGTH
+            maxLength = POSTAL_CODE_LENGTH,
+            errorText = errorFor(DetailsIssue.POSTAL_INVALID)?.let { stringResource(it) }
         )
 
         DescriptionLabel(
@@ -98,10 +108,67 @@ fun AddressFields(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+private fun StreetSearchField(
+    value: String,
+    suggestions: List<AddressSuggestion>,
+    onValueChange: (String) -> Unit,
+    onPick: (AddressSuggestion) -> Unit,
+    errorRes: Int?,
+    modifier: Modifier = Modifier
+) {
+    var dismissed by remember(suggestions) { mutableStateOf(false) }
+    val expanded = suggestions.isNotEmpty() && !dismissed
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { if (!it) dismissed = true },
+        modifier = modifier
+    ) {
+        AppTextField(
+            value = value,
+            onValueChange = onValueChange,
+            placeholder = stringResource(R.string.address_street),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+            leadingIcon = Icons.Default.Home,
+            errorText = errorRes?.let { stringResource(it) }
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { dismissed = true }
+        ) {
+            suggestions.forEach { suggestion ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = suggestion.label,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Place,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    onClick = { onPick(suggestion) }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 private fun ProvinceDropdown(
     selected: Province?,
     onSelect: (Province) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    errorRes: Int? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -118,6 +185,8 @@ private fun ProvinceDropdown(
                 .fillMaxWidth()
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             singleLine = true,
+            isError = errorRes != null,
+            supportingText = errorRes?.let { { Text(text = stringResource(it), style = MaterialTheme.typography.bodySmall) } },
             shape = MaterialTheme.shapes.medium,
             placeholder = {
                 Text(

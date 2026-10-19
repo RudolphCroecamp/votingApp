@@ -22,6 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +39,7 @@ import com.example.frontend.ui.components.StatusLabel
 import com.example.frontend.ui.components.SectionHeading
 import com.example.frontend.ui.components.SimpleButton
 import com.example.frontend.ui.components.StatusType
+import com.example.frontend.ui.screens.Registration.DetailsIssue
 import com.example.frontend.ui.screens.Registration.Province
 import com.example.frontend.ui.screens.Registration.REGISTRATION_STEPS
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
@@ -56,6 +60,11 @@ fun RegisterScreen(
     modifier: Modifier = Modifier,
     backgroundColor: Color = PageBackground
 ) {
+    val issues = if (uiState.showDetailsIssues) uiState.detailsIssues else emptyList()
+    val errorFor: @Composable (DetailsIssue) -> String? = { issue ->
+        if (issue in issues) stringResource(issue.messageRes) else null
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = backgroundColor,
@@ -87,7 +96,8 @@ fun RegisterScreen(
                 onValueChange = { onEvent(RegistrationUiEvent.OnFullNamesChanged(it)) },
                 placeholder = stringResource(R.string.field_full_name),
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = Icons.Default.Person
+                leadingIcon = Icons.Default.Person,
+                errorText = errorFor(DetailsIssue.NAME_MISSING) ?: errorFor(DetailsIssue.SURNAME_MISSING)
             )
 
             AppTextField(
@@ -96,7 +106,8 @@ fun RegisterScreen(
                 placeholder = stringResource(R.string.field_id_or_passport),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.AccountBox,
-                maxLength = ID_NUMBER_MAX_LENGTH
+                maxLength = ID_NUMBER_MAX_LENGTH,
+                errorText = errorFor(DetailsIssue.ID_MISSING) ?: errorFor(DetailsIssue.ID_LENGTH)
             )
 
             AppTextField(
@@ -105,7 +116,8 @@ fun RegisterScreen(
                 placeholder = stringResource(R.string.field_cellphone),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.Phone,
-                keyboardType = KeyboardType.Phone
+                keyboardType = KeyboardType.Phone,
+                errorText = errorFor(DetailsIssue.PHONE_MISSING) ?: errorFor(DetailsIssue.PHONE_INVALID)
             )
 
             AppTextField(
@@ -114,7 +126,8 @@ fun RegisterScreen(
                 placeholder = stringResource(R.string.field_email_optional),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.Email,
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                errorText = errorFor(DetailsIssue.EMAIL_INVALID)
             )
 
             AddressFields(
@@ -123,12 +136,18 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            if (issues.isNotEmpty()) {
+                DetailsIssuesCard(issues = issues)
+            }
+
             SimpleButton(
                 label = stringResource(R.string.action_continue),
-                onClick = onContinue,
+                onClick = {
+                    if (uiState.canSubmitDetails) onContinue()
+                    else onEvent(RegistrationUiEvent.OnDetailsSubmitAttempted)
+                },
                 modifier = Modifier.fillMaxWidth(),
-                variant = ButtonVariant.Tertiary,
-                enabled = uiState.canSubmitDetails
+                variant = ButtonVariant.Tertiary
             )
 
             StatusLabel(
@@ -160,6 +179,20 @@ fun RegisterScreen(
             }
         }
     }
+}
+
+@Composable
+private fun DetailsIssuesCard(issues: List<DetailsIssue>) {
+    StatusLabel(
+        message = buildString {
+            append(stringResource(R.string.details_issues_title))
+            issues.forEach { append("\n• ").append(stringResource(it.messageRes)) }
+        },
+        type = StatusType.Warning,
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics { liveRegion = LiveRegionMode.Polite }
+    )
 }
 
 @Composable

@@ -4,6 +4,7 @@ import android.os.Looper
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.example.frontend.data.Party
 import com.example.frontend.data.PartyRepository
 import com.example.frontend.data.SampleParties
 import com.example.frontend.ui.theme.FrontendTheme
@@ -57,5 +58,48 @@ class PartiesViewModelTest {
         compose.onNodeWithText("Couldn't load the parties. Check your connection and try again.").assertExists()
         compose.onNodeWithText("Try again").performClick()
         assertEquals(1, retried)
+    }
+
+    @Test
+    fun `opening a party loads it by id`() {
+        val fresh = SampleParties.first().copy(description = "From the backend")
+        val repo = object : PartyRepository {
+            override suspend fun parties() = SampleParties
+            override suspend fun party(id: String) = fresh.takeIf { id == fresh.id }
+        }
+        val vm = PartiesViewModel(repo)
+        idle()
+
+        vm.openParty(fresh.id)
+        idle()
+        assertEquals(PartyDetailUiState.Loaded(fresh.id, fresh), vm.detail.value)
+    }
+
+    @Test
+    fun `a failed lookup falls back to the loaded list`() {
+        val repo = object : PartyRepository {
+            override suspend fun parties() = SampleParties
+            override suspend fun party(id: String): Party? = throw IOException("offline")
+        }
+        val vm = PartiesViewModel(repo)
+        idle()
+
+        vm.openParty("da")
+        idle()
+        assertEquals(PartyDetailUiState.Loaded("da", SampleParties[1]), vm.detail.value)
+
+        vm.openParty("nope")
+        idle()
+        assertEquals(PartyDetailUiState.Error("nope"), vm.detail.value)
+    }
+
+    @Test
+    fun `an unknown party is reported as not found`() {
+        val vm = PartiesViewModel { SampleParties }
+        idle()
+
+        vm.openParty("nope")
+        idle()
+        assertEquals(PartyDetailUiState.NotFound("nope"), vm.detail.value)
     }
 }

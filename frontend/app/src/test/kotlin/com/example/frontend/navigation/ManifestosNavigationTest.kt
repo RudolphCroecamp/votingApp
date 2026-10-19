@@ -8,7 +8,9 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.frontend.data.SamplePartyRepository
 import com.example.frontend.ui.components.FullScreenLoading
+import com.example.frontend.ui.screens.Manifestos.PartiesViewModel
 import com.example.frontend.ui.theme.FrontendTheme
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -30,7 +32,7 @@ class ManifestosNavigationTest {
     private fun start(vararg routes: Screen) {
         compose.setContent {
             nav = rememberNavController()
-            FrontendTheme { AppNavGraph(navController = nav) }
+            FrontendTheme { AppNavGraph(navController = nav, partiesViewModel = PartiesViewModel(SamplePartyRepository)) }
         }
         compose.runOnIdle { routes.forEach { nav.navigate(it) } }
         compose.waitForIdle()

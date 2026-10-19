@@ -19,6 +19,7 @@ namespace votingBackend3.Models.Entities
         public string street { get; set; } = string.Empty;
         [Required, DataType(DataType.PostalCode)]
         public int postal { get; set; } = 0;
+        public string phone { get; set; } = string.Empty;
 
 
         

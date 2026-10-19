@@ -125,32 +125,25 @@ fun ProfileScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Form fields local states initialized with registration data or voter defaults
-    val effectiveName = initialName.ifBlank { "Thandi Nkosi" }
-    val effectiveIdNumber = initialIdNumber.ifBlank { "9201185082089" }
-    val effectivePhone = initialPhone.ifBlank { "0821234567" }
-    val effectiveStreet = initialStreet.ifBlank { "124 Market Street" }
-    val effectiveCity = initialCity.ifBlank { "Johannesburg" }
-    val effectiveProvince = initialProvince.ifBlank { "Gauteng" }
-    val effectivePostalCode = initialPostalCode.ifBlank { "2001" }
-
+    // Form fields start from what the voter registered with. Keyed on the incoming
+    // values so a profile that loads after this screen opens still fills the form.
     // Legal identity fields (Name and ID)
-    var fullName by rememberSaveable { mutableStateOf(effectiveName) }
-    var currentFullName by rememberSaveable { mutableStateOf(effectiveName) }
+    var fullName by rememberSaveable(initialName) { mutableStateOf(initialName) }
+    var currentFullName by rememberSaveable(initialName) { mutableStateOf(initialName) }
 
-    var idNumber by rememberSaveable { mutableStateOf(effectiveIdNumber) }
-    var currentIdNumber by rememberSaveable { mutableStateOf(effectiveIdNumber) }
+    var idNumber by rememberSaveable(initialIdNumber) { mutableStateOf(initialIdNumber) }
+    var currentIdNumber by rememberSaveable(initialIdNumber) { mutableStateOf(initialIdNumber) }
 
     var isEditingIdentity by remember { mutableStateOf(false) }
 
     // Contact & address fields
-    var phone by rememberSaveable { mutableStateOf(effectivePhone) }
-    var currentPhone by rememberSaveable { mutableStateOf(effectivePhone) }
+    var phone by rememberSaveable(initialPhone) { mutableStateOf(initialPhone) }
+    var currentPhone by rememberSaveable(initialPhone) { mutableStateOf(initialPhone) }
 
-    var street by rememberSaveable { mutableStateOf(effectiveStreet) }
-    var city by rememberSaveable { mutableStateOf(effectiveCity) }
-    var province by rememberSaveable { mutableStateOf(effectiveProvince) }
-    var postalCode by rememberSaveable { mutableStateOf(effectivePostalCode) }
+    var street by rememberSaveable(initialStreet) { mutableStateOf(initialStreet) }
+    var city by rememberSaveable(initialCity) { mutableStateOf(initialCity) }
+    var province by rememberSaveable(initialProvince) { mutableStateOf(initialProvince) }
+    var postalCode by rememberSaveable(initialPostalCode) { mutableStateOf(initialPostalCode) }
 
     var provinceExpanded by remember { mutableStateOf(false) }
 

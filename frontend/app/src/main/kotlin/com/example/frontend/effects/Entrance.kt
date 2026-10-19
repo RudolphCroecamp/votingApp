@@ -7,7 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import com.example.frontend.ui.theme.EnterEasing
@@ -18,10 +18,13 @@ import com.example.frontend.ui.theme.motionEnabled
 /**
  * Flips to true on the first frame a screen is composed, which is what drives
  * the entrance animations below.
+ *
+ * Saved with the back stack entry, so going Back to a screen shows it as it was
+ * instead of replaying the cascade from blank while the screen itself fades in.
  */
 @Composable
 fun rememberEntranceTrigger(): State<Boolean> {
-    val shown = remember { mutableStateOf(false) }
+    val shown = rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) { shown.value = true }
     return shown
 }

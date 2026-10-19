@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.AssignmentTurnedIn
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ReportProblem
 import androidx.compose.material.icons.filled.Shield
@@ -56,6 +55,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.R
+import com.example.frontend.data.election.ReminderInterval
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.pressScale
 import com.example.frontend.effects.rememberEntranceTrigger
@@ -102,6 +102,11 @@ fun SettingsScreen(
     onHelpClick: () -> Unit = {},
     onReportProblemClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
+    remindersEnabled: Boolean = false,
+    reminderIntervals: Set<ReminderInterval> = ReminderInterval.defaults,
+    nextReminder: String? = null,
+    onRemindersEnabledChange: (Boolean) -> Unit = {},
+    onReminderIntervalToggle: (ReminderInterval) -> Unit = {},
     selectedTab: BottomTab = BottomTab.Settings,
     onTabSelected: (BottomTab) -> Unit = {},
     backgroundColor: Color = PageBackground
@@ -109,7 +114,6 @@ fun SettingsScreen(
     val entered by rememberEntranceTrigger()
 
     // Preferences local states
-    var notificationsEnabled by rememberSaveable { mutableStateOf(true) }
     var faceVerificationEnabled by rememberSaveable { mutableStateOf(true) }
 
     // Dialog visibilities
@@ -181,14 +185,12 @@ fun SettingsScreen(
                     iconTint = WarningContent,
                     iconBackground = WarningContainer
                 )
-                SettingToggleRow(
-                    icon = Icons.Default.Notifications,
-                    title = stringResource(R.string.settings_reminders_title),
-                    description = stringResource(R.string.settings_reminders_description),
-                    checked = notificationsEnabled,
-                    onCheckedChange = { notificationsEnabled = it },
-                    iconTint = InfoContent,
-                    iconBackground = InfoContainer
+                ReminderSettingsCard(
+                    enabled = remindersEnabled,
+                    intervals = reminderIntervals,
+                    nextReminder = nextReminder,
+                    onEnabledChange = onRemindersEnabledChange,
+                    onIntervalToggle = onReminderIntervalToggle
                 )
             }
 

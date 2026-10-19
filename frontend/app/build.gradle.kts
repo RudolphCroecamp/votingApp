@@ -35,6 +35,11 @@ android {
             "API_BASE_URL",
             "\"${providers.gradleProperty("apiBaseUrl").getOrElse("http://10.0.2.2:5000/")}\""
         )
+        buildConfigField(
+            "String",
+            "SUPPORT_EMAIL",
+            "\"${providers.gradleProperty("supportEmail").getOrElse("avanwyk191@gmail.com")}\""
+        )
     }
 
     buildTypes {
@@ -103,6 +108,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
     implementation(libs.litert)
+    implementation(libs.work.runtime)
+    implementation(libs.osmdroid)
 
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)

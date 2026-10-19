@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using votingBackend3.Models.DTOs;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using votingBackend3.Services;
 
 namespace votingBackend3.Controllers
@@ -215,6 +218,30 @@ namespace votingBackend3.Controllers
                     message = $"Token refresh error: {ex.Message}",
                 });
             }
+        }
+
+        [Authorize(Roles = "Voter")]
+        [HttpGet]
+        [Route("me")]
+        public async Task<IActionResult> Me()
+        {
+            var voterIdValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var jtiValue = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+
+            if (!Guid.TryParse(voterIdValue, out var voterId) || !Guid.TryParse(jtiValue, out var jti))
+                return Unauthorized(new { message = "Token is missing a valid voter ID or JTI." });
+
+            if (!await _authService.ValidateSession(voterId, jti))
+                return Unauthorized(new { message = "Token session is invalid, expired, or revoked." });
+
+            var profile = await _authService.GetProfile(voterId);
+            if (profile == null) return NotFound(new { message = "Voter not found" });
+
+            return Ok(new
+            {
+                message = "Voter profile",
+                profile = profile
+            });
         }
 
         [HttpPost]

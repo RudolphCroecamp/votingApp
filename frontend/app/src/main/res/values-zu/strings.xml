@@ -146,6 +146,11 @@
     <string name="verify_idle_info">Irisidi yakho ifakazela ukuthi iphepha lakho lokuvota libaliwe. Ayikaze iveze ukuthi uvotele bani.</string>
     <string name="verify_not_found">Alikho ivoti elifana naleyo khodi yerisidi. Hlola ikhodi bese uzama futhi.</string>
     <string name="verify_found">Leli voti libhaliwe futhi labalwa.</string>
+    <string name="verify_chain_checking">Ihlola i-blockchain…</string>
+    <string name="verify_chain_ok">I-blockchain iphephile: ama-node angu-%1$d kwangu-%2$d asebenza futhi wonke amaketanga alungile.</string>
+    <string name="verify_chain_invalid">Ama-node angu-%1$d kwangu-%2$d asebenza, kodwa ukuhlolwa kobuqotho be-blockchain kwehlulekile.</string>
+    <string name="verify_chain_nodes_only">Ama-node e-blockchain angu-%1$d kwangu-%2$d asebenza.</string>
+    <string name="verify_chain_unavailable">Asikwazanga ukufinyelela i-blockchain okwamanje.</string>
 
     <!-- Splash and welcome -->
     <string name="splash_title">Izwi Lakho. Ivoti Lakho.\nIkusasa Ndawonye.</string>
@@ -162,7 +167,7 @@
     <string name="login_register">Bhalisa</string>
 
     <!-- Form fields -->
-    <string name="field_full_name">Igama eliphelele</string>
+    <string name="field_full_name">Igama nesibongo (njengoba kusho kumazisi wakho)</string>
     <string name="field_id_or_passport">Inombolo ye-ID / Inombolo yephasipothi</string>
     <string name="field_id_number">Inombolo ye-ID</string>
     <string name="field_passport_number">Inombolo yephasipothi</string>
@@ -197,6 +202,18 @@
     <string name="address_postal_code">Ikhodi yeposi</string>
     <string name="address_province">Isifundazwe</string>
     <string name="address_province_hint">Isifundazwe sakho sinquma ukuthi yimaphi amaphepha okuvota esifundazwe nawesifunda ozowathola, ngakho kufanele kube kulungile.</string>
+    <string name="details_issues_title">Eish, hhayi ngokushesha kangaka! 🙈 Lungisa lezi zinto bese uyaqhubeka:</string>
+    <string name="issue_name_missing">Singathanda ukwazi igama lakho 👋</string>
+    <string name="issue_surname_missing">Faka nesibongo sakho 😉</string>
+    <string name="issue_id_missing">Inombolo yakho kamazisi noma yephasipothi ayikho 🪪</string>
+    <string name="issue_id_length">Izinombolo zikamazisi waseNingizimu Afrika zinezinombolo ezingu-13. Bala futhi? 🔢</string>
+    <string name="issue_phone_missing">Faka inombolo yakho yeselula 📱</string>
+    <string name="issue_phone_invalid">Leyo nombolo yeselula ibukeka inephutha. Zama into efana no-082 123 4567 📱</string>
+    <string name="issue_email_invalid">Lelo imeyili alibukeki kahle. Lilungise noma ulishiye lingenalutho ✉️</string>
+    <string name="issue_province_missing">Khetha isifundazwe sakho. Sinquma ukuthi yimaphi amaphepha okuvota ozowathola 🗺️</string>
+    <string name="issue_street_missing">Uhlalaphi? Faka ikheli lomgwaqo wakho 🏠</string>
+    <string name="issue_city_missing">Lokho kusedolobheni noma kusiphi isigodi? 🏙️</string>
+    <string name="issue_postal_invalid">Amakhodi eposi anezinombolo ezi-4 📮</string>
     <string name="register_identity_title">Qinisekisa Ubuwena</string>
     <string name="register_identity_heading">Umqulu Wobuwena</string>
     <string name="register_identity_description">Khetha uhlobo lomqulu wakho bese uthatha isithombe esicacile sangaphambili.</string>
@@ -360,6 +377,23 @@
     <string name="settings_election_info_description">Inqubo yokuvota, imithetho namalungelo omvoti</string>
     <string name="settings_report_title">Bika Inkinga</string>
     <string name="settings_report_description">Bika izinkinga zobuchwepheshe noma ukukhathazeka komvoti</string>
+    <string name="report_title">Bika Inkinga</string>
+    <string name="report_subtitle">Iya ngqo eqenjini labathuthukisi</string>
+    <string name="report_heading">Kungabe yini engahambanga kahle?</string>
+    <string name="report_description">Sitshele ukuthi kwenzekeni futhi sizokubheka. Sicela ungalokothi usho ukuthi uvotele bani.</string>
+    <string name="report_category_label">Kumayelana nani?</string>
+    <string name="report_category_app">Inkinga ye-app</string>
+    <string name="report_category_voting">Ukukhathazeka ngokuvota</string>
+    <string name="report_category_account">I-akhawunti nokungena</string>
+    <string name="report_category_other">Okunye</string>
+    <string name="report_message_placeholder">Chaza inkinga…</string>
+    <string name="report_counter">%1$d/%2$d</string>
+    <string name="report_email_placeholder">I-imeyili yakho yokuphendula (akuphoqelekile)</string>
+    <string name="report_device_note">Sizofaka inguqulo ye-app nohlobo locingo lwakho ukuze siyilungise ngokushesha. Hhayi ivoti lakho.</string>
+    <string name="report_send">Thumela eqenjini labathuthukisi</string>
+    <string name="report_message_too_short">Sitshele okwengeziwe. Umusho noma emibili usisiza ukuyithola 🐛</string>
+    <string name="report_opened">I-app yakho ye-imeyili ivuliwe. Cindezela ukuthumela lapho, sizoqhubeka nayo 🚀</string>
+    <string name="report_no_email_app">Ayikho i-app ye-imeyili kulolu cingo. Sithumelele i-imeyili ku-%1$s.</string>
     <string name="settings_logout_description">Phuma ku-akhawunti yakho yomvoti</string>
     <string name="settings_logout_confirm_title">Uyaphuma?</string>
     <string name="settings_logout_confirm_body">Uqinisekile ukuthi ufuna ukuphuma ku-akhawunti yakho yomvoti kule divayisi?</string>
@@ -424,4 +458,55 @@
     <string name="login_error_blocked">Le akhawunti ivinjiwe. Xhumana nolayini wosizo we-IEC.</string>
     <string name="register_error_exists">Le nombolo kamazisi isibhalisiwe. Ngena esikhundleni salokho.</string>
     <string name="register_error_invalid">Eminye imininingwane yakho ayamukelwanga. Yihlole bese uzama futhi.</string>
+
+    <!-- Election schedule, reminders and voting station map -->
+    <string name="reminder_interval_month">Inyanga engu-1 ngaphambili</string>
+    <string name="reminder_interval_two_weeks">Amasonto ama-2 ngaphambili</string>
+    <string name="reminder_interval_week">Isonto elingu-1 ngaphambili</string>
+    <string name="reminder_interval_three_days">Izinsuku ezi-3 ngaphambili</string>
+    <string name="reminder_interval_day">Usuku olu-1 ngaphambili</string>
+    <string name="reminder_interval_morning_of">Ekuseni ngosuku lokuvota</string>
+    <string name="reminder_channel_name">Izikhumbuzo zokhetho</string>
+    <string name="reminder_channel_description">Izikhumbuzo ngaphambi kokuba ukuvota kuvulwe</string>
+    <string name="reminder_body_today">Ukuvota kuvulwa namuhla. Phatha i-ID yakho ubeke uphawu lwakho!</string>
+    <string name="reminder_title_fallback">Isikhumbuzo sokhetho</string>
+    <string name="reminder_intervals_title">Ngikhumbuze</string>
+    <string name="reminder_none_selected">Khetha okungenani isikhathi esisodwa ukuze uthole izikhumbuzo.</string>
+    <string name="reminder_next">Isikhumbuzo esilandelayo: %1$s</string>
+    <string name="reminder_nothing_scheduled">Azikho izikhumbuzo okwamanje. Zizosethwa uma usuku lokhetho selumenyezelwe.</string>
+    <string name="reminder_notifications_blocked">Izaziso zivaliwe kulolu hlelo, ngakho izikhumbuzo ngeke zivele. Zivule kuzilungiselelo zefoni yakho.</string>
+    <string name="reminder_permission_denied">Vumela izaziso ukuze sikukhumbuze ngaphambi kokuba ukuvota kuvulwe.</string>
+    <string name="reminder_open_settings">Vula izilungiselelo zezaziso</string>
+    <string name="home_no_election_title">Alukho ukhetho oseluhleliwe okwamanje</string>
+    <string name="home_no_election_body">Usuku lokuvota luzovela lapha uma selumenyezelwe.</string>
+    <string name="home_closes_today">Ukuvota kuvalwa namuhla. Beka uphawu lwakho!</string>
+    <string name="home_open_until">Ukuvota kuvuliwe kuze kube ngu-%1$s. Beka uphawu lwakho!</string>
+    <string name="home_opens_tomorrow">Ukuvota kuvulwa kusasa · %1$s. Lungiselela!</string>
+    <string name="home_reminder_off">Izikhumbuzo zivaliwe. Thepha Ngikhumbuze ukuze ukhethe ukuthi nini.</string>
+    <string name="station_title">Isiteshi sakho sokuvota</string>
+    <string name="station_subtitle">Esiseduze nekheli lakho elibhalisiwe</string>
+    <string name="station_locating">Ithola iziteshi eziseduze nekheli lakho…</string>
+    <string name="station_no_address">Asikabi nalo ikheli lakho. Lingeze kuphrofayela yakho ukuze uthole isiteshi sokuvota esiseduze.</string>
+    <string name="station_address_not_found">Asikwazanga ukuthola ikheli lakho elibhalisiwe emephini. Hlola umgwaqo nedolobha kuphrofayela yakho.</string>
+    <string name="station_edit_address">Hlola ikheli lami</string>
+    <string name="station_failed">Asikwazanga ukulayisha imininingwane yemephu. Hlola uxhumano lwakho bese uzama futhi.</string>
+    <string name="station_none_nearby">Azikho iziteshi zokuvota ezitholakele ngaphakathi kwamakhilomitha ayi-10 ekhelini lakho.</string>
+    <string name="station_navigate_google">Zula nge-Google Maps</string>
+    <string name="station_open_other_maps">Vula kolunye uhlelo lwamamephu</string>
+    <string name="station_other_options">Ezinye iziteshi eziseduze</string>
+    <string name="station_confirm_with_iec">Isiteshi sakho esisemthethweni sokuvota yilapho wabhalisa khona. Kuqinisekise ngokuthumela inombolo yakho ye-ID nge-SMS ku-32810 noma ku-www.elections.org.za. Imininingwane yemephu © abanikeli be-OpenStreetMap, © Esri.</string>
+    <string name="station_your_address">Ikheli lakho elibhalisiwe</string>
+    <string name="station_distance">%1$s ukusuka ekhelini lakho elibhalisiwe</string>
+    <string name="station_kind_official">Isiteshi sokuvota</string>
+    <string name="station_kind_likely">Kungenzeka kube isiteshi sokuvota</string>
+    <string name="station_unnamed_official">Isiteshi sokuvota</string>
+    <string name="station_unnamed_likely">Isikole noma ihholo lomphakathi</string>
+    <plurals name="reminder_body_days">
+        <item quantity="one">Ukuvota kuvulwa ngosuku olu-%1$d, ngo-%2$s.</item>
+        <item quantity="other">Ukuvota kuvulwa ezinsukwini ezi-%1$d, ngo-%2$s.</item>
+    </plurals>
+    <plurals name="home_opens_in_days">
+        <item quantity="one">Ukuvota kuvulwa ngosuku olu-%1$d · %2$s. Lungiselela!</item>
+        <item quantity="other">Ukuvota kuvulwa ezinsukwini ezi-%1$d · %2$s. Lungiselela!</item>
+    </plurals>
 </resources>

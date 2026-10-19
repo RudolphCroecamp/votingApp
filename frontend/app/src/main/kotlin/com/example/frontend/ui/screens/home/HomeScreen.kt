@@ -70,6 +70,7 @@ fun HomeScreen(
     heroState: HeroState = HeroState.VotingOpen,
     closingTime: String = stringResource(R.string.home_sample_closing),
     openingTime: String = stringResource(R.string.home_sample_opening),
+    comingUpFootnote: String? = null,
     receiptSummary: String = stringResource(R.string.home_sample_receipt_summary),
     selectedTab: BottomTab = BottomTab.Home,
     onTabSelected: (BottomTab) -> Unit = {},
@@ -202,6 +203,7 @@ fun HomeScreen(
                         subtitle = openingTime,
                         actionLabel = stringResource(R.string.home_remind_me),
                         onAction = onRemindMe,
+                        footnote = comingUpFootnote,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

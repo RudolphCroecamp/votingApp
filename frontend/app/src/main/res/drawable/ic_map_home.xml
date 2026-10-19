@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Map pin for the voter's registered address: brand-navy dot with a white ring. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="26dp"
+    android:height="26dp"
+    android:viewportWidth="26"
+    android:viewportHeight="26">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M13,1a12,12 0,1 0,0.01 0z" />
+    <path
+        android:fillColor="#FF113056"
+        android:pathData="M13,4a9,9 0,1 0,0.01 0z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M13,8.2l-4.6,3.7v5.6h3.1v-3.4h3v3.4h3.1v-5.6z" />
+</vector>

@@ -272,6 +272,10 @@ namespace votingBackend3.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("postal")
                         .HasColumnType("integer");
 

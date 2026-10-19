@@ -44,6 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.R
+import com.example.frontend.data.blockchain.ChainStatus
 import com.example.frontend.ui.components.AppBottomBar
 import com.example.frontend.ui.components.AppTextField
 import com.example.frontend.ui.components.AppTopBar
@@ -87,6 +88,7 @@ fun VoteVerifyReceiptScreen(
     selectedTab: BottomTab = BottomTab.Vote,
     onTabSelected: (BottomTab) -> Unit = {},
     onVerify: (String) -> ReceiptLookup = ::sampleLookup,
+    chainStatus: ChainStatus = ChainStatus.Checking,
     backgroundColor: Color = PageBackground
 ) {
     var receiptCode by remember { mutableStateOf("") }
@@ -150,6 +152,8 @@ fun VoteVerifyReceiptScreen(
                 leadingIcon = Icons.Default.ContentPaste
             )
 
+            ChainStatusLabel(chainStatus)
+
             Spacer(modifier = Modifier.height(Spacing.tight))
 
             // Fading between outcomes makes the lookup feel like it answered,
@@ -180,6 +184,23 @@ fun VoteVerifyReceiptScreen(
             }
         }
     }
+}
+
+@Composable
+private fun ChainStatusLabel(status: ChainStatus) {
+    val (message, type) = when (status) {
+        ChainStatus.Checking -> stringResource(R.string.verify_chain_checking) to StatusType.Info
+        ChainStatus.Unavailable -> stringResource(R.string.verify_chain_unavailable) to StatusType.Warning
+        is ChainStatus.Known -> when (status.chainValid) {
+            true -> stringResource(R.string.verify_chain_ok, status.healthyNodes, status.totalNodes) to
+                if (status.healthyNodes == status.totalNodes) StatusType.Success else StatusType.Warning
+            false -> stringResource(R.string.verify_chain_invalid, status.healthyNodes, status.totalNodes) to
+                StatusType.Warning
+            null -> stringResource(R.string.verify_chain_nodes_only, status.healthyNodes, status.totalNodes) to
+                StatusType.Info
+        }
+    }
+    StatusLabel(message = message, type = type, modifier = Modifier.fillMaxWidth())
 }
 
 @Composable

@@ -18,11 +18,12 @@ namespace votingBackend3.Services
         private readonly VotingDbContext _votingDbContext;
         private readonly DocumentService _documentService;
 
-        private readonly double SIMULARITYSCORE = 0.90;
+        private readonly double SIMULARITYSCORE;
 
         public AuthService(IConfiguration configuration, VotingDbContext votingDbContext, DocumentService documentService)
         {
             _configuration = configuration;
+            SIMULARITYSCORE = configuration.GetValue("FaceMatch:Threshold", 0.70);
             _votingDbContext = votingDbContext;
             _documentService = documentService;;
         }
@@ -49,6 +50,7 @@ namespace votingBackend3.Services
 
                 // Compare the submitted face embedding with the saved embedding.
                 double similarity = CosineSimilarity(user.face_embedding, creds.face_embedding);
+                Console.WriteLine($"Face login similarity {similarity:F3} (threshold {SIMULARITYSCORE:F2})");
 
                 // Reject embeddings that do not meet the configured similarity threshold.
                 if (similarity < SIMULARITYSCORE) throw new UnauthorizedAccessException($"Invalid credentials provided"); ;
@@ -244,7 +246,8 @@ namespace votingBackend3.Services
                 province = request.province,
                 city = request.city,
                 street = request.street,
-                postal = request.postal
+                postal = request.postal,
+                phone = request.phone?.Trim() ?? string.Empty
             };
 
             var newUser = new Auth
@@ -363,6 +366,25 @@ namespace votingBackend3.Services
 
             // A correctly signed JWT is accepted only while its matching DB session remains active.
             return await ValidateSession(voterId, jti);
+        }
+
+        public async Task<VoterProfileDto?> GetProfile(Guid voterId)
+        {
+            var auth = await _votingDbContext.auth.AsNoTracking().FirstOrDefaultAsync(a => a.voter_id == voterId);
+            var voter = await _votingDbContext.voter.AsNoTracking().FirstOrDefaultAsync(v => v.voter_id == voterId);
+            if (auth == null || voter == null) return null;
+
+            return new VoterProfileDto
+            {
+                id_number = auth.id_number,
+                firstname = voter.firstname,
+                lastname = voter.lastname,
+                province = voter.province,
+                city = voter.city,
+                street = voter.street,
+                postal = voter.postal,
+                phone = voter.phone
+            };
         }
 
         public async Task<bool> ValidateSession(Guid voterId, Guid jti)

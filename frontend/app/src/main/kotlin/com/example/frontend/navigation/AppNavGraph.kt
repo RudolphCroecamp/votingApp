@@ -3,6 +3,10 @@ package com.example.frontend.navigation
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
@@ -10,9 +14,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination
@@ -24,7 +30,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.frontend.R
+import com.example.frontend.data.AppContainer
 import com.example.frontend.data.SampleParties
+import com.example.frontend.data.blockchain.ChainStatus
 import com.example.frontend.ui.components.Ballot
 import com.example.frontend.ui.components.BottomTab
 import com.example.frontend.ui.screens.Auth.LoginFaceScreen
@@ -33,12 +41,11 @@ import com.example.frontend.ui.screens.Auth.LoginScreen
 import com.example.frontend.ui.screens.Info.InfoScreen
 import com.example.frontend.ui.screens.Info.InfoDetailScreen
 import com.example.frontend.ui.screens.Info.InfoTopic
-import com.example.frontend.ui.components.HeroState
 import com.example.frontend.ui.screens.Manifestos.ManifestosScreen
 import com.example.frontend.ui.screens.Manifestos.PartiesLoadError
 import com.example.frontend.ui.screens.Manifestos.PartiesUiState
 import com.example.frontend.ui.screens.Manifestos.PartiesViewModel
-import com.example.frontend.ui.screens.Manifestos.partyById
+import com.example.frontend.ui.screens.Manifestos.PartyDetailUiState
 import com.example.frontend.ui.components.FullScreenLoading
 import com.example.frontend.ui.screens.Manifestos.PartyDetailScreen
 import com.example.frontend.ui.screens.Profile.ProfileScreen
@@ -50,7 +57,12 @@ import com.example.frontend.ui.screens.Registration.screens.RegisterDoneScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterFaceScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterIdentityScreen
 import com.example.frontend.ui.screens.Registration.screens.RegisterScreen
+import com.example.frontend.ui.screens.Splash.SessionState
+import com.example.frontend.ui.screens.Splash.SessionViewModel
 import com.example.frontend.ui.screens.Splash.SplashScreen
+import com.example.frontend.ui.screens.Support.ReportProblemScreen
+import com.example.frontend.ui.screens.Support.rememberEmailSender
+import com.example.frontend.ui.screens.Status.OfflineScreen
 import com.example.frontend.ui.screens.Vote.SampleReceipts
 import com.example.frontend.ui.screens.Vote.VoteConfirmationScreen
 import com.example.frontend.ui.screens.Vote.VoteFaceCheckScreen
@@ -64,10 +76,17 @@ import com.example.frontend.ui.screens.Vote.VoteReviewScreen
 import com.example.frontend.ui.screens.Vote.VoteVerifyReceiptScreen
 import com.example.frontend.ui.screens.Vote.reviewErrorMessage
 import com.example.frontend.ui.screens.Welcome.WelcomeScreen
+import com.example.frontend.ui.screens.home.ElectionViewModel
 import com.example.frontend.ui.screens.home.HomeScreen
+import com.example.frontend.ui.screens.home.electionHero
+import com.example.frontend.ui.screens.home.formatReminderTime
+import com.example.frontend.ui.screens.Station.VotingStationScreen
+import com.example.frontend.ui.screens.Station.VotingStationViewModel
+import com.example.frontend.ui.screens.Station.registeredAddressLine
 import com.example.frontend.ui.theme.MotionDurations
 import com.example.frontend.ui.theme.StandardEasing
 import com.example.frontend.ui.theme.motionDuration
+import com.example.frontend.ui.theme.motionEnabled
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -80,14 +99,30 @@ private fun screenFor(tab: BottomTab): Screen = when (tab) {
     BottomTab.Settings -> Screen.Settings
 }
 
+/** Old screen drifts 1/3 of the width while the new one covers it, as on iOS. */
+private const val PARALLAX_FRACTION = 3
+
+/** Close to UIKit's push: settles in roughly 400 ms, no overshoot. */
+private const val NAV_SPRING_STIFFNESS = 320f
+
+/** The top level of each bottom tab: switching between them is lateral, not deeper. */
+private fun NavDestination.isTabRoot(): Boolean =
+    hasRoute<Screen.Home>() || hasRoute<Screen.Manifestos>() || hasRoute<Screen.Info>() || hasRoute<Screen.Settings>()
+
+/** Entry points the app jumps to when the session changes; nothing to slide back to. */
+private fun NavDestination.isSessionRoot(): Boolean =
+    hasRoute<Screen.Splash>() || hasRoute<Screen.Offline>()
+
 /** Which tab should look selected for the destination currently on screen. */
 private fun tabFor(destination: NavDestination?): BottomTab = when {
     destination == null -> BottomTab.Vote
     destination.hasRoute<Screen.Home>() -> BottomTab.Home
+    destination.hasRoute<Screen.VotingStation>() -> BottomTab.Home
     destination.hasRoute<Screen.Manifestos>() -> BottomTab.Manifestos
     destination.hasRoute<Screen.PartyDetail>() -> BottomTab.Manifestos
     destination.hasRoute<Screen.Info>() -> BottomTab.Info
     destination.hasRoute<Screen.Settings>() -> BottomTab.Settings
+    destination.hasRoute<Screen.ReportProblem>() -> BottomTab.Settings
     else -> BottomTab.Vote
 }
 
@@ -99,20 +134,44 @@ fun AppNavGraph(
     // Activity-scoped so all three ballots, Review and the face check share it (KAN-17).
     voteFlowViewModel: VoteFlowViewModel = viewModel(),
     // Activity-scoped so the list loads once for Manifestos and party detail (KAN-25).
-    partiesViewModel: PartiesViewModel = viewModel()
+    partiesViewModel: PartiesViewModel = viewModel(),
+    sessionViewModel: SessionViewModel = viewModel(),
+    // Activity-scoped so Home's countdown and Settings' reminders share one schedule.
+    electionViewModel: ElectionViewModel = viewModel()
 ) {
     // Flow state that outlives a single destination. Anything a later screen
     // needs but cannot be derived from its own route lives here.
-    var registeredName by remember { mutableStateOf("Thandi Nkosi") }
-    var registeredIdNumber by remember { mutableStateOf("9201185082089") }
-    var registeredPhone by remember { mutableStateOf("0821234567") }
-    var registeredStreet by remember { mutableStateOf("124 Market Street") }
-    var registeredCity by remember { mutableStateOf("Johannesburg") }
-    var registeredProvince by remember { mutableStateOf("Gauteng") }
-    var registeredPostalCode by remember { mutableStateOf("2001") }
+    var registeredName by remember { mutableStateOf("") }
+    var registeredIdNumber by remember { mutableStateOf("") }
+    var registeredPhone by remember { mutableStateOf("") }
+    var registeredStreet by remember { mutableStateOf("") }
+    var registeredCity by remember { mutableStateOf("") }
+    var registeredProvince by remember { mutableStateOf("") }
+    var registeredPostalCode by remember { mutableStateOf("") }
 
     val registrationState by registrationViewModel.uiState.collectAsState()
     val voteState by voteFlowViewModel.state.collectAsState()
+    val sessionState by sessionViewModel.state.collectAsState()
+    val signedInProfile by sessionViewModel.profile.collectAsState()
+    val electionsState by electionViewModel.state.collectAsState()
+    val reminderSettings by electionViewModel.settings.collectAsState()
+    val nextReminder by electionViewModel.nextReminder.collectAsState()
+
+    LaunchedEffect(sessionState) {
+        if (sessionState == SessionState.SignedIn) electionViewModel.refresh()
+    }
+
+    LaunchedEffect(signedInProfile) {
+        signedInProfile?.let { profile ->
+            if (profile.fullName.isNotBlank()) registeredName = profile.fullName
+            if (profile.idNumber.isNotBlank()) registeredIdNumber = profile.idNumber
+            registeredStreet = profile.street
+            registeredCity = profile.city
+            registeredProvince = profile.province
+            registeredPostalCode = profile.postalCode
+            if (profile.phone.isNotBlank()) registeredPhone = profile.phone
+        }
+    }
 
     /** Resume where the voter left off; after voting, show the receipts instead. */
     fun startVoting() {
@@ -147,57 +206,116 @@ fun AppNavGraph(
 
     fun openInfo(topic: InfoTopic) = navController.navigate(Screen.InfoDetail(topic))
 
+    fun openSessionStart(state: SessionState) {
+        val target = when (state) {
+            SessionState.Checking -> return
+            SessionState.SignedIn -> Screen.Home
+            SessionState.SignedOut -> Screen.Welcome
+            SessionState.Offline -> Screen.Offline
+        }
+        navController.navigate(target) {
+            popUpTo(navController.graph.id) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
+
     fun logout() {
+        sessionViewModel.signOut()
+        electionViewModel.clear()
+        registrationViewModel.onEvent(RegistrationUiEvent.OnRegistrationStarted)
+        registeredName = ""
+        registeredIdNumber = ""
+        registeredPhone = ""
+        registeredStreet = ""
+        registeredCity = ""
+        registeredProvince = ""
+        registeredPostalCode = ""
         navController.navigate(Screen.Login) {
             popUpTo(navController.graph.id) { inclusive = true }
             launchSingleTop = true
         }
     }
 
-    // Screens cross-fade with a short horizontal drift. The slide is a fraction
-    // of the width rather than the full screen, so each frame composites a
-    // mostly-opaque layer: far cheaper than a full-width slide on weak GPUs.
-    val transitionMillis = motionDuration(MotionDurations.medium)
-    val slideFraction = 12
+    // iOS-style navigation. Forward: the new screen slides in from the right edge,
+    // over the old one, which drifts a third of the way left (parallax). Back is the
+    // exact reverse, and Navigation draws the dismissed screen on top so it peels off.
+    // Offsets run on a critically damped spring, so motion eases out naturally with
+    // no bounce, and the same specs drive the predictive back gesture as you drag.
+    // Bottom-tab switches and session changes (sign in/out) cross-fade instead:
+    // they are peers, not a step deeper.
+    val animate = motionEnabled
+    val fadeMillis = motionDuration(MotionDurations.medium)
+
+    fun offsetSpec(): FiniteAnimationSpec<IntOffset> =
+        if (animate) spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = NAV_SPRING_STIFFNESS) else snap()
+
+    fun isPeerSwitch(from: NavDestination, to: NavDestination): Boolean =
+        (from.isTabRoot() && to.isTabRoot()) || from.isSessionRoot() || to.isSessionRoot()
 
     NavHost(
         navController = navController,
         startDestination = Screen.Splash,
         modifier = modifier,
         enterTransition = {
-            fadeIn(tween(transitionMillis, easing = StandardEasing)) +
-                slideInHorizontally(tween(transitionMillis, easing = StandardEasing)) {
-                    it / slideFraction
-                }
+            if (isPeerSwitch(initialState.destination, targetState.destination)) {
+                fadeIn(tween(fadeMillis, easing = StandardEasing))
+            } else {
+                slideInHorizontally(offsetSpec()) { it }
+            }
         },
         exitTransition = {
-            fadeOut(tween(transitionMillis, easing = StandardEasing)) +
-                slideOutHorizontally(tween(transitionMillis, easing = StandardEasing)) {
-                    -it / slideFraction
-                }
+            if (isPeerSwitch(initialState.destination, targetState.destination)) {
+                fadeOut(tween(fadeMillis, easing = StandardEasing))
+            } else {
+                slideOutHorizontally(offsetSpec()) { -it / PARALLAX_FRACTION }
+            }
         },
         popEnterTransition = {
-            fadeIn(tween(transitionMillis, easing = StandardEasing)) +
-                slideInHorizontally(tween(transitionMillis, easing = StandardEasing)) {
-                    -it / slideFraction
-                }
+            if (isPeerSwitch(initialState.destination, targetState.destination)) {
+                fadeIn(tween(fadeMillis, easing = StandardEasing))
+            } else {
+                slideInHorizontally(offsetSpec()) { -it / PARALLAX_FRACTION }
+            }
         },
         popExitTransition = {
-            fadeOut(tween(transitionMillis, easing = StandardEasing)) +
-                slideOutHorizontally(tween(transitionMillis, easing = StandardEasing)) {
-                    it / slideFraction
-                }
+            if (isPeerSwitch(initialState.destination, targetState.destination)) {
+                fadeOut(tween(fadeMillis, easing = StandardEasing))
+            } else {
+                slideOutHorizontally(offsetSpec()) { it }
+            }
         }
     ) {
         composable<Screen.Splash> {
-            SplashScreen(
-                onFinished = {
-                    navController.navigate(Screen.Welcome) {
-                        // Drop the splash so Back never returns to it.
-                        popUpTo<Screen.Splash> { inclusive = true }
-                        launchSingleTop = true
-                    }
+            var splashFinished by remember { mutableStateOf(false) }
+
+            LaunchedEffect(Unit) { sessionViewModel.check() }
+            LaunchedEffect(splashFinished, sessionState) {
+                if (splashFinished) openSessionStart(sessionState)
+            }
+
+            if (splashFinished) {
+                FullScreenLoading(label = stringResource(R.string.offline_looking))
+            } else {
+                SplashScreen(onFinished = { splashFinished = true })
+            }
+        }
+
+        composable<Screen.Offline> {
+            LaunchedEffect(sessionState) {
+                if (sessionState == SessionState.SignedIn || sessionState == SessionState.SignedOut) {
+                    openSessionStart(sessionState)
                 }
+            }
+
+            OfflineScreen(
+                onRetry = sessionViewModel::check,
+                onBackClick = {
+                    navController.navigate(Screen.Welcome) {
+                        popUpTo<Screen.Offline> { inclusive = true }
+                    }
+                },
+                wasCastingVote = false,
+                isRetrying = sessionState == SessionState.Checking
             )
         }
 
@@ -208,7 +326,10 @@ fun AppNavGraph(
         composable<Screen.Login> {
             LoginScreen(
                 onFaceVerification = { idNumber -> navController.navigate(Screen.LoginFace(idNumber)) },
-                onRegister = { navController.navigate(Screen.Register) }
+                onRegister = {
+                    registrationViewModel.onEvent(RegistrationUiEvent.OnRegistrationStarted)
+                    navController.navigate(Screen.Register)
+                }
             )
         }
 
@@ -224,6 +345,7 @@ fun AppNavGraph(
                 onEvent = faceViewModel::onEvent,
                 onBackClick = { navController.popBackStack() },
                 onVerified = {
+                    sessionViewModel.onSignedIn()
                     navController.navigate(Screen.Home) {
                         popUpTo<Screen.Login> { inclusive = true }
                     }
@@ -292,6 +414,7 @@ fun AppNavGraph(
                     if (registrationState.phone.isNotBlank()) registeredPhone = registrationState.phone
                     if (registrationState.postalCode.isNotBlank()) registeredPostalCode = registrationState.postalCode
                     registrationViewModel.onEvent(RegistrationUiEvent.OnRegistrationComplete)
+                    sessionViewModel.onSignedIn()
                     navController.navigate(Screen.Home) {
                         popUpTo<Screen.Welcome> { inclusive = false }
                     }
@@ -300,21 +423,32 @@ fun AppNavGraph(
         }
 
         composable<Screen.Home> {
+            LaunchedEffect(Unit) { electionViewModel.refresh() }
+            val hero = electionHero(
+                elections = electionsState,
+                hasVoted = voteState.hasVoted,
+                nextReminder = nextReminder,
+                remindersEnabled = reminderSettings.enabled
+            )
             HomeScreen(
                 onVoteNow = { startVoting() },
                 voterName = registeredName,
-                heroState = if (voteState.hasVoted) HeroState.VoteCast else HeroState.VotingOpen,
+                heroState = hero.state,
+                electionName = hero.title ?: stringResource(R.string.home_sample_election),
+                closingTime = hero.closingLine ?: stringResource(R.string.home_sample_closing),
+                openingTime = hero.openingLine ?: stringResource(R.string.home_sample_opening),
+                comingUpFootnote = hero.footnote,
                 receiptSummary = voteState.receipts.firstOrNull()?.let { first ->
                     stringResource(R.string.home_receipt_summary, first.castAt, voteState.receipts.size)
                 } ?: "",
                 onViewReceipt = { navController.navigate(Screen.Receipt) },
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) },
-                onVotingStation = { openInfo(InfoTopic.VotingStation) },
+                onVotingStation = { navController.navigate(Screen.VotingStation) },
                 onVotingInformation = { openInfo(InfoTopic.Rights) },
                 onCheckRegistration = { navController.navigate(Screen.Profile) },
-                onRemindMe = { navController.navigate(Screen.Info) },
-                onReportProblem = { openInfo(InfoTopic.Help) },
+                onRemindMe = { navController.navigate(Screen.Settings) },
+                onReportProblem = { navController.navigate(Screen.ReportProblem) },
                 onPrivacy = { openInfo(InfoTopic.Privacy) },
                 onHelp = { openInfo(InfoTopic.Help) },
                 onSettings = { navController.navigate(Screen.Settings) },
@@ -421,10 +555,15 @@ fun AppNavGraph(
         }
 
         composable<Screen.VerifyReceipt> {
+            val chainStatus by produceState<ChainStatus>(ChainStatus.Checking) {
+                value = runCatching { AppContainer.blockchainRepository.status() }
+                    .getOrDefault(ChainStatus.Unavailable)
+            }
             VoteVerifyReceiptScreen(
                 onBackClick = { navController.popBackStack() },
                 selectedTab = currentTab,
-                onTabSelected = { openTab(it) }
+                onTabSelected = { openTab(it) },
+                chainStatus = chainStatus
             )
         }
 
@@ -444,19 +583,18 @@ fun AppNavGraph(
 
         composable<Screen.PartyDetail> { entry ->
             val route = entry.toRoute<Screen.PartyDetail>()
-            val partiesState by partiesViewModel.state.collectAsState()
-            when (val state = partiesState) {
-                PartiesUiState.Loading -> FullScreenLoading(label = stringResource(R.string.parties_loading))
-                PartiesUiState.Error -> PartiesLoadError(onRetry = partiesViewModel::retry)
-                is PartiesUiState.Loaded -> {
-                    val party = state.partyById(route.partyId)
-                    if (party == null) {
-                        // Unknown id (stale link): leave instead of crashing.
-                        LaunchedEffect(route.partyId) { navController.popBackStack() }
-                    } else {
-                        PartyDetailScreen(party = party, onBackClick = { navController.popBackStack() })
-                    }
-                }
+            val detailState by partiesViewModel.detail.collectAsState()
+            LaunchedEffect(route.partyId) { partiesViewModel.openParty(route.partyId) }
+            when (val state = detailState.takeIf { it.partyId == route.partyId }) {
+                null, is PartyDetailUiState.Loading ->
+                    FullScreenLoading(label = stringResource(R.string.parties_loading))
+                is PartyDetailUiState.Error ->
+                    PartiesLoadError(onRetry = { partiesViewModel.openParty(route.partyId) })
+                is PartyDetailUiState.NotFound ->
+                    // Unknown id (stale link): leave instead of crashing.
+                    LaunchedEffect(route.partyId) { navController.popBackStack() }
+                is PartyDetailUiState.Loaded ->
+                    PartyDetailScreen(party = state.party, onBackClick = { navController.popBackStack() })
             }
         }
 
@@ -489,10 +627,46 @@ fun AppNavGraph(
                 onVotingInformationClick = { navController.navigate(Screen.Info) },
                 onPrivacyClick = { navController.navigate(Screen.Info) },
                 onHelpClick = { navController.navigate(Screen.Info) },
-                onReportProblemClick = { navController.navigate(Screen.Info) },
+                onReportProblemClick = { navController.navigate(Screen.ReportProblem) },
                 onLogoutClick = { logout() },
+                remindersEnabled = reminderSettings.enabled,
+                reminderIntervals = reminderSettings.intervals,
+                nextReminder = nextReminder?.let { formatReminderTime(it.at) },
+                onRemindersEnabledChange = electionViewModel::setRemindersEnabled,
+                onReminderIntervalToggle = electionViewModel::toggleInterval,
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) }
+            )
+        }
+
+        composable<Screen.VotingStation> {
+            val stationViewModel: VotingStationViewModel = viewModel()
+            val stationState by stationViewModel.state.collectAsState()
+            val address = registeredAddressLine(
+                street = registeredStreet,
+                city = registeredCity,
+                postalCode = registeredPostalCode,
+                province = registeredProvince
+            )
+            LaunchedEffect(address) { stationViewModel.load(address) }
+
+            VotingStationScreen(
+                state = stationState,
+                onSelect = stationViewModel::select,
+                onRetry = stationViewModel::retry,
+                onEditAddress = { navController.navigate(Screen.Profile) },
+                onBackClick = { navController.popBackStack() },
+                selectedTab = currentTab,
+                onTabSelected = { openTab(it) }
+            )
+        }
+
+        composable<Screen.ReportProblem> {
+            ReportProblemScreen(
+                onBackClick = { navController.popBackStack() },
+                selectedTab = currentTab,
+                onTabSelected = { openTab(it) },
+                onSend = rememberEmailSender()
             )
         }
 

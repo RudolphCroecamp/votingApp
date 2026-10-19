@@ -147,6 +147,11 @@
     <string name="verify_idle_info">Your receipt proves your ballot was counted. It never reveals who you voted for.</string>
     <string name="verify_not_found">No vote matches that receipt code. Check the code and try again.</string>
     <string name="verify_found">This vote was recorded and counted.</string>
+    <string name="verify_chain_checking">Checking the blockchain…</string>
+    <string name="verify_chain_ok">Blockchain secure: %1$d of %2$d nodes online and every chain checks out.</string>
+    <string name="verify_chain_invalid">%1$d of %2$d nodes online, but the blockchain integrity check failed.</string>
+    <string name="verify_chain_nodes_only">%1$d of %2$d blockchain nodes online.</string>
+    <string name="verify_chain_unavailable">We couldn\'t reach the blockchain right now.</string>
 
     <!-- Splash and welcome -->
     <string name="splash_title">Your Voice. Your Vote.\nThe Future Together.</string>
@@ -163,7 +168,7 @@
     <string name="login_register">Register</string>
 
     <!-- Form fields -->
-    <string name="field_full_name">Full Name</string>
+    <string name="field_full_name">Name and Surname (as on your ID)</string>
     <string name="field_id_or_passport">ID Number / Passport Number</string>
     <string name="field_id_number">ID Number</string>
     <string name="field_passport_number">Passport Number</string>
@@ -198,6 +203,18 @@
     <string name="address_postal_code">Postal Code</string>
     <string name="address_province">Province</string>
     <string name="address_province_hint">Your province decides which provincial and regional ballots you get, so it has to be right.</string>
+    <string name="details_issues_title">Eish, not so fast! 🙈 Sort out these bits and you\'re good to go:</string>
+    <string name="issue_name_missing">We\'d love to know your name 👋</string>
+    <string name="issue_surname_missing">Add your surname too. First-name basis comes later 😉</string>
+    <string name="issue_id_missing">Your ID or passport number is missing 🪪</string>
+    <string name="issue_id_length">SA ID numbers have 13 digits. Count again? 🔢</string>
+    <string name="issue_phone_missing">Pop in your cellphone number 📱</string>
+    <string name="issue_phone_invalid">That cellphone number looks a digit off. Try something like 082 123 4567 📱</string>
+    <string name="issue_email_invalid">That email looks a bit wonky. Fix it or leave it blank ✉️</string>
+    <string name="issue_province_missing">Pick your province. It decides which ballots you get 🗺️</string>
+    <string name="issue_street_missing">Where do you stay? Add your street address 🏠</string>
+    <string name="issue_city_missing">Which city or town is that in? 🏙️</string>
+    <string name="issue_postal_invalid">Postal codes have 4 digits 📮</string>
     <string name="register_identity_title">Verify Identity</string>
     <string name="register_identity_heading">Identity Document</string>
     <string name="register_identity_description">Pick your document type and capture a clear photo of the front.</string>
@@ -361,6 +378,23 @@
     <string name="settings_election_info_description">Ballot process, rules and voter rights</string>
     <string name="settings_report_title">Report a Problem</string>
     <string name="settings_report_description">Log technical issues or voter concerns</string>
+    <string name="report_title">Report a Problem</string>
+    <string name="report_subtitle">Straight to the dev team</string>
+    <string name="report_heading">What went wrong?</string>
+    <string name="report_description">Tell us what happened and we\'ll look into it. Please never include who you voted for.</string>
+    <string name="report_category_label">What\'s it about?</string>
+    <string name="report_category_app">App issue</string>
+    <string name="report_category_voting">Voting concern</string>
+    <string name="report_category_account">Account &amp; login</string>
+    <string name="report_category_other">Something else</string>
+    <string name="report_message_placeholder">Describe the problem…</string>
+    <string name="report_counter">%1$d/%2$d</string>
+    <string name="report_email_placeholder">Your email for a reply (optional)</string>
+    <string name="report_device_note">We\'ll add your app version and phone model so we can fix it faster. Never your vote.</string>
+    <string name="report_send">Send to the dev team</string>
+    <string name="report_message_too_short">Tell us a little more. A sentence or two helps us track it down 🐛</string>
+    <string name="report_opened">Your email app is open. Hit send there and we\'ll take it from here 🚀</string>
+    <string name="report_no_email_app">No email app on this phone. Email us at %1$s instead.</string>
     <string name="settings_logout_description">Sign out of your voter account</string>
     <string name="settings_logout_confirm_title">Log Out?</string>
     <string name="settings_logout_confirm_body">Are you sure you want to log out of your voter account on this device?</string>
@@ -425,4 +459,55 @@
     <string name="login_error_blocked">This account has been blocked. Contact the IEC helpline.</string>
     <string name="register_error_exists">This ID number is already registered. Sign in instead.</string>
     <string name="register_error_invalid">Some of your details were not accepted. Check them and try again.</string>
+
+    <!-- Election schedule, reminders and voting station map -->
+    <string name="reminder_interval_month">1 month before</string>
+    <string name="reminder_interval_two_weeks">2 weeks before</string>
+    <string name="reminder_interval_week">1 week before</string>
+    <string name="reminder_interval_three_days">3 days before</string>
+    <string name="reminder_interval_day">1 day before</string>
+    <string name="reminder_interval_morning_of">Morning of voting day</string>
+    <string name="reminder_channel_name">Election reminders</string>
+    <string name="reminder_channel_description">Reminders before voting opens</string>
+    <string name="reminder_body_today">Voting opens today. Bring your ID and make your mark!</string>
+    <string name="reminder_title_fallback">Election reminder</string>
+    <string name="reminder_intervals_title">Remind me</string>
+    <string name="reminder_none_selected">Pick at least one time to get reminders.</string>
+    <string name="reminder_next">Next reminder: %1$s</string>
+    <string name="reminder_nothing_scheduled">No reminders due yet. They are set as soon as an election date is announced.</string>
+    <string name="reminder_notifications_blocked">Notifications are off for this app, so reminders can\'t appear. Turn them on in your phone\'s settings.</string>
+    <string name="reminder_permission_denied">Allow notifications so we can remind you before voting opens.</string>
+    <string name="reminder_open_settings">Open notification settings</string>
+    <string name="home_no_election_title">No election scheduled yet</string>
+    <string name="home_no_election_body">The voting date will show here as soon as it is announced.</string>
+    <string name="home_closes_today">Voting closes today. Make your mark!</string>
+    <string name="home_open_until">Voting is open until %1$s. Make your mark!</string>
+    <string name="home_opens_tomorrow">Voting opens tomorrow · %1$s. Get ready!</string>
+    <string name="home_reminder_off">Reminders are off. Tap Remind me to choose when.</string>
+    <string name="station_title">Your voting station</string>
+    <string name="station_subtitle">Nearest to your registered address</string>
+    <string name="station_locating">Finding stations near your address…</string>
+    <string name="station_no_address">We don\'t have your address yet. Add it to your profile to find the nearest voting station.</string>
+    <string name="station_address_not_found">We couldn\'t place your registered address on the map. Check your street and city in your profile.</string>
+    <string name="station_edit_address">Check my address</string>
+    <string name="station_failed">We couldn\'t load the map data. Check your connection and try again.</string>
+    <string name="station_none_nearby">No voting stations found within 10 km of your address.</string>
+    <string name="station_navigate_google">Navigate with Google Maps</string>
+    <string name="station_open_other_maps">Open in another maps app</string>
+    <string name="station_other_options">Other stations nearby</string>
+    <string name="station_confirm_with_iec">Your official voting station is where you registered. Confirm it by SMSing your ID number to 32810 or at www.elections.org.za. Map data © OpenStreetMap contributors, tiles © Esri.</string>
+    <string name="station_your_address">Your registered address</string>
+    <string name="station_distance">%1$s from your registered address</string>
+    <string name="station_kind_official">Voting station</string>
+    <string name="station_kind_likely">Likely voting station</string>
+    <string name="station_unnamed_official">Voting station</string>
+    <string name="station_unnamed_likely">School or community hall</string>
+    <plurals name="reminder_body_days">
+        <item quantity="one">Voting opens in %1$d day, on %2$s.</item>
+        <item quantity="other">Voting opens in %1$d days, on %2$s.</item>
+    </plurals>
+    <plurals name="home_opens_in_days">
+        <item quantity="one">Voting opens in %1$d day · %2$s. Get ready!</item>
+        <item quantity="other">Voting opens in %1$d days · %2$s. Get ready!</item>
+    </plurals>
 </resources>

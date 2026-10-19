@@ -146,6 +146,11 @@
     <string name="verify_idle_info">Jou kwitansie bewys dat jou stembrief getel is. Dit wys nooit vir wie jy gestem het nie.</string>
     <string name="verify_not_found">Geen stem pas by daardie kwitansiekode nie. Kontroleer die kode en probeer weer.</string>
     <string name="verify_found">Hierdie stem is aangeteken en getel.</string>
+    <string name="verify_chain_checking">Kontroleer die blokketting…</string>
+    <string name="verify_chain_ok">Blokketting veilig: %1$d van %2$d nodusse aanlyn en elke ketting klop.</string>
+    <string name="verify_chain_invalid">%1$d van %2$d nodusse aanlyn, maar die blokketting se integriteitstoets het misluk.</string>
+    <string name="verify_chain_nodes_only">%1$d van %2$d blokketting-nodusse aanlyn.</string>
+    <string name="verify_chain_unavailable">Ons kon nie nou die blokketting bereik nie.</string>
 
     <!-- Splash and welcome -->
     <string name="splash_title">Jou Stem. Jou Keuse.\nDie Toekoms Saam.</string>
@@ -162,7 +167,7 @@
     <string name="login_register">Registreer</string>
 
     <!-- Form fields -->
-    <string name="field_full_name">Volle naam</string>
+    <string name="field_full_name">Naam en Van (soos op jou ID)</string>
     <string name="field_id_or_passport">ID-nommer / Paspoortnommer</string>
     <string name="field_id_number">ID-nommer</string>
     <string name="field_passport_number">Paspoortnommer</string>
@@ -197,6 +202,18 @@
     <string name="address_postal_code">Poskode</string>
     <string name="address_province">Provinsie</string>
     <string name="address_province_hint">Jou provinsie bepaal watter provinsiale en streekstembriewe jy kry, so dit moet reg wees.</string>
+    <string name="details_issues_title">Eish, stadig oor die klippe! 🙈 Maak net hierdie goed reg, dan is jy klaar:</string>
+    <string name="issue_name_missing">Ons wil graag jou naam weet 👋</string>
+    <string name="issue_surname_missing">Voeg ook jou van by. Ons is nog nie op voornaam-basis nie 😉</string>
+    <string name="issue_id_missing">Jou ID- of paspoortnommer ontbreek 🪪</string>
+    <string name="issue_id_length">SA ID-nommers het 13 syfers. Tel weer? 🔢</string>
+    <string name="issue_phone_missing">Gooi jou selfoonnommer in 📱</string>
+    <string name="issue_phone_invalid">Daai selfoonnommer lyk \'n syfer uit. Probeer iets soos 082 123 4567 📱</string>
+    <string name="issue_email_invalid">Daai e-pos lyk bietjie skeef. Maak dit reg of los dit leeg ✉️</string>
+    <string name="issue_province_missing">Kies jou provinsie. Dit bepaal watter stembriewe jy kry 🗺️</string>
+    <string name="issue_street_missing">Waar bly jy? Voeg jou straatadres by 🏠</string>
+    <string name="issue_city_missing">In watter stad of dorp is dit? 🏙️</string>
+    <string name="issue_postal_invalid">Poskodes het 4 syfers 📮</string>
     <string name="register_identity_title">Verifieer identiteit</string>
     <string name="register_identity_heading">Identiteitsdokument</string>
     <string name="register_identity_description">Kies jou dokumenttipe en neem \'n duidelike foto van die voorkant.</string>
@@ -360,6 +377,23 @@
     <string name="settings_election_info_description">Stemproses, reëls en kieserregte</string>
     <string name="settings_report_title">Rapporteer \'n probleem</string>
     <string name="settings_report_description">Meld tegniese probleme of kieserbekommernisse aan</string>
+    <string name="report_title">Rapporteer \'n Probleem</string>
+    <string name="report_subtitle">Reguit na die ontwikkelaars</string>
+    <string name="report_heading">Wat het verkeerd geloop?</string>
+    <string name="report_description">Vertel ons wat gebeur het en ons kyk daarna. Moet asseblief nooit sê vir wie jy gestem het nie.</string>
+    <string name="report_category_label">Waaroor gaan dit?</string>
+    <string name="report_category_app">Toepassing-probleem</string>
+    <string name="report_category_voting">Stem-bekommernis</string>
+    <string name="report_category_account">Rekening en aanmelding</string>
+    <string name="report_category_other">Iets anders</string>
+    <string name="report_message_placeholder">Beskryf die probleem…</string>
+    <string name="report_counter">%1$d/%2$d</string>
+    <string name="report_email_placeholder">Jou e-pos vir \'n antwoord (opsioneel)</string>
+    <string name="report_device_note">Ons voeg jou toepassing-weergawe en foonmodel by sodat ons dit vinniger kan regmaak. Nooit jou stem nie.</string>
+    <string name="report_send">Stuur na die ontwikkelaars</string>
+    <string name="report_message_too_short">Vertel ons bietjie meer. \'n Sin of twee help ons om dit op te spoor 🐛</string>
+    <string name="report_opened">Jou e-pos-toepassing is oop. Druk daar stuur en ons vat dit van daar af 🚀</string>
+    <string name="report_no_email_app">Geen e-pos-toepassing op hierdie foon nie. E-pos ons eerder by %1$s.</string>
     <string name="settings_logout_description">Teken uit jou kieserrekening uit</string>
     <string name="settings_logout_confirm_title">Teken uit?</string>
     <string name="settings_logout_confirm_body">Is jy seker jy wil op hierdie toestel uit jou kieserrekening teken?</string>
@@ -424,4 +458,55 @@
     <string name="login_error_blocked">Hierdie rekening is geblokkeer. Kontak die IEC-hulplyn.</string>
     <string name="register_error_exists">Hierdie ID-nommer is reeds geregistreer. Teken eerder aan.</string>
     <string name="register_error_invalid">Sommige van jou besonderhede is nie aanvaar nie. Gaan dit na en probeer weer.</string>
+
+    <!-- Election schedule, reminders and voting station map -->
+    <string name="reminder_interval_month">1 maand vooraf</string>
+    <string name="reminder_interval_two_weeks">2 weke vooraf</string>
+    <string name="reminder_interval_week">1 week vooraf</string>
+    <string name="reminder_interval_three_days">3 dae vooraf</string>
+    <string name="reminder_interval_day">1 dag vooraf</string>
+    <string name="reminder_interval_morning_of">Oggend van stemdag</string>
+    <string name="reminder_channel_name">Verkiesingsherinneringe</string>
+    <string name="reminder_channel_description">Herinneringe voordat stemming oopmaak</string>
+    <string name="reminder_body_today">Stemming maak vandag oop. Bring jou ID en trek jou kruisie!</string>
+    <string name="reminder_title_fallback">Verkiesingsherinnering</string>
+    <string name="reminder_intervals_title">Herinner my</string>
+    <string name="reminder_none_selected">Kies ten minste een tyd om herinneringe te kry.</string>
+    <string name="reminder_next">Volgende herinnering: %1$s</string>
+    <string name="reminder_nothing_scheduled">Nog geen herinneringe nie. Hulle word gestel sodra \'n verkiesingsdatum aangekondig word.</string>
+    <string name="reminder_notifications_blocked">Kennisgewings is af vir hierdie toep, dus kan herinneringe nie verskyn nie. Skakel dit aan in jou foon se instellings.</string>
+    <string name="reminder_permission_denied">Laat kennisgewings toe sodat ons jou kan herinner voordat stemming oopmaak.</string>
+    <string name="reminder_open_settings">Maak kennisgewing-instellings oop</string>
+    <string name="home_no_election_title">Nog geen verkiesing geskeduleer nie</string>
+    <string name="home_no_election_body">Die stemdatum sal hier wys sodra dit aangekondig word.</string>
+    <string name="home_closes_today">Stemming sluit vandag. Trek jou kruisie!</string>
+    <string name="home_open_until">Stemming is oop tot %1$s. Trek jou kruisie!</string>
+    <string name="home_opens_tomorrow">Stemming maak môre oop · %1$s. Maak gereed!</string>
+    <string name="home_reminder_off">Herinneringe is af. Tik Herinner my om te kies wanneer.</string>
+    <string name="station_title">Jou stemstasie</string>
+    <string name="station_subtitle">Naaste aan jou geregistreerde adres</string>
+    <string name="station_locating">Soek stasies naby jou adres…</string>
+    <string name="station_no_address">Ons het nog nie jou adres nie. Voeg dit by jou profiel om die naaste stemstasie te vind.</string>
+    <string name="station_address_not_found">Ons kon nie jou geregistreerde adres op die kaart vind nie. Kontroleer jou straat en stad in jou profiel.</string>
+    <string name="station_edit_address">Kontroleer my adres</string>
+    <string name="station_failed">Ons kon nie die kaartdata laai nie. Kontroleer jou verbinding en probeer weer.</string>
+    <string name="station_none_nearby">Geen stemstasies binne 10 km van jou adres gevind nie.</string>
+    <string name="station_navigate_google">Navigeer met Google Maps</string>
+    <string name="station_open_other_maps">Maak oop in \'n ander kaarttoep</string>
+    <string name="station_other_options">Ander stasies naby</string>
+    <string name="station_confirm_with_iec">Jou amptelike stemstasie is waar jy geregistreer het. Bevestig dit deur jou ID-nommer na 32810 te SMS of by www.elections.org.za. Kaartdata © OpenStreetMap-bydraers, teëls © Esri.</string>
+    <string name="station_your_address">Jou geregistreerde adres</string>
+    <string name="station_distance">%1$s van jou geregistreerde adres</string>
+    <string name="station_kind_official">Stemstasie</string>
+    <string name="station_kind_likely">Waarskynlike stemstasie</string>
+    <string name="station_unnamed_official">Stemstasie</string>
+    <string name="station_unnamed_likely">Skool of gemeenskapsaal</string>
+    <plurals name="reminder_body_days">
+        <item quantity="one">Stemming maak oop oor %1$d dag, op %2$s.</item>
+        <item quantity="other">Stemming maak oop oor %1$d dae, op %2$s.</item>
+    </plurals>
+    <plurals name="home_opens_in_days">
+        <item quantity="one">Stemming maak oop oor %1$d dag · %2$s. Maak gereed!</item>
+        <item quantity="other">Stemming maak oop oor %1$d dae · %2$s. Maak gereed!</item>
+    </plurals>
 </resources>

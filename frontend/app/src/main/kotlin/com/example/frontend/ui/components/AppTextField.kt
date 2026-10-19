@@ -40,7 +40,9 @@ fun AppTextField(
     isPassword: Boolean = false,
     enabled: Boolean = true,
     maxLength: Int = Int.MAX_VALUE,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    errorText: String? = null,
+    minLines: Int = 1
 ) {
     var revealed by remember { mutableStateOf(false) }
     val hideText = isPassword && !revealed
@@ -50,7 +52,10 @@ fun AppTextField(
         onValueChange = { if (it.length <= maxLength) onValueChange(it) },
         modifier = modifier,
         enabled = enabled,
-        singleLine = true,
+        singleLine = minLines == 1,
+        minLines = minLines,
+        isError = errorText != null,
+        supportingText = errorText?.let { { Text(text = it, style = MaterialTheme.typography.bodySmall) } },
         shape = MaterialTheme.shapes.medium,
         placeholder = {
             Text(

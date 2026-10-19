@@ -10,6 +10,8 @@ sealed interface Screen {
     @Serializable
     data object Welcome : Screen
     @Serializable
+    data object Offline : Screen
+    @Serializable
     data object Home : Screen
     @Serializable
     data object Login : Screen
@@ -49,8 +51,13 @@ sealed interface Screen {
     /** One Information topic (KAN-50). */
     @Serializable
     data class InfoDetail(val topic: InfoTopic) : Screen
+    /** Map of the nearest voting station to the registered address. */
+    @Serializable
+    data object VotingStation : Screen
     @Serializable
     data object Settings : Screen
+    @Serializable
+    data object ReportProblem : Screen
     @Serializable
     data object Profile : Screen
     @Serializable

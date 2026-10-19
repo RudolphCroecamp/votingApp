@@ -20,6 +20,8 @@ namespace votingBackend3.Models.DTOs
         public string street { get; set; } = string.Empty;
         [Required]
         public int postal { get; set; }
+        // Optional so older app builds that don't send it can still register.
+        public string? phone { get; set; }
         [Required]
         public IFormFile id_front { get; set; } = null!;
         [Required]
