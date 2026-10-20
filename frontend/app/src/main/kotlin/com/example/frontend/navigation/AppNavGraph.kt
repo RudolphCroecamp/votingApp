@@ -3,6 +3,8 @@ package com.example.frontend.navigation
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.snap
@@ -103,6 +105,12 @@ private fun screenFor(tab: BottomTab): Screen = when (tab) {
     BottomTab.Settings -> Screen.Settings
 }
 
+/** Tabs that switch with no animation; Info and Settings keep their cross-fade. */
+private val INSTANT_TABS = setOf(BottomTab.Home, BottomTab.Vote, BottomTab.Manifestos)
+
+/** Leaving these tabs from the bottom bar is instant too, whichever tab is opened. */
+private val INSTANT_FROM_TABS = setOf(BottomTab.Home, BottomTab.Vote)
+
 /** Old screen drifts 1/3 of the width while the new one covers it, as on iOS. */
 private const val PARALLAX_FRACTION = 3
 
@@ -186,7 +194,11 @@ fun AppNavGraph(
             voteState.isComplete -> Screen.Review
             else -> Screen.PartySelection(voteState.firstUnfilledBallot ?: Ballot.National)
         }
-        navController.navigate(target)
+        navController.navigate(target) {
+            // Always one level above Home, whichever screen Vote was opened from.
+            popUpTo<Screen.Home> { inclusive = false }
+            launchSingleTop = true
+        }
     }
 
     // Read through State objects, never as plain values: the NavHost graph builder
@@ -203,19 +215,22 @@ fun AppNavGraph(
     fun openTab(tab: BottomTab) {
         if (currentTab == tab) return
         tabSwitch.pending = true
-        if (tab == BottomTab.Vote) {
-            startVoting()
-            return
-        }
-        val target = screenFor(tab)
-        navController.navigate(target) {
-            // Keep one entry per tab instead of stacking them up.
-            popUpTo<Screen.Home> {
-                inclusive = false
-                saveState = true
+        when (tab) {
+            // Home is the root of every tab: drop back to it. No saveState/restoreState here,
+            // because state saved while popping to Home is stored under Home's own key, and
+            // restoring it brought back the tab being left instead of Home.
+            BottomTab.Home -> if (!navController.popBackStack<Screen.Home>(inclusive = false)) {
+                navController.navigate(Screen.Home) {
+                    popUpTo(navController.graph.id) { inclusive = true }
+                    launchSingleTop = true
+                }
             }
-            launchSingleTop = true
-            restoreState = true
+            BottomTab.Vote -> startVoting()
+            else -> navController.navigate(screenFor(tab)) {
+                // One entry per tab, directly above Home.
+                popUpTo<Screen.Home> { inclusive = false }
+                launchSingleTop = true
+            }
         }
     }
 
@@ -264,6 +279,11 @@ fun AppNavGraph(
     fun offsetSpec(): FiniteAnimationSpec<IntOffset> =
         if (animate) spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = NAV_SPRING_STIFFNESS) else snap()
 
+    // Bottom-bar taps onto Home, Vote or Manifestos, or away from Home or Vote, switch
+    // instantly with no motion at all.
+    fun isInstantTab(from: NavDestination, to: NavDestination): Boolean =
+        tabSwitch.pending && (tabFor(to) in INSTANT_TABS || tabFor(from) in INSTANT_FROM_TABS)
+
     fun isPeerSwitch(from: NavDestination, to: NavDestination): Boolean =
         tabSwitch.pending || (from.isTabRoot() && to.isTabRoot()) || from.isSessionRoot() || to.isSessionRoot()
 
@@ -272,28 +292,36 @@ fun AppNavGraph(
         startDestination = Screen.Splash,
         modifier = modifier,
         enterTransition = {
-            if (isPeerSwitch(initialState.destination, targetState.destination)) {
+            if (isInstantTab(initialState.destination, targetState.destination)) {
+                EnterTransition.None
+            } else if (isPeerSwitch(initialState.destination, targetState.destination)) {
                 fadeIn(tween(fadeMillis, easing = StandardEasing))
             } else {
                 slideInHorizontally(offsetSpec()) { it }
             }
         },
         exitTransition = {
-            if (isPeerSwitch(initialState.destination, targetState.destination)) {
+            if (isInstantTab(initialState.destination, targetState.destination)) {
+                ExitTransition.None
+            } else if (isPeerSwitch(initialState.destination, targetState.destination)) {
                 fadeOut(tween(fadeMillis, easing = StandardEasing))
             } else {
                 slideOutHorizontally(offsetSpec()) { -it / PARALLAX_FRACTION }
             }
         },
         popEnterTransition = {
-            if (isPeerSwitch(initialState.destination, targetState.destination)) {
+            if (isInstantTab(initialState.destination, targetState.destination)) {
+                EnterTransition.None
+            } else if (isPeerSwitch(initialState.destination, targetState.destination)) {
                 fadeIn(tween(fadeMillis, easing = StandardEasing))
             } else {
                 slideInHorizontally(offsetSpec()) { -it / PARALLAX_FRACTION }
             }
         },
         popExitTransition = {
-            if (isPeerSwitch(initialState.destination, targetState.destination)) {
+            if (isInstantTab(initialState.destination, targetState.destination)) {
+                ExitTransition.None
+            } else if (isPeerSwitch(initialState.destination, targetState.destination)) {
                 fadeOut(tween(fadeMillis, easing = StandardEasing))
             } else {
                 slideOutHorizontally(offsetSpec()) { it }

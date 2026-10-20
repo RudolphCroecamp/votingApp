@@ -1,7 +1,5 @@
 package com.example.frontend.ui.components.Camera
 
-import androidx.core.graphics.get
-import androidx.core.graphics.scale
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -27,7 +25,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.CenterFocusStrong
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.ScreenRotation
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.ZoomIn
+import androidx.compose.material.icons.filled.ZoomOut
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -50,6 +63,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -61,12 +75,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.frontend.R
-import kotlin.math.abs
+import kotlinx.coroutines.delay
 
 @Composable
 fun CameraView(
@@ -78,7 +89,10 @@ fun CameraView(
     modifier: Modifier = Modifier,
     onError: (messageRes: Int) -> Unit = {},
     // FACE mode only: require a real blink, then capture automatically (login + vote checks).
-    requireLiveness: Boolean = false
+    requireLiveness: Boolean = false,
+    // FACE mode only: take the photo by itself once the face is framed and steady.
+    // Tapping a shutter shakes the phone, which is the main cause of blurry face photos.
+    autoCapture: Boolean = requireLiveness
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -144,11 +158,13 @@ fun CameraView(
         }
     }
 
-    // Liveness passed: take the photo without waiting for a tap.
+    // Framed (and blinked, if required): wait for the face to stay put, then capture.
+    // Any guidance change restarts this effect, which cancels the wait.
     LaunchedEffect(guidance, state) {
-        if (requireLiveness && checker.passed && guidance == FaceGuidance.READY &&
+        if (autoCapture && (!requireLiveness || checker.passed) && guidance == FaceGuidance.READY &&
             state == CaptureState.Framing && !autoCaptureFired
         ) {
+            delay(STEADY_BEFORE_CAPTURE_MS)
             autoCaptureFired = true
             takePhoto(context, controller, onPhotoTaken, onError)
         }
@@ -173,7 +189,15 @@ fun CameraView(
                 },
                 modifier = Modifier.fillMaxSize()
             )
-            FramingGuide(mode)                             // oval or card outline
+            FramingGuide(mode, outline = if (mode == CameraCaptureStates.FACE) guidance.tone.colour else Color.White)
+            if (mode == CameraCaptureStates.FACE && state == CaptureState.Framing) {
+                GuidancePill(
+                    guidance = guidance,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                )
+            }
         }
 
         // Bottom area: message + buttons per state
@@ -184,15 +208,11 @@ fun CameraView(
         ) {
             when (state) {
                 CaptureState.Framing -> if (mode == CameraCaptureStates.FACE) {
-                    Text(
-                        stringResource(guidance.messageRes),
-                        color = Color.White,
-                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite } // TalkBack reads hints
-                    )
+                    // The instruction itself is in the pill at the top of the camera.
                     when {
-                        requireLiveness && guidance == FaceGuidance.READY ->
-                            CircularProgressIndicator(color = Color.White) // auto-capturing
-                        !requireLiveness ->
+                        autoCapture && guidance == FaceGuidance.READY ->
+                            CircularProgressIndicator(color = GuidanceTone.Ready.colour) // about to capture
+                        !autoCapture ->
                             ShutterButton(enabled = guidance == FaceGuidance.READY) {
                                 takePhoto(context, controller, onPhotoTaken, onError)
                             }
@@ -253,8 +273,63 @@ private fun Bitmap.rotate(degrees: Int): Bitmap =
         Bitmap.createBitmap(this, 0, 0, width, height, Matrix().apply { postRotate(degrees.toFloat()) }, true)
     }
 
+private const val STEADY_BEFORE_CAPTURE_MS = 600L
+
+/** Colour of the oval and pill: green when ready, gold while blinking, amber when adjusting. */
+enum class GuidanceTone(val colour: Color) {
+    Ready(Color(0xFF4ADE80)),
+    Action(Color(0xFFFFB612)),
+    Adjust(Color.White)
+}
+
+val FaceGuidance.tone: GuidanceTone
+    get() = when (this) {
+        FaceGuidance.READY -> GuidanceTone.Ready
+        FaceGuidance.BLINK -> GuidanceTone.Action
+        else -> GuidanceTone.Adjust
+    }
+
+private val FaceGuidance.icon: ImageVector
+    get() = when (this) {
+        FaceGuidance.NO_FACE -> Icons.Default.Face
+        FaceGuidance.MULTIPLE_FACES -> Icons.Default.Groups
+        FaceGuidance.MOVE_CLOSER -> Icons.Default.ZoomIn
+        FaceGuidance.MOVE_BACK -> Icons.Default.ZoomOut
+        FaceGuidance.MOVE_LEFT -> Icons.AutoMirrored.Filled.ArrowBack
+        FaceGuidance.MOVE_RIGHT -> Icons.AutoMirrored.Filled.ArrowForward
+        FaceGuidance.MOVE_UP -> Icons.Default.ArrowUpward
+        FaceGuidance.MOVE_DOWN -> Icons.Default.ArrowDownward
+        FaceGuidance.LOOK_STRAIGHT -> Icons.Default.CenterFocusStrong
+        FaceGuidance.HOLD_LEVEL -> Icons.Default.ScreenRotation
+        FaceGuidance.BLINK -> Icons.Default.Visibility
+        FaceGuidance.READY -> Icons.Default.CheckCircle
+    }
+
+/** One clear instruction at a time, read out by TalkBack as it changes. */
 @Composable
-private fun FramingGuide(mode: CameraCaptureStates) {
+private fun GuidancePill(guidance: FaceGuidance, modifier: Modifier = Modifier) {
+    val tone = guidance.tone
+    Row(
+        modifier = modifier
+            .clip(CircleShape)
+            .background(Color.Black.copy(alpha = 0.65f))
+            .border(1.5.dp, tone.colour, CircleShape)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .semantics { liveRegion = LiveRegionMode.Polite },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Icon(guidance.icon, contentDescription = null, tint = tone.colour, modifier = Modifier.size(22.dp))
+        Text(
+            text = stringResource(guidance.messageRes),
+            color = Color.White,
+            style = MaterialTheme.typography.titleSmall
+        )
+    }
+}
+
+@Composable
+private fun FramingGuide(mode: CameraCaptureStates, outline: Color = Color.White) {
     Canvas(
         Modifier.fillMaxSize()
             .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen } // needed for Clear
@@ -266,7 +341,7 @@ private fun FramingGuide(mode: CameraCaptureStates) {
             val topLeft = Offset(oval.left, oval.top)
             val ovalSize = Size(oval.width, oval.height)
             drawOval(Color.Transparent, topLeft, ovalSize, blendMode = BlendMode.Clear)  // punch hole
-            drawOval(Color.White, topLeft, ovalSize, style = Stroke(3.dp.toPx()))
+            drawOval(outline, topLeft, ovalSize, style = Stroke(4.dp.toPx()))
         } else {
             val w = size.width * 0.85f
             val h = w / 1.586f                                     // 1.586 = ID card ratio
@@ -287,29 +362,4 @@ private fun ShutterButton(enabled: Boolean = true, onClick: () -> Unit) {
             .border(4.dp, Color.White.copy(alpha = 0.5f), CircleShape)
             .clickable(enabled = enabled, onClickLabel = clickLabel, onClick = onClick)
     )
-}
-fun Bitmap.brightness(): Double {
-    val small = scale(64, 64)
-    var sum = 0.0
-    for (x in 0 until 64) for (y in 0 until 64) {
-        val p = small[x, y]
-        sum += 0.299 * p.red + 0.587 * p.green + 0.114 * p.blue
-    }
-    return sum / (64 * 64)
-}
-
-/** Sharpness = how much neighbouring pixels differ. Low value = blurry. Tune threshold on a real phone. */
-fun Bitmap.sharpness(): Double {
-    val s = scale(200, 200)
-    var total = 0.0
-    for (x in 1 until 199) for (y in 0 until 200) {
-        total += abs(s[x, y].red - s[x - 1, y].red)
-    }
-    return total / (198 * 200)
-}
-/** Grades a fresh capture. The caller owns the state, so this just reports the verdict. */
-fun evaluateCapture(photo: Bitmap): CaptureState = when {
-    photo.brightness() < 60 -> CaptureState.Problem(R.string.camera_problem_too_dark)
-    photo.sharpness() < 6 -> CaptureState.Problem(R.string.camera_problem_blurry)
-    else -> CaptureState.Captured(photo)
 }

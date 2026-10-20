@@ -84,6 +84,7 @@ dependencies {
     // On-device face detection + the CameraX bridge that feeds it preview frames.
     implementation(libs.camerax.mlkit.vision)
     implementation(libs.mlkit.face.detection)
+    implementation(libs.mlkit.text.recognition)
 
     implementation(libs.activity.ktx)
     // CameraView uses core-ktx (androidx.core.graphics.red/green/blue); it only came in

@@ -70,7 +70,6 @@
     <string name="face_guidance_multiple_faces">Qinisekisa ukuba nguwe wedwa osesakhelweni</string>
     <string name="face_guidance_move_closer">Sondela kancinci</string>
     <string name="face_guidance_move_back">Buyela umva kancinci</string>
-    <string name="face_guidance_centre">Beka ubuso bakho embindini wesangqa</string>
     <string name="face_guidance_look_straight">Jonga ngqo kwikhamera</string>
     <string name="face_guidance_blink">Qhwanyaza kancinci</string>
     <string name="face_guidance_ready">Musa ukushukuma</string>
@@ -622,4 +621,34 @@
     <string name="faq_data_a">Igama lakho, inombolo yesazisi, iifoto zesazisi, umzobo wobuso, idilesi nenombolo yeselfowuni, zisetyenziswa kuphela ukukubhalisa nokuqinisekisa ukuba nguwe. Phantsi kwe-POPIA ungacela ukubona okanye ukulungisa olu lwazi ngokuthi Xela ingxaki.</string>
     <string name="faq_face_q">Kwenzeka ntoni ngoskena wobuso bam?</string>
     <string name="faq_face_a">Ubuso bakho buguqulwa bube ngumzobo wamanani kwifowuni yakho. Kugcinwa loo mzobo kuphela, kwaye usetyenziselwa kuphela ukuqinisekisa ukuba nguwe xa ungena naphambi kokuba ivoti yakho ifakwe. Awunxulunyaniswa nokhetho lwakho.</string>
+
+    <!-- ID number checks and face guidance -->
+    <string name="face_guidance_move_left">Shukuma kancinci ngasekhohlo</string>
+    <string name="face_guidance_move_right">Shukuma kancinci ngasekunene</string>
+    <string name="face_guidance_move_up">Phakamisa ifowuni kancinci</string>
+    <string name="face_guidance_move_down">Thoba ifowuni kancinci</string>
+    <string name="face_guidance_hold_level">Gcina intloko yakho ithe tye</string>
+    <string name="issue_id_birth_date">Amanani ama-6 okuqala kufuneka abe ngumhla wokuzalwa okhoyo (YYMMDD)</string>
+    <string name="issue_id_checksum">Le ayiyonombolo yesazisi soMzantsi Afrika esebenzayo. Jonga inani ngalinye</string>
+    <string name="issue_id_not_citizen">Ngabemi boMzantsi Afrika kuphela abanokubhalisela ukuvota</string>
+    <string name="issue_id_too_young">Ungabhalisa ukususela kwiminyaka eli-16</string>
+    <string name="id_feedback_valid">Isazisi esisebenzayo · wazalwa ngo-%1$s · %2$s · %3$s</string>
+    <string name="id_gender_female">ibhinqa</string>
+    <string name="id_gender_male">indoda</string>
+    <string name="id_citizen">ummi woMzantsi Afrika</string>
+    <string name="id_permanent_resident">umhlali osisigxina</string>
+    <string name="id_refugee">imbacu</string>
+
+    <!-- ID card identifier -->
+    <string name="issue_document_number_mismatch">Le kufuneka ibe yinombolo yesazisi efanayo naleyo uyifake kwinyathelo leenkcukacha</string>
+    <string name="doc_check_title">Ukujonga ikhadi lesazisi</string>
+    <string name="doc_check_scanning">Ifunda uxwebhu lwakho…</string>
+    <string name="doc_check_matches">%1$s siqatshelwe. Inombolo yesazisi ekuso iyafana.</string>
+    <string name="doc_check_mismatch">Inombolo yesazisi esoxwebhwini ayifani naleyo uyifakileyo. Jonga inombolo okanye uphinde uthathe ifoto.</string>
+    <string name="doc_check_unreadable">%1$s siqatshelwe, kodwa inombolo yesazisi ayikwazanga ukufundwa. Phinda uthathe ekukhanyeni okuhle ngaphandle kokukhazimla ukuba unako.</string>
+    <string name="doc_check_not_identified">Oku akukhangeleki njengesazisi okanye incwadana yokundwendwela yoMzantsi Afrika. Gcwalisa isakhelo ngaphambili koxwebhu lwakho uze uphinde uthathe.</string>
+    <string name="doc_kind_smart_card">Ikhadi lesazisi elikrelekrele</string>
+    <string name="doc_kind_green_book">Incwadi yesazisi eluhlaza</string>
+    <string name="doc_kind_passport">Incwadana yokundwendwela yoMzantsi Afrika</string>
+    <string name="doc_kind_unknown">Uxwebhu lwesazisi</string>
 </resources>

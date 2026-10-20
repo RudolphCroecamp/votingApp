@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,6 +61,10 @@ import com.example.frontend.ui.components.StatusLabel
 import com.example.frontend.ui.components.SimpleButton
 import com.example.frontend.ui.components.StatusType
 import com.example.frontend.ui.components.SuccessCheckmarkBadge
+import com.example.frontend.data.identity.DocumentKind
+import com.example.frontend.ui.components.IdNumberFeedback
+import com.example.frontend.ui.components.IndeterminateLinearIndicator
+import com.example.frontend.ui.screens.Registration.DocumentCheck
 import com.example.frontend.ui.screens.Registration.DocumentSide
 import com.example.frontend.ui.screens.Registration.IdentityDocumentType
 import com.example.frontend.ui.screens.Registration.RegistrationUiEvent
@@ -162,8 +167,13 @@ fun RegisterIdentityScreen(
                 maxLength = when (uiState.documentType) {
                     IdentityDocumentType.NATIONAL_ID -> ID_NUMBER_MAX_LENGTH
                     IdentityDocumentType.PASSPORT -> PASSPORT_NUMBER_MAX_LENGTH
-                }
+                },
+                keyboardType = if (uiState.documentType == IdentityDocumentType.NATIONAL_ID) KeyboardType.Number else KeyboardType.Text,
+                errorText = uiState.documentNumberIssueRes?.let { stringResource(it) }
             )
+            if (uiState.documentType == IdentityDocumentType.NATIONAL_ID && uiState.documentNumberIssueRes == null) {
+                IdNumberFeedback(idNumber = uiState.documentNumber)
+            }
 
             DescriptionLabel(
                 text = stringResource(R.string.register_document_photo),
@@ -216,6 +226,10 @@ fun RegisterIdentityScreen(
                 )
             }
 
+            uiState.documentCheck?.takeIf { capturingSide == null }?.let { check ->
+                DocumentCheckCard(check = check, kind = uiState.documentScan?.kind, modifier = Modifier.fillMaxWidth())
+            }
+
             val problem = (capture as? CaptureState.Problem)?.takeIf { capturingSide != null }
             StatusLabel(
                 message = when {
@@ -251,6 +265,37 @@ fun RegisterIdentityScreen(
                 )
             }
         }
+    }
+}
+
+/** ID card identifier result: what document the photo shows and whether its number matches. */
+@Composable
+private fun DocumentCheckCard(check: DocumentCheck, kind: DocumentKind?, modifier: Modifier = Modifier) {
+    val kindLabel = stringResource(
+        when (kind) {
+            DocumentKind.SmartIdCard -> R.string.doc_kind_smart_card
+            DocumentKind.GreenIdBook -> R.string.doc_kind_green_book
+            DocumentKind.Passport -> R.string.doc_kind_passport
+            DocumentKind.Unknown, null -> R.string.doc_kind_unknown
+        }
+    )
+    val (message, type) = when (check) {
+        DocumentCheck.SCANNING -> stringResource(R.string.doc_check_scanning) to StatusType.Info
+        DocumentCheck.MATCHES -> stringResource(R.string.doc_check_matches, kindLabel) to StatusType.Success
+        DocumentCheck.MISMATCH -> stringResource(R.string.doc_check_mismatch) to StatusType.Error
+        DocumentCheck.NUMBER_UNREADABLE -> stringResource(R.string.doc_check_unreadable, kindLabel) to StatusType.Warning
+        DocumentCheck.NOT_IDENTIFIED -> stringResource(R.string.doc_check_not_identified) to StatusType.Warning
+    }
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+        DescriptionLabel(
+            text = stringResource(R.string.doc_check_title),
+            modifier = Modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.labelLarge
+        )
+        if (check == DocumentCheck.SCANNING) {
+            IndeterminateLinearIndicator(modifier = Modifier.fillMaxWidth())
+        }
+        StatusLabel(message = message, type = type, modifier = Modifier.fillMaxWidth())
     }
 }
 

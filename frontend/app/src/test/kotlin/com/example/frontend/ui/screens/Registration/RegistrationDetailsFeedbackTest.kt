@@ -142,7 +142,7 @@ class RegistrationDetailsFeedbackTest {
     fun `starting a new registration clears the last voter's details and photos`() {
         val photo = java.io.File.createTempFile("id_front", ".jpg")
         viewModel.onEvent(RegistrationUiEvent.OnFullNamesChanged("Adriaan van Wyk"))
-        viewModel.onEvent(RegistrationUiEvent.OnIdNumberChanged("0412305800081"))
+        viewModel.onEvent(RegistrationUiEvent.OnIdNumberChanged("0412305800085"))
         viewModel.onEvent(RegistrationUiEvent.OnConsentChanged(true))
         viewModel.onEvent(RegistrationUiEvent.OnDocumentCaptured(DocumentSide.FRONT, photo.absolutePath))
         viewModel.onEvent(RegistrationUiEvent.OnNextStepClicked)

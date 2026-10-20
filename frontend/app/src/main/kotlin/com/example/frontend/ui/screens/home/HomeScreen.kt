@@ -1,11 +1,7 @@
 package com.example.frontend.ui.screens.home
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,8 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.frontend.R
-import com.example.frontend.effects.entrance
-import com.example.frontend.effects.rememberEntranceTrigger
 import com.example.frontend.ui.components.ActionRow
 import com.example.frontend.ui.components.AppBottomBar
 import com.example.frontend.ui.components.AppLanguagePickerDialog
@@ -51,11 +45,8 @@ import com.example.frontend.ui.components.currentAppLanguage
 import com.example.frontend.ui.theme.ErrorContainer
 import com.example.frontend.ui.theme.ErrorContent
 import com.example.frontend.ui.theme.FrontendTheme
-import com.example.frontend.ui.theme.MotionDurations
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
-import com.example.frontend.ui.theme.StandardEasing
-import com.example.frontend.ui.theme.motionDuration
 import com.example.frontend.ui.theme.SuccessContainer
 import com.example.frontend.ui.theme.SuccessContent
 import com.example.frontend.ui.theme.WarningContainer
@@ -90,8 +81,6 @@ fun HomeScreen(
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     var languagePickerOpen by remember { mutableStateOf(false) }
-    val entered by rememberEntranceTrigger()
-    val heroSwapMillis = motionDuration(MotionDurations.medium)
     val displayName = voterName.ifBlank { stringResource(R.string.voter_fallback_name) }
     Scaffold(
         modifier = modifier,
@@ -164,20 +153,9 @@ fun HomeScreen(
                 .padding(horizontal = Spacing.screen, vertical = Spacing.card),
             verticalArrangement = Arrangement.spacedBy(Spacing.item)
         ) {
-            // A plain cross-fade between hero states: no shared-element work,
-            // no size animation, so the rows below never shift.
-            AnimatedContent(
-                targetState = heroState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .entrance(entered, index = 0),
-                transitionSpec = {
-                    val spec = tween<Float>(heroSwapMillis, easing = StandardEasing)
-                    fadeIn(spec) togetherWith fadeOut(spec)
-                },
-                label = "heroState"
-            ) { state ->
-                when (state) {
+            // Static by design: Home, Vote and Manifestos switch instantly with no motion.
+            Box(modifier = Modifier.fillMaxWidth()) {
+                when (heroState) {
                     HeroState.VotingOpen -> HeroCard(
                         state = HeroState.VotingOpen,
                         title = electionName,
@@ -210,7 +188,6 @@ fun HomeScreen(
             }
 
             HomeActions(
-                entered = entered,
                 onVotingStation = onVotingStation,
                 onVotingInformation = onVotingInformation,
                 onCheckRegistration = onCheckRegistration,
@@ -221,7 +198,6 @@ fun HomeScreen(
                 onLinkClick = onPrivacy,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .entrance(entered, index = 5)
             )
         }
     }
@@ -230,7 +206,6 @@ fun HomeScreen(
 /** The secondary action list. Fixed for every hero state; only the hero changes. */
 @Composable
 private fun HomeActions(
-    entered: Boolean,
     onVotingStation: () -> Unit,
     onVotingInformation: () -> Unit,
     onCheckRegistration: () -> Unit,
@@ -246,14 +221,14 @@ private fun HomeActions(
             title = stringResource(R.string.home_action_station_title),
             description = stringResource(R.string.home_action_station_description),
             onClick = onVotingStation,
-            modifier = Modifier.entrance(entered, index = 1)
+            modifier = Modifier
         )
         ActionRow(
             icon = Icons.AutoMirrored.Filled.MenuBook,
             title = stringResource(R.string.home_action_info_title),
             description = stringResource(R.string.home_action_info_description),
             onClick = onVotingInformation,
-            modifier = Modifier.entrance(entered, index = 2),
+            modifier = Modifier,
             iconTint = WarningContent,
             iconBackground = WarningContainer
         )
@@ -262,7 +237,7 @@ private fun HomeActions(
             title = stringResource(R.string.home_action_registration_title),
             description = stringResource(R.string.home_action_registration_description),
             onClick = onCheckRegistration,
-            modifier = Modifier.entrance(entered, index = 3),
+            modifier = Modifier,
             iconTint = SuccessContent,
             iconBackground = SuccessContainer
         )
@@ -271,7 +246,7 @@ private fun HomeActions(
             title = stringResource(R.string.home_action_report_title),
             description = stringResource(R.string.home_action_report_description),
             onClick = onReportProblem,
-            modifier = Modifier.entrance(entered, index = 4),
+            modifier = Modifier,
             iconTint = ErrorContent,
             iconBackground = ErrorContainer
         )

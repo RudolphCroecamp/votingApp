@@ -14,6 +14,7 @@ lifecycle = "2.11.0"
 kotlinxSerialization = "1.11.0"
 camerax = "1.6.2"
 mlkitFaceDetection = "16.1.7"
+mlkitTextRecognition = "16.0.1"
 robolectric = "4.17"
 okhttp = "5.5.0"
 litert = "2.3.0"
@@ -27,6 +28,8 @@ camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", vers
 camerax-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
 camerax-mlkit-vision = { group = "androidx.camera", name = "camera-mlkit-vision", version.ref = "camerax" }
 mlkit-face-detection = { group = "com.google.mlkit", name = "face-detection", version.ref = "mlkitFaceDetection" }
+# Reads the ID number off the document photo, on the device (bundled model, works offline).
+mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }

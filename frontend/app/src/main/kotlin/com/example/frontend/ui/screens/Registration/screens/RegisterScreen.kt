@@ -35,6 +35,7 @@ import com.example.frontend.ui.components.AppTopBar
 import com.example.frontend.ui.components.ButtonVariant
 import com.example.frontend.ui.components.DescriptionLabel
 import com.example.frontend.ui.components.HeadingLabel
+import com.example.frontend.ui.components.IdNumberFeedback
 import com.example.frontend.ui.components.StatusLabel
 import com.example.frontend.ui.components.SectionHeading
 import com.example.frontend.ui.components.SimpleButton
@@ -108,7 +109,11 @@ fun RegisterScreen(
                 leadingIcon = Icons.Default.AccountBox,
                 maxLength = ID_NUMBER_MAX_LENGTH,
                 errorText = errorFor(DetailsIssue.ID_MISSING) ?: errorFor(DetailsIssue.ID_LENGTH)
+                    ?: errorFor(DetailsIssue.ID_BIRTH_DATE) ?: errorFor(DetailsIssue.ID_CHECKSUM)
+                    ?: errorFor(DetailsIssue.ID_NOT_CITIZEN) ?: errorFor(DetailsIssue.ID_TOO_YOUNG)
             )
+            // Decoded as they type: birth date, gender and citizenship, or what is wrong.
+            IdNumberFeedback(idNumber = uiState.idNumber)
 
             AppTextField(
                 value = uiState.phone,

@@ -37,7 +37,9 @@ import com.example.frontend.ui.components.BrandHeader
 import com.example.frontend.ui.components.ButtonVariant
 import com.example.frontend.ui.components.DescriptionLabel
 import com.example.frontend.ui.components.HeadingLabel
+import com.example.frontend.ui.components.IdNumberFeedback
 import com.example.frontend.ui.components.StatusLabel
+import com.example.frontend.ui.components.saIdProblemRes
 import com.example.frontend.ui.components.SectionHeading
 import com.example.frontend.ui.components.SimpleButton
 import com.example.frontend.ui.components.StatusType
@@ -94,6 +96,7 @@ fun LoginScreen(
                 leadingIcon = Icons.Default.AccountBox,
                 maxLength = ID_NUMBER_MAX_LENGTH
             )
+            IdNumberFeedback(idNumber = idNumber)
 
             SimpleButton(
                 label = stringResource(R.string.login_with_face),
@@ -103,7 +106,8 @@ fun LoginScreen(
                     .entrance(entered, index = 3),
                 variant = ButtonVariant.Tertiary,
                 leadingIcon = Icons.Default.CenterFocusStrong,
-                enabled = idNumber.isNotBlank()
+                // A mistyped SA ID would just fail the face check; catch it here instead.
+                enabled = idNumber.isNotBlank() && saIdProblemRes(idNumber) == null
             )
 
             StatusLabel(

@@ -25,7 +25,7 @@ class RegistrationViewModelTest {
 
     private fun fillDetails() = send(
         RegistrationUiEvent.OnFullNamesChanged("Thandi Nkosi"),
-        RegistrationUiEvent.OnIdNumberChanged("9201185082089"),
+        RegistrationUiEvent.OnIdNumberChanged("9201185082083"),
         RegistrationUiEvent.OnPhoneChanged("0821234567"),
         RegistrationUiEvent.OnProvinceSelected(Province.GAUTENG),
         RegistrationUiEvent.OnStreetChanged("124 Market Street"),
@@ -97,7 +97,7 @@ class RegistrationViewModelTest {
     fun `a province must be picked because it decides the ballots`() {
         send(
             RegistrationUiEvent.OnFullNamesChanged("Thandi Nkosi"),
-            RegistrationUiEvent.OnIdNumberChanged("9201185082089"),
+            RegistrationUiEvent.OnIdNumberChanged("9201185082083"),
             RegistrationUiEvent.OnPhoneChanged("0821234567"),
             RegistrationUiEvent.OnStreetChanged("124 Market Street"),
             RegistrationUiEvent.OnCityChanged("Johannesburg"),
@@ -109,8 +109,8 @@ class RegistrationViewModelTest {
 
     @Test
     fun `too-long ID numbers and postal codes are ignored`() {
-        send(RegistrationUiEvent.OnIdNumberChanged("9201185082089"))
-        send(RegistrationUiEvent.OnIdNumberChanged("92011850820891")) // 14 digits
+        send(RegistrationUiEvent.OnIdNumberChanged("9201185082083"))
+        send(RegistrationUiEvent.OnIdNumberChanged("92011850820831")) // 14 digits
         assertEquals(ID_NUMBER_MAX_LENGTH, state.idNumber.length)
 
         send(RegistrationUiEvent.OnPostalCodeChanged("2001"))

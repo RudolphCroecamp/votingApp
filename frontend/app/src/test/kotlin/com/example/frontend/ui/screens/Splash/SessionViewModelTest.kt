@@ -112,7 +112,7 @@ class SessionViewModelTest {
 
     @Test
     fun `signing in loads the voter's own details and signing out forgets them`() {
-        val adriaan = VoterProfile("0412305800081", "Adriaan", "van Wyk", "Eastern Cape", "Gqeberha", "12 Main Road", "6070")
+        val adriaan = VoterProfile("0412305800085", "Adriaan", "van Wyk", "Eastern Cape", "Gqeberha", "12 Main Road", "6070")
         val tokens = MemoryTokenStore("t")
         val vm = SessionViewModel(FakeAuth(valid = setOf("t"), profiles = mapOf("t" to adriaan)), { true }, tokens)
 
@@ -128,7 +128,7 @@ class SessionViewModelTest {
 
     @Test
     fun `a stored session loads the profile on start`() {
-        val adriaan = VoterProfile("0412305800081", "Adriaan", "van Wyk", "Eastern Cape", "Gqeberha", "12 Main Road", "6070")
+        val adriaan = VoterProfile("0412305800085", "Adriaan", "van Wyk", "Eastern Cape", "Gqeberha", "12 Main Road", "6070")
         val vm = SessionViewModel(FakeAuth(valid = setOf("t"), profiles = mapOf("t" to adriaan)), { true }, MemoryTokenStore("t"))
         vm.check()
         idle()

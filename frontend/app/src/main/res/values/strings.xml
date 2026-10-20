@@ -71,7 +71,6 @@
     <string name="face_guidance_multiple_faces">Make sure only you are in the frame</string>
     <string name="face_guidance_move_closer">Move a little closer</string>
     <string name="face_guidance_move_back">Move back a little</string>
-    <string name="face_guidance_centre">Centre your face in the oval</string>
     <string name="face_guidance_look_straight">Look straight at the camera</string>
     <string name="face_guidance_blink">Blink slowly</string>
     <string name="face_guidance_ready">Hold still</string>
@@ -623,4 +622,34 @@
     <string name="faq_data_a">Your name, ID number, ID photos, face template, address and cellphone number, used only to register you and confirm it is you. Under POPIA you may ask to see or correct this information through Report a problem.</string>
     <string name="faq_face_q">What happens to my face scan?</string>
     <string name="faq_face_a">Your face is turned into a numeric template on your phone. Only that template is stored, and it is used only to confirm it is you when you sign in and before your vote is cast. It is never linked to your ballot choices.</string>
+
+    <!-- ID number checks and face guidance -->
+    <string name="face_guidance_move_left">Move a little to the left</string>
+    <string name="face_guidance_move_right">Move a little to the right</string>
+    <string name="face_guidance_move_up">Raise the phone a little</string>
+    <string name="face_guidance_move_down">Lower the phone a little</string>
+    <string name="face_guidance_hold_level">Keep your head level</string>
+    <string name="issue_id_birth_date">The first 6 digits must be a real date of birth (YYMMDD)</string>
+    <string name="issue_id_checksum">This is not a valid South African ID number. Check each digit</string>
+    <string name="issue_id_not_citizen">Only South African citizens can register to vote</string>
+    <string name="issue_id_too_young">You can register from age 16</string>
+    <string name="id_feedback_valid">Valid ID · born %1$s · %2$s · %3$s</string>
+    <string name="id_gender_female">female</string>
+    <string name="id_gender_male">male</string>
+    <string name="id_citizen">SA citizen</string>
+    <string name="id_permanent_resident">permanent resident</string>
+    <string name="id_refugee">refugee</string>
+
+    <!-- ID card identifier -->
+    <string name="issue_document_number_mismatch">This must be the same ID number you entered on the details step</string>
+    <string name="doc_check_title">ID card check</string>
+    <string name="doc_check_scanning">Reading your document…</string>
+    <string name="doc_check_matches">%1$s recognised. The ID number on it matches.</string>
+    <string name="doc_check_mismatch">The ID number on the document doesn\'t match the one you entered. Check the number or retake the photo.</string>
+    <string name="doc_check_unreadable">%1$s recognised, but the ID number couldn\'t be read. Retake in good light without glare if you can.</string>
+    <string name="doc_check_not_identified">This doesn\'t look like a South African ID or passport. Fill the frame with the front of your document and retake.</string>
+    <string name="doc_kind_smart_card">Smart ID card</string>
+    <string name="doc_kind_green_book">Green ID book</string>
+    <string name="doc_kind_passport">South African passport</string>
+    <string name="doc_kind_unknown">ID document</string>
 </resources>

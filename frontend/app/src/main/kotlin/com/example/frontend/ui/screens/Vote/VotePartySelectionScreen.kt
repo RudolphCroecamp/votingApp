@@ -19,8 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.frontend.R
-import com.example.frontend.effects.entrance
-import com.example.frontend.effects.rememberEntranceTrigger
 import androidx.compose.ui.unit.dp
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
@@ -55,7 +53,6 @@ fun VotePartySelectionScreen(
     onTabSelected: (BottomTab) -> Unit = {},
     backgroundColor: Color = PageBackground
 ) {
-    val entered by rememberEntranceTrigger()
 
     Scaffold(
         modifier = modifier,
@@ -77,13 +74,13 @@ fun VotePartySelectionScreen(
         ) {
             BallotStepIndicator(
                 ballot = ballot,
-                modifier = Modifier.entrance(entered, index = 0)
+                modifier = Modifier
             )
 
             SectionHeading(
                 title = ballotTitle,
                 description = stringResource(R.string.vote_select_one_party),
-                modifier = Modifier.entrance(entered, index = 1)
+                modifier = Modifier
             )
 
             parties.forEachIndexed { index, party ->
@@ -93,7 +90,6 @@ fun VotePartySelectionScreen(
                     onClick = { onPartySelected(party) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .entrance(entered, index = index + 2)
                 )
             }
 

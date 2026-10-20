@@ -7,6 +7,9 @@ import com.example.frontend.data.AppContainer
 import com.example.frontend.data.address.AddressSuggester
 import com.example.frontend.data.address.AddressSuggestion
 import com.example.frontend.data.auth.AuthException
+import com.example.frontend.data.identity.DocumentKind
+import com.example.frontend.data.identity.DocumentScan
+import com.example.frontend.data.identity.IdDocumentReader
 import com.example.frontend.data.auth.AuthRepository
 import com.example.frontend.data.auth.RegistrationForm
 import com.example.frontend.data.auth.TokenStore
@@ -32,8 +35,11 @@ class RegistrationViewModel(
     private val authRepository: AuthRepository = AppContainer.authRepository,
     private val faceEmbedder: FaceEmbedder = AppContainer.faceEmbedder,
     private val tokenStore: TokenStore = AppContainer.tokenStore,
-    private val addressSuggester: AddressSuggester = AppContainer.addressSuggester
+    private val addressSuggester: AddressSuggester = AppContainer.addressSuggester,
+    private val documentReader: IdDocumentReader = AppContainer.idDocumentReader
 ) : ViewModel() {
+
+    private var scanJob: Job? = null
 
     private var suggestJob: Job? = null
 
@@ -68,11 +74,12 @@ class RegistrationViewModel(
 
             is RegistrationUiEvent.OnDocumentTypeSelected -> _uiState.update { it.copy(documentType = event.type) }
             is RegistrationUiEvent.OnDocumentNumberChanged -> _uiState.update { it.copy(documentNumber = event.number) }
-            is RegistrationUiEvent.OnDocumentCaptured -> _uiState.update {
-                when (event.side) {
-                    DocumentSide.FRONT -> it.copy(documentFrontImagePath = event.imagePath)
-                    DocumentSide.BACK -> it.copy(documentBackImagePath = event.imagePath)
+            is RegistrationUiEvent.OnDocumentCaptured -> when (event.side) {
+                DocumentSide.FRONT -> {
+                    _uiState.update { it.copy(documentFrontImagePath = event.imagePath, documentScan = null) }
+                    scanDocument(event.imagePath)
                 }
+                DocumentSide.BACK -> _uiState.update { it.copy(documentBackImagePath = event.imagePath) }
             }
 
             is RegistrationUiEvent.OnFaceCaptured -> _uiState.update {
@@ -98,7 +105,31 @@ class RegistrationViewModel(
         }
     }
 
+    /** ID card identifier: read the front of the document and fill in the number if it is blank. */
+    private fun scanDocument(path: String) {
+        scanJob?.cancel()
+        _uiState.update { it.copy(isScanningDocument = true) }
+        scanJob = viewModelScope.launch {
+            val scan = try {
+                documentReader.read(decodePhoto(path))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "Document scan failed", e)
+                DocumentScan(DocumentKind.Unknown, null)
+            }
+            _uiState.update { state ->
+                state.copy(
+                    documentScan = scan,
+                    isScanningDocument = false,
+                    documentNumber = state.documentNumber.ifBlank { scan.idNumber.orEmpty() }
+                )
+            }
+        }
+    }
+
     private fun reset() {
+        scanJob?.cancel()
         suggestJob?.cancel()
         val state = _uiState.value
         listOfNotNull(state.documentFrontImagePath, state.documentBackImagePath, state.capturedFaceImagePath)

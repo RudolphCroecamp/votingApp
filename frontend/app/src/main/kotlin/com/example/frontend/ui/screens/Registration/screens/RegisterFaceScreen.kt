@@ -52,7 +52,7 @@ import com.example.frontend.ui.components.ButtonVariant
 import com.example.frontend.ui.components.Camera.CameraCaptureStates
 import com.example.frontend.ui.components.Camera.CameraView
 import com.example.frontend.ui.components.Camera.CaptureState
-import com.example.frontend.ui.components.Camera.evaluateCapture
+import com.example.frontend.ui.components.Camera.evaluateFaceCapture
 import com.example.frontend.ui.components.Camera.rememberCameraPermission
 import com.example.frontend.ui.components.SimpleButton
 import com.example.frontend.ui.components.StatusLabel
@@ -133,7 +133,12 @@ fun RegisterFaceScreen(
                     CameraView(
                         mode = CameraCaptureStates.FACE,
                         state = capture,
-                        onPhotoTaken = { photo -> capture = evaluateCapture(photo) },
+                        autoCapture = true,
+                        onPhotoTaken = { photo ->
+                            // Check there is exactly one face and grade light/focus on it, off the main thread.
+                            capture = CaptureState.Capturing
+                            scope.launch { capture = evaluateFaceCapture(photo) }
+                        },
                         onRetake = { capture = CaptureState.Framing },
                         onConfirm = {
                             val photo = (capture as? CaptureState.Captured)?.photo

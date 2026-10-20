@@ -136,7 +136,7 @@ class ThreeBallotFlowTest {
 
     @Test
     fun `face screen reports matched and rejected exactly`() {
-        val start = LoginFaceUiState(idNumber = "9201185082089")
+        val start = LoginFaceUiState(idNumber = "9201185082083")
 
         assertNull(start.voteOutcome())
         assertNull(start.checking().voteOutcome())

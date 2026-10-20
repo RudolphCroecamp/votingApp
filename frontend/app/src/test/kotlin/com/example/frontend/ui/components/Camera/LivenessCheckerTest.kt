@@ -37,8 +37,11 @@ class LivenessCheckerTest {
     @Test fun tooClose() =
         assertEquals(FaceGuidance.MOVE_BACK, LivenessChecker(false).evaluate(listOf(face(widthFraction = 1.4f)), w, h))
 
-    @Test fun offCentre() =
-        assertEquals(FaceGuidance.CENTRE, LivenessChecker(false).evaluate(listOf(face(dx = 300f)), w, h))
+    @Test fun offCentre() {
+        // Face right of the oval on screen: move left. Left of it: move right.
+        assertEquals(FaceGuidance.MOVE_LEFT, LivenessChecker(false).evaluate(listOf(face(dx = 300f)), w, h))
+        assertEquals(FaceGuidance.MOVE_RIGHT, LivenessChecker(false).evaluate(listOf(face(dx = -300f)), w, h))
+    }
 
     @Test fun headTurned() =
         assertEquals(FaceGuidance.LOOK_STRAIGHT, LivenessChecker(false).evaluate(listOf(face(yaw = 30f)), w, h))

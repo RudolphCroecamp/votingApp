@@ -29,8 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.frontend.R
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
-import com.example.frontend.effects.entrance
-import com.example.frontend.effects.rememberEntranceTrigger
 import com.example.frontend.ui.components.AppBottomBar
 import com.example.frontend.ui.components.AppTopBar
 import com.example.frontend.ui.components.BALLOT_ORDER
@@ -63,7 +61,6 @@ fun VoteReviewScreen(
     onTabSelected: (BottomTab) -> Unit = {},
     backgroundColor: Color = PageBackground
 ) {
-    val entered by rememberEntranceTrigger()
 
     Scaffold(
         modifier = modifier,
@@ -99,7 +96,6 @@ fun VoteReviewScreen(
                     onChange = { onChangeBallot(ballot) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .entrance(entered, index = index)
                 )
             }
 
@@ -108,7 +104,6 @@ fun VoteReviewScreen(
                 type = StatusType.Warning,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .entrance(entered, index = BALLOT_ORDER.size)
             )
 
             Spacer(modifier = Modifier.height(Spacing.small))
@@ -119,7 +114,6 @@ fun VoteReviewScreen(
                 enabled = confirmEnabled,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .entrance(entered, index = BALLOT_ORDER.size + 1)
             )
         }
     }

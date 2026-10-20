@@ -13,8 +13,13 @@ enum class FaceGuidance(@param:StringRes val messageRes: Int) {
     MULTIPLE_FACES(R.string.face_guidance_multiple_faces),
     MOVE_CLOSER(R.string.face_guidance_move_closer),
     MOVE_BACK(R.string.face_guidance_move_back),
-    CENTRE(R.string.face_guidance_centre),
+    // Directions are as seen on screen; the front preview is mirrored, so they feel natural.
+    MOVE_LEFT(R.string.face_guidance_move_left),
+    MOVE_RIGHT(R.string.face_guidance_move_right),
+    MOVE_UP(R.string.face_guidance_move_up),
+    MOVE_DOWN(R.string.face_guidance_move_down),
     LOOK_STRAIGHT(R.string.face_guidance_look_straight),
+    HOLD_LEVEL(R.string.face_guidance_hold_level),
     BLINK(R.string.face_guidance_blink),
     READY(R.string.face_guidance_ready)
 }
@@ -80,10 +85,18 @@ class LivenessChecker(private val requireBlink: Boolean) {
         val fill = face.width / oval.width
         if (fill < MIN_FILL) return FaceGuidance.MOVE_CLOSER
         if (fill > MAX_FILL) return FaceGuidance.MOVE_BACK
-        if (abs(face.centreX - oval.centreX) > oval.width * CENTRE_TOLERANCE ||
-            abs(face.centreY - oval.centreY) > oval.height * CENTRE_TOLERANCE
-        ) return FaceGuidance.CENTRE
-        if (abs(face.yaw) > MAX_ANGLE || abs(face.roll) > MAX_ANGLE) return FaceGuidance.LOOK_STRAIGHT
+        val dx = face.centreX - oval.centreX
+        val dy = face.centreY - oval.centreY
+        // Fix the larger offset first, so the voter gets one instruction at a time.
+        if (abs(dx) / oval.width > CENTRE_TOLERANCE || abs(dy) / oval.height > CENTRE_TOLERANCE) {
+            return if (abs(dx) / oval.width >= abs(dy) / oval.height) {
+                if (dx > 0) FaceGuidance.MOVE_LEFT else FaceGuidance.MOVE_RIGHT
+            } else {
+                if (dy > 0) FaceGuidance.MOVE_UP else FaceGuidance.MOVE_DOWN
+            }
+        }
+        if (abs(face.yaw) > MAX_ANGLE) return FaceGuidance.LOOK_STRAIGHT
+        if (abs(face.roll) > MAX_ANGLE) return FaceGuidance.HOLD_LEVEL
 
         if (!requireBlink || passed) return FaceGuidance.READY
 

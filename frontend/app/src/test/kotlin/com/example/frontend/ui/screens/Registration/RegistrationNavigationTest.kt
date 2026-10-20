@@ -34,7 +34,7 @@ class RegistrationNavigationTest {
     private fun startAtDetails() {
         listOf(
             RegistrationUiEvent.OnFullNamesChanged("Thandi Nkosi"),
-            RegistrationUiEvent.OnIdNumberChanged("9201185082089"),
+            RegistrationUiEvent.OnIdNumberChanged("9201185082083"),
             RegistrationUiEvent.OnPhoneChanged("0821234567"),
             RegistrationUiEvent.OnProvinceSelected(Province.GAUTENG),
             RegistrationUiEvent.OnStreetChanged("124 Market Street"),
@@ -87,7 +87,7 @@ class RegistrationNavigationTest {
         tapBack()
 
         compose.onNodeWithText("Thandi Nkosi").performScrollTo().assertIsDisplayed()
-        compose.onNodeWithText("9201185082089").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("9201185082083").performScrollTo().assertIsDisplayed()
     }
 
     @Test

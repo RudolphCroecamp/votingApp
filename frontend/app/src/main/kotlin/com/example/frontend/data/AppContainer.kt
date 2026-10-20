@@ -24,6 +24,8 @@ import com.example.frontend.data.station.NominatimVotingStationFinder
 import com.example.frontend.data.station.OverpassVotingStationFinder
 import com.example.frontend.data.station.VotingStationFinder
 import com.example.frontend.data.face.FaceEmbedder
+import com.example.frontend.data.identity.IdDocumentReader
+import com.example.frontend.data.identity.MlKitIdDocumentReader
 import com.example.frontend.data.face.TfliteFaceEmbedder
 import com.example.frontend.data.health.HealthRepository
 import com.example.frontend.data.health.HttpHealthRepository
@@ -72,6 +74,8 @@ object AppContainer {
             )
         )
     }
+
+    val idDocumentReader: IdDocumentReader by lazy { MlKitIdDocumentReader() }
 
     val tokenStore: TokenStore by lazy { PrefsTokenStore(appContext) }
 

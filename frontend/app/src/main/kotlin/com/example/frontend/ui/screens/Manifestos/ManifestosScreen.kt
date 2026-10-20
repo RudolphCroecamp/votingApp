@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.data.Party
 import com.example.frontend.data.SampleParties
-import com.example.frontend.effects.pressScale
 import com.example.frontend.ui.components.AppBottomBar
 import com.example.frontend.ui.components.AppTopBar
 import com.example.frontend.ui.components.BottomTab
@@ -104,7 +103,7 @@ private fun ManifestoPartyCard(
     Card(
         onClick = onClick,
         interactionSource = interactionSource,
-        modifier = modifier.pressScale(interactionSource),
+        modifier = modifier,
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),

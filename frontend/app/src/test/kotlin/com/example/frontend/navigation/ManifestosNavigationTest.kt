@@ -2,6 +2,7 @@ package com.example.frontend.navigation
 
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -57,6 +58,29 @@ class ManifestosNavigationTest {
     fun `unknown party id goes back instead of crashing`() {
         start(Screen.Home, Screen.Manifestos, Screen.PartyDetail("no-such-party"))
         assertTrue(nav.currentDestination!!.hasRoute<Screen.Manifestos>())
+    }
+
+    private fun tapTab(label: String) {
+        compose.onNodeWithContentDescription(label).performClick()
+        compose.waitForIdle()
+    }
+
+    @Test
+    fun `bottom bar tabs always open their own screen, including Home`() {
+        start(Screen.Home)
+        tapTab("Manifestos")
+        assertTrue(nav.currentDestination!!.hasRoute<Screen.Manifestos>())
+        tapTab("Home")
+        assertTrue(nav.currentDestination!!.hasRoute<Screen.Home>())
+        tapTab("Vote")
+        assertTrue(nav.currentDestination!!.hasRoute<Screen.PartySelection>())
+        tapTab("Home")
+        assertTrue(nav.currentDestination!!.hasRoute<Screen.Home>())
+        tapTab("Vote")
+        tapTab("Manifestos")
+        assertTrue(nav.currentDestination!!.hasRoute<Screen.Manifestos>())
+        tapTab("Home")
+        assertTrue(nav.currentDestination!!.hasRoute<Screen.Home>())
     }
 
     @Test

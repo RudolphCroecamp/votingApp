@@ -16,11 +16,15 @@ import kotlin.coroutines.resumeWithException
  * fast = live preview (every frame); accurate = one-off check on the captured photo.
  * Detection only: it finds faces, it does NOT check whose face it is. Matching the voter is the backend's job.
  */
-fun createFaceDetector(accurate: Boolean = false): FaceDetector = FaceDetection.getClient(
+fun createFaceDetector(accurate: Boolean = false, landmarks: Boolean = false): FaceDetector = FaceDetection.getClient(
     FaceDetectorOptions.Builder()
         .setPerformanceMode(
             if (accurate) FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE
             else FaceDetectorOptions.PERFORMANCE_MODE_FAST
+        )
+        // Eye positions, so the embedder can line the face up the same way every time.
+        .setLandmarkMode(
+            if (landmarks) FaceDetectorOptions.LANDMARK_MODE_ALL else FaceDetectorOptions.LANDMARK_MODE_NONE
         )
         .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL) // eye-open probabilities
         .setMinFaceSize(0.15f)
@@ -46,13 +50,10 @@ suspend fun FaceDetector.detect(photo: Bitmap): List<Face> = suspendCancellableC
 }
 
 /**
- * Grades a captured face photo: light, sharpness, then exactly one face.
- * Use this for FACE mode; [evaluateCapture] is enough for the ID photo.
+ * Grades a captured face photo: exactly one face, then light and sharpness measured on
+ * that face only. Use this for FACE mode; [evaluateCapture] is for the ID photo.
  */
 suspend fun evaluateFaceCapture(photo: Bitmap): CaptureState {
-    val basic = evaluateCapture(photo)
-    if (basic !is CaptureState.Captured) return basic
-
     val faces = try {
         createFaceDetector(accurate = true).use { it.detect(photo) }
     } catch (e: Exception) {
@@ -61,6 +62,6 @@ suspend fun evaluateFaceCapture(photo: Bitmap): CaptureState {
     return when {
         faces.isEmpty() -> CaptureState.Problem(R.string.camera_problem_no_face)
         faces.size > 1 -> CaptureState.Problem(R.string.camera_problem_multiple_faces)
-        else -> basic
+        else -> evaluateFaceRegion(photo, faces.single().boundingBox)
     }
 }

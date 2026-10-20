@@ -70,7 +70,6 @@
     <string name="face_guidance_multiple_faces">Qiniseka ukuthi nguwe wedwa ozimeleni</string>
     <string name="face_guidance_move_closer">Sondela kancane</string>
     <string name="face_guidance_move_back">Hlehla kancane</string>
-    <string name="face_guidance_centre">Beka ubuso bakho phakathi nesiyingi</string>
     <string name="face_guidance_look_straight">Bheka ngqo ekhamereni</string>
     <string name="face_guidance_blink">Cwayiza kancane</string>
     <string name="face_guidance_ready">Ungazamazami</string>
@@ -622,4 +621,34 @@
     <string name="faq_data_a">Igama lakho, inombolo kamazisi, izithombe zikamazisi, isifanekiso sobuso, ikheli nenombolo yeselula, kusetshenziswa kuphela ukukubhalisa nokuqinisekisa ukuthi nguwe. Ngaphansi kwe-POPIA ungacela ukubona noma ukulungisa lolu lwazi ngokuthi Bika inkinga.</string>
     <string name="faq_face_q">Kwenzekani ngokuskena kobuso bami?</string>
     <string name="faq_face_a">Ubuso bakho buguqulwa bube yisifanekiso sezinombolo efonini yakho. Kugcinwa leso sifanekiso kuphela, futhi sisetshenziselwa kuphela ukuqinisekisa ukuthi nguwe uma ungena nangaphambi kokuba ivoti lakho lifakwe. Asixhunywa nokukhetha kwakho.</string>
+
+    <!-- ID number checks and face guidance -->
+    <string name="face_guidance_move_left">Yiya kancane ngakwesobunxele</string>
+    <string name="face_guidance_move_right">Yiya kancane ngakwesokudla</string>
+    <string name="face_guidance_move_up">Phakamisa ifoni kancane</string>
+    <string name="face_guidance_move_down">Yehlisa ifoni kancane</string>
+    <string name="face_guidance_hold_level">Gcina ikhanda lakho liqondile</string>
+    <string name="issue_id_birth_date">Amadijithi angu-6 okuqala kufanele abe usuku lokuzalwa olukhona (YYMMDD)</string>
+    <string name="issue_id_checksum">Lena akuyona inombolo kamazisi waseNingizimu Afrika evumelekile. Hlola idijithi ngayinye</string>
+    <string name="issue_id_not_citizen">Izakhamuzi zaseNingizimu Afrika kuphela ezingabhalisela ukuvota</string>
+    <string name="issue_id_too_young">Ungabhalisa kusukela eminyakeni eyi-16</string>
+    <string name="id_feedback_valid">I-ID evumelekile · wazalwa ngo-%1$s · %2$s · %3$s</string>
+    <string name="id_gender_female">owesifazane</string>
+    <string name="id_gender_male">owesilisa</string>
+    <string name="id_citizen">isakhamuzi saseNingizimu Afrika</string>
+    <string name="id_permanent_resident">isakhamuzi esihlala unomphela</string>
+    <string name="id_refugee">umbaleki</string>
+
+    <!-- ID card identifier -->
+    <string name="issue_document_number_mismatch">Lokhu kufanele kube yinombolo kamazisi efanayo oyifake esinyathelweni semininingwane</string>
+    <string name="doc_check_title">Ukuhlola ikhadi likamazisi</string>
+    <string name="doc_check_scanning">Ifunda umqulu wakho…</string>
+    <string name="doc_check_matches">%1$s kuqashelwe. Inombolo kamazisi ekuyo iyafana.</string>
+    <string name="doc_check_mismatch">Inombolo kamazisi esemqulwini ayifani naleyo oyifakile. Hlola inombolo noma uphinde uthathe isithombe.</string>
+    <string name="doc_check_unreadable">%1$s kuqashelwe, kodwa inombolo kamazisi ayikwazanga ukufundwa. Phinda uthathe ekukhanyeni okuhle ngaphandle kokucwebezela uma ukwazi.</string>
+    <string name="doc_check_not_identified">Lokhu akubukeki njengomazisi noma iphasiphothi yaseNingizimu Afrika. Gcwalisa uhlaka ngengaphambili lomqulu wakho bese uphinda uthatha.</string>
+    <string name="doc_kind_smart_card">Ikhadi likamazisi elihlakaniphile</string>
+    <string name="doc_kind_green_book">Incwadi kamazisi eluhlaza</string>
+    <string name="doc_kind_passport">Iphasiphothi yaseNingizimu Afrika</string>
+    <string name="doc_kind_unknown">Umqulu kamazisi</string>
 </resources>

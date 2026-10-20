@@ -70,7 +70,6 @@
     <string name="face_guidance_multiple_faces">Maak seker net jy is in die raam</string>
     <string name="face_guidance_move_closer">Kom \'n bietjie nader</string>
     <string name="face_guidance_move_back">Gaan \'n bietjie terug</string>
-    <string name="face_guidance_centre">Sentreer jou gesig in die ovaal</string>
     <string name="face_guidance_look_straight">Kyk reguit na die kamera</string>
     <string name="face_guidance_blink">Knipper stadig</string>
     <string name="face_guidance_ready">Bly stil</string>
@@ -622,4 +621,34 @@
     <string name="faq_data_a">Jou naam, ID-nommer, ID-foto\'s, gesigsjabloon, adres en selfoonnommer, slegs gebruik om jou te registreer en te bevestig dat dit jy is. Ingevolge POPIA kan jy vra om hierdie inligting te sien of reg te stel via Rapporteer \'n probleem.</string>
     <string name="faq_face_q">Wat gebeur met my gesigskandering?</string>
     <string name="faq_face_a">Jou gesig word op jou foon in \'n numeriese sjabloon omgeskakel. Slegs daardie sjabloon word gestoor, en dit word slegs gebruik om te bevestig dat dit jy is wanneer jy aanmeld en voordat jou stem uitgebring word. Dit word nooit aan jou stemkeuses gekoppel nie.</string>
+
+    <!-- ID number checks and face guidance -->
+    <string name="face_guidance_move_left">Skuif effens na links</string>
+    <string name="face_guidance_move_right">Skuif effens na regs</string>
+    <string name="face_guidance_move_up">Lig die foon effens</string>
+    <string name="face_guidance_move_down">Laat sak die foon effens</string>
+    <string name="face_guidance_hold_level">Hou jou kop reguit</string>
+    <string name="issue_id_birth_date">Die eerste 6 syfers moet \'n geldige geboortedatum wees (JJMMDD)</string>
+    <string name="issue_id_checksum">Dit is nie \'n geldige Suid-Afrikaanse ID-nommer nie. Kontroleer elke syfer</string>
+    <string name="issue_id_not_citizen">Slegs Suid-Afrikaanse burgers kan registreer om te stem</string>
+    <string name="issue_id_too_young">Jy kan vanaf 16 jaar registreer</string>
+    <string name="id_feedback_valid">Geldige ID · gebore %1$s · %2$s · %3$s</string>
+    <string name="id_gender_female">vroulik</string>
+    <string name="id_gender_male">manlik</string>
+    <string name="id_citizen">SA burger</string>
+    <string name="id_permanent_resident">permanente inwoner</string>
+    <string name="id_refugee">vlugteling</string>
+
+    <!-- ID card identifier -->
+    <string name="issue_document_number_mismatch">Dit moet dieselfde ID-nommer wees as op die besonderhede-stap</string>
+    <string name="doc_check_title">ID-kaart kontrole</string>
+    <string name="doc_check_scanning">Lees jou dokument…</string>
+    <string name="doc_check_matches">%1$s herken. Die ID-nommer daarop stem ooreen.</string>
+    <string name="doc_check_mismatch">Die ID-nommer op die dokument stem nie ooreen met die een wat jy ingevoer het nie. Kontroleer die nommer of neem die foto weer.</string>
+    <string name="doc_check_unreadable">%1$s herken, maar die ID-nommer kon nie gelees word nie. Neem weer in goeie lig sonder glans as jy kan.</string>
+    <string name="doc_check_not_identified">Dit lyk nie soos \'n Suid-Afrikaanse ID of paspoort nie. Vul die raam met die voorkant van jou dokument en neem weer.</string>
+    <string name="doc_kind_smart_card">Slim ID-kaart</string>
+    <string name="doc_kind_green_book">Groen ID-boek</string>
+    <string name="doc_kind_passport">Suid-Afrikaanse paspoort</string>
+    <string name="doc_kind_unknown">ID-dokument</string>
 </resources>
