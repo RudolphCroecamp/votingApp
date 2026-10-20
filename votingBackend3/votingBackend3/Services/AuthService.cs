@@ -33,6 +33,9 @@ namespace votingBackend3.Services
         public async Task<string> Login(login_requestDto creds) {
             try
             {
+                //FIX remove in prodcution
+                Console.WriteLine(creds.face_embedding);
+
                 // Find the account associated with the supplied ID number.
                 var user = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.id_number == creds.id_number);
 
@@ -47,6 +50,8 @@ namespace votingBackend3.Services
 
                 // Embeddings must have equal lengths to be compared.
                 if (user.face_embedding.Length != creds.face_embedding.Length) throw new UnauthorizedAccessException("Invalid credentials provided");
+
+
 
                 // Compare the submitted face embedding with the saved embedding.
                 double similarity = CosineSimilarity(user.face_embedding, creds.face_embedding);
@@ -216,6 +221,10 @@ namespace votingBackend3.Services
 
             if (request.face_embedding.Any( x => double.IsNaN(x) || double.IsInfinity(x))) throw new ArgumentException("Face embedding contains invalid values.");
 
+            //FIX remove in prodcution
+            Console.WriteLine(request.face_embedding);
+
+
             if (string.IsNullOrWhiteSpace(request.firstname)) throw new ArgumentException("First name is required.");
 
             if (string.IsNullOrWhiteSpace(request.lastname)) throw new ArgumentException("Last name is required.");
@@ -292,68 +301,6 @@ namespace votingBackend3.Services
 
                 // Preserve the original exception and stack trace.
                 throw;
-            }
-        }
-
-
-
-
-
-
-        public async Task<bool> Register([FromForm] register_request request)
-        {
-            try
-            {
-                // Require authentication data and the voter profile fields needed by the database.
-                if (string.IsNullOrWhiteSpace(request.id_number)) throw new Exception("Id number is required");
-                if (request.face_embedding == null || request.face_embedding.Length == 0) throw new Exception("Face embedding is required");
-                if (string.IsNullOrWhiteSpace(request.firstname)) throw new Exception("First name is required");
-                if (string.IsNullOrWhiteSpace(request.lastname)) throw new Exception("Last name is required");
-                if (string.IsNullOrWhiteSpace(request.province)) throw new Exception("Province is required");
-                if (string.IsNullOrWhiteSpace(request.city)) throw new Exception("City is required");
-                if (request.postal <= 0) throw new Exception("Postal code is required");
-
-                // Do not create a second account with the same ID number.
-                var existingUser = await _votingDbContext.auth.FirstOrDefaultAsync(a => a.id_number == request.id_number);
-
-                if (existingUser != null) throw new Exception("User already exists");
-
-                // Use one ID to link the voter profile to its authentication record.
-                var voterId = Guid.NewGuid();
-
-                // Build the voter's profile from the submitted personal details.
-                var newVoter = new Voter
-                {
-                    voter_id = voterId,
-                    firstname = request.firstname,
-                    lastname = request.lastname,
-                    province = request.province,
-                    city = request.city,
-                    street = request.street,
-                    postal = request.postal
-                };
-
-                // Build the active authentication record using the same voter ID.
-                var newUser = new Auth
-                {
-                    voter_id = voterId,
-                    id_number = request.id_number,
-                    role = "Voter",
-                    face_embedding = request.face_embedding,
-                    allowed = true,//NOTE voters should probably be checked out before allowing them
-                    created_at = DateTime.UtcNow
-                };
-
-                // Save both related records in the same database operation.
-                await _votingDbContext.voter.AddAsync(newVoter);
-                await _votingDbContext.auth.AddAsync(newUser);
-                await _votingDbContext.SaveChangesAsync();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
             }
         }
 

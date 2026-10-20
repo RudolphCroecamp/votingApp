@@ -157,6 +157,7 @@ namespace votingBackend3.Controllers
 
         [HttpPost]
         [Route("validate")]
+        [Authorize(Roles = "Admin, Voter")]
         public async Task<IActionResult> ValidateToken([FromBody] token_request request)
         {
             try
@@ -189,6 +190,7 @@ namespace votingBackend3.Controllers
 
         [HttpPost]
         [Route("refresh")]
+        [Authorize(Roles = "Admin, Voter")]
         public async Task<IActionResult> RefreshToken([FromBody] token_request request)
         {
             try
@@ -246,6 +248,7 @@ namespace votingBackend3.Controllers
 
         [HttpPost]
         [Route("logout")]
+        [Authorize(Roles = "Admin, Voter")]
         public async Task<IActionResult> Logout([FromBody] logout_request request)
         {
             try
