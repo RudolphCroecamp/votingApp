@@ -181,31 +181,7 @@ namespace votingBackend3.Services
 
 
 
-        private double CosineSimilarity(double[] a, double[] b)
-        {
-            // Ensure both embeddings have the same length before comparing them.
-            if (a.Length != b.Length) throw new ArgumentException("Embedding sizes do not match.");
-
-            // Initialize totals used to calculate the cosine similarity score.
-            double dotProduct = 0;
-            double magnitudeA = 0;
-            double magnitudeB = 0;
-
-            // Multiply each matching value pair and accumulate the vector magnitudes.
-            for (int i = 0; i < a.Length; i++)
-            {
-                dotProduct += a[i] * b[i];
-                magnitudeA += a[i] * a[i];
-                magnitudeB += b[i] * b[i];
-            }
-
-            // Avoid dividing by zero if either embedding is empty or zero-valued.
-            if (magnitudeA == 0 || magnitudeB == 0)
-                return 0;
-
-            // Return the cosine similarity, which measures how aligned the two vectors are.
-            return dotProduct / (Math.Sqrt(magnitudeA) * Math.Sqrt(magnitudeB));
-        }
+       
 
         //updated register endpoint
         public async Task<bool> Register(register_request request)
@@ -464,7 +440,7 @@ namespace votingBackend3.Services
         }
 
 
-        public static bool IsStructurallyValid(string? idNumber)
+        private static bool IsStructurallyValid(string? idNumber)
         {
             // Must contain exactly 13 digits
             if (string.IsNullOrWhiteSpace(idNumber) ||
@@ -527,6 +503,33 @@ namespace votingBackend3.Services
             }
 
             return sum % 10 == 0;
+        }
+
+
+        private double CosineSimilarity(double[] a, double[] b)
+        {
+            // Ensure both embeddings have the same length before comparing them.
+            if (a.Length != b.Length) throw new ArgumentException("Embedding sizes do not match.");
+
+            // Initialize totals used to calculate the cosine similarity score.
+            double dotProduct = 0;
+            double magnitudeA = 0;
+            double magnitudeB = 0;
+
+            // Multiply each matching value pair and accumulate the vector magnitudes.
+            for (int i = 0; i < a.Length; i++)
+            {
+                dotProduct += a[i] * b[i];
+                magnitudeA += a[i] * a[i];
+                magnitudeB += b[i] * b[i];
+            }
+
+            // Avoid dividing by zero if either embedding is empty or zero-valued.
+            if (magnitudeA == 0 || magnitudeB == 0)
+                return 0;
+
+            // Return the cosine similarity, which measures how aligned the two vectors are.
+            return dotProduct / (Math.Sqrt(magnitudeA) * Math.Sqrt(magnitudeB));
         }
 
     }

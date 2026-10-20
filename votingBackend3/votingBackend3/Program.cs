@@ -276,3 +276,6 @@ app.Run();
 
 
 //FIX votingtokendto in db for some reason
+//add user to election_voter table on register
+
+//"http://192.168.101.100:5000/api/Auth"
