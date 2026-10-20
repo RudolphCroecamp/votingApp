@@ -167,7 +167,6 @@
 
     <!-- Form fields -->
     <string name="field_full_name">Igama nesibongo (njengoba kusho kumazisi wakho)</string>
-    <string name="field_id_or_passport">Inombolo ye-ID / Inombolo yephasipothi</string>
     <string name="field_id_number">Inombolo ye-ID</string>
     <string name="field_passport_number">Inombolo yephasipothi</string>
     <string name="field_cellphone">Inombolo yeselula</string>

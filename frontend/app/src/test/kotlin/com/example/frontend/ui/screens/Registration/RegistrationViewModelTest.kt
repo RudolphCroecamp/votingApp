@@ -108,6 +108,31 @@ class RegistrationViewModelTest {
     }
 
     @Test
+    fun `ID number keeps digits only and names keep letters, spaces, hyphens and apostrophes`() {
+        send(RegistrationUiEvent.OnIdNumberChanged("920118 5082-08a3"))
+        assertEquals("9201185082083", state.idNumber)
+
+        send(RegistrationUiEvent.OnFullNamesChanged("Zoë O'Brien-van der Merwe 123!"))
+        assertEquals("Zoë O'Brien-van der Merwe ", state.fullNames)
+    }
+
+    @Test
+    fun `ID number from the details step is already filled in on the ID card step`() {
+        send(RegistrationUiEvent.OnIdNumberChanged("9201185082083"))
+        assertEquals("9201185082083", state.documentNumber)
+
+        // Fixing a typo on the details step updates the card step too.
+        send(RegistrationUiEvent.OnIdNumberChanged("8001015009087"))
+        assertEquals("8001015009087", state.documentNumber)
+
+        // A passport has its own number; switching back to an SA ID restores the ID number.
+        send(RegistrationUiEvent.OnDocumentTypeSelected(IdentityDocumentType.PASSPORT))
+        assertEquals("", state.documentNumber)
+        send(RegistrationUiEvent.OnDocumentTypeSelected(IdentityDocumentType.NATIONAL_ID))
+        assertEquals("8001015009087", state.documentNumber)
+    }
+
+    @Test
     fun `too-long ID numbers and postal codes are ignored`() {
         send(RegistrationUiEvent.OnIdNumberChanged("9201185082083"))
         send(RegistrationUiEvent.OnIdNumberChanged("92011850820831")) // 14 digits

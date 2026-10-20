@@ -26,9 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.frontend.R
+import com.example.frontend.util.InputFilters
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import androidx.compose.ui.unit.dp
@@ -88,8 +90,9 @@ fun LoginScreen(
 
             AppTextField(
                 value = idNumber,
-                onValueChange = { idNumber = it },
-                placeholder = stringResource(R.string.field_id_or_passport),
+                onValueChange = { idNumber = InputFilters.digits(it) },
+                placeholder = stringResource(R.string.field_id_number),
+                keyboardType = KeyboardType.Number,
                 modifier = Modifier
                     .fillMaxWidth()
                     .entrance(entered, index = 2),

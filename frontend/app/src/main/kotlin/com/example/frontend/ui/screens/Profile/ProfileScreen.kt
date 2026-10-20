@@ -70,6 +70,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.R
+import com.example.frontend.util.InputFilters
 import com.example.frontend.effects.entrance
 import com.example.frontend.effects.rememberEntranceTrigger
 import com.example.frontend.ui.components.AppBottomBar
@@ -336,7 +337,7 @@ fun ProfileScreen(
                             )
                             AppTextField(
                                 value = fullName,
-                                onValueChange = { fullName = it },
+                                onValueChange = { fullName = InputFilters.personName(it) },
                                 placeholder = stringResource(R.string.profile_full_legal_names_hint),
                                 leadingIcon = Icons.Default.Person,
                                 modifier = Modifier.fillMaxWidth()
@@ -349,7 +350,7 @@ fun ProfileScreen(
                             )
                             AppTextField(
                                 value = idNumber,
-                                onValueChange = { idNumber = it },
+                                onValueChange = { idNumber = InputFilters.digits(it) },
                                 placeholder = stringResource(R.string.profile_id_hint),
                                 leadingIcon = Icons.Default.AccountBox,
                                 keyboardType = KeyboardType.Number,

@@ -167,7 +167,6 @@
 
     <!-- Form fields -->
     <string name="field_full_name">Naam en Van (soos op jou ID)</string>
-    <string name="field_id_or_passport">ID-nommer / Paspoortnommer</string>
     <string name="field_id_number">ID-nommer</string>
     <string name="field_passport_number">Paspoortnommer</string>
     <string name="field_cellphone">Selfoonnommer</string>

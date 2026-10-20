@@ -72,7 +72,7 @@ class RegistrationDetailsFeedbackTest {
             listOf(DetailsIssue.ID_LENGTH, DetailsIssue.PHONE_INVALID, DetailsIssue.EMAIL_INVALID)
         ))
 
-        viewModel.onEvent(RegistrationUiEvent.OnIdNumberChanged("A12345678"))
+        viewModel.onEvent(RegistrationUiEvent.OnIdNumberChanged("9201185082083"))
         viewModel.onEvent(RegistrationUiEvent.OnPhoneChanged("+27 82 123 4567"))
         viewModel.onEvent(RegistrationUiEvent.OnEmailChanged(""))
         assertTrue(state.detailsIssues.none {

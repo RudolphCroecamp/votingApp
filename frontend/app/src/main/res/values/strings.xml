@@ -168,7 +168,6 @@
 
     <!-- Form fields -->
     <string name="field_full_name">Name and Surname (as on your ID)</string>
-    <string name="field_id_or_passport">ID Number / Passport Number</string>
     <string name="field_id_number">ID Number</string>
     <string name="field_passport_number">Passport Number</string>
     <string name="field_cellphone">Cellphone Number</string>

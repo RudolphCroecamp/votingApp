@@ -104,10 +104,11 @@ fun RegisterScreen(
             AppTextField(
                 value = uiState.idNumber,
                 onValueChange = { onEvent(RegistrationUiEvent.OnIdNumberChanged(it)) },
-                placeholder = stringResource(R.string.field_id_or_passport),
+                placeholder = stringResource(R.string.field_id_number),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = Icons.Default.AccountBox,
                 maxLength = ID_NUMBER_MAX_LENGTH,
+                keyboardType = KeyboardType.Number,
                 errorText = errorFor(DetailsIssue.ID_MISSING) ?: errorFor(DetailsIssue.ID_LENGTH)
                     ?: errorFor(DetailsIssue.ID_BIRTH_DATE) ?: errorFor(DetailsIssue.ID_CHECKSUM)
                     ?: errorFor(DetailsIssue.ID_NOT_CITIZEN) ?: errorFor(DetailsIssue.ID_TOO_YOUNG)

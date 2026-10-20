@@ -16,6 +16,7 @@ import com.example.frontend.data.auth.TokenStore
 import com.example.frontend.data.face.FaceEmbedder
 import com.example.frontend.ui.screens.Auth.ID_NUMBER_MAX_LENGTH
 import com.example.frontend.ui.screens.Auth.decodePhoto
+import com.example.frontend.util.InputFilters
 import com.example.frontend.ui.screens.Auth.toMessageRes
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -48,10 +49,18 @@ class RegistrationViewModel(
 
     fun onEvent(event: RegistrationUiEvent) {
         when (event) {
-            is RegistrationUiEvent.OnFullNamesChanged -> _uiState.update { it.copy(fullNames = event.value) }
+            is RegistrationUiEvent.OnFullNamesChanged ->
+                _uiState.update { it.copy(fullNames = InputFilters.personName(event.value)) }
             is RegistrationUiEvent.OnIdNumberChanged -> {
-                if (event.value.length <= ID_NUMBER_MAX_LENGTH) {
-                    _uiState.update { it.copy(idNumber = event.value) }
+                val digits = InputFilters.digits(event.value)
+                if (digits.length <= ID_NUMBER_MAX_LENGTH) {
+                    _uiState.update { state ->
+                        // Carry the number through to the ID card step, unless the voter
+                        // already typed something different there.
+                        val follow = state.documentType == IdentityDocumentType.NATIONAL_ID &&
+                            (state.documentNumber.isBlank() || state.documentNumber == state.idNumber)
+                        state.copy(idNumber = digits, documentNumber = if (follow) digits else state.documentNumber)
+                    }
                 }
             }
             is RegistrationUiEvent.OnPhoneChanged -> _uiState.update { it.copy(phone = event.value) }
@@ -72,8 +81,26 @@ class RegistrationViewModel(
 
             is RegistrationUiEvent.OnConsentChanged -> _uiState.update { it.copy(hasConsented = event.granted) }
 
-            is RegistrationUiEvent.OnDocumentTypeSelected -> _uiState.update { it.copy(documentType = event.type) }
-            is RegistrationUiEvent.OnDocumentNumberChanged -> _uiState.update { it.copy(documentNumber = event.number) }
+            is RegistrationUiEvent.OnDocumentTypeSelected -> _uiState.update { state ->
+                state.copy(
+                    documentType = event.type,
+                    // Switching to an SA ID brings back the number from the details step;
+                    // switching to a passport clears it, since a passport number is different.
+                    documentNumber = when {
+                        event.type == IdentityDocumentType.NATIONAL_ID && state.documentNumber.isBlank() -> state.idNumber
+                        event.type == IdentityDocumentType.PASSPORT && state.documentNumber == state.idNumber -> ""
+                        else -> state.documentNumber
+                    }
+                )
+            }
+            is RegistrationUiEvent.OnDocumentNumberChanged -> _uiState.update { state ->
+                val number = if (state.documentType == IdentityDocumentType.NATIONAL_ID) {
+                    InputFilters.digits(event.number).take(ID_NUMBER_MAX_LENGTH)
+                } else {
+                    event.number.filter { it.isLetterOrDigit() }.uppercase()
+                }
+                state.copy(documentNumber = number)
+            }
             is RegistrationUiEvent.OnDocumentCaptured -> when (event.side) {
                 DocumentSide.FRONT -> {
                     _uiState.update { it.copy(documentFrontImagePath = event.imagePath, documentScan = null) }
