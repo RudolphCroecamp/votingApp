@@ -55,6 +55,8 @@ sealed interface Screen {
     @Serializable
     data object VotingStation : Screen
     @Serializable
+    data object RequestVote : Screen
+    @Serializable
     data object Settings : Screen
     @Serializable
     data object ReportProblem : Screen
