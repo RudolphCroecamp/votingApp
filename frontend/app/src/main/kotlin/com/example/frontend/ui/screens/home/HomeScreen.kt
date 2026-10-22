@@ -14,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AssignmentTurnedIn
 import androidx.compose.material.icons.filled.HowToVote
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Poll
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.ReportProblem
 import androidx.compose.material.icons.filled.Search
@@ -79,6 +80,7 @@ fun HomeScreen(
     onSettings: () -> Unit = {},
     onVerifyVote: () -> Unit = {},
     onViewReceipt: () -> Unit = onVerifyVote,
+    onViewResults: () -> Unit = {},
     onRemindMe: () -> Unit = {},
     onLogout: () -> Unit = {},
     backgroundColor: Color = PageBackground
@@ -128,6 +130,14 @@ fun HomeScreen(
                                 onVerifyVote()
                             },
                             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Election Results") },
+                            onClick = {
+                                menuOpen = false
+                                onViewResults()
+                            },
+                            leadingIcon = { Icon(Icons.Default.Poll, contentDescription = null) }
                         )
                         HorizontalDivider()
                         DropdownMenuItem(
@@ -196,7 +206,8 @@ fun HomeScreen(
                 onVotingInformation = onVotingInformation,
                 onCheckRegistration = onCheckRegistration,
                 onRequestVote = onRequestVote,
-                onReportProblem = onReportProblem
+                onReportProblem = onReportProblem,
+                onViewResults = onViewResults
             )
 
             PrivacyNote(
@@ -216,6 +227,7 @@ private fun HomeActions(
     onCheckRegistration: () -> Unit,
     onRequestVote: () -> Unit,
     onReportProblem: () -> Unit,
+    onViewResults: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -252,6 +264,15 @@ private fun HomeActions(
             title = "Request to Vote",
             description = "Request access to vote in upcoming elections",
             onClick = onRequestVote,
+            modifier = Modifier,
+            iconTint = InfoContent,
+            iconBackground = InfoContainer
+        )
+        ActionRow(
+            icon = Icons.Default.Poll,
+            title = "Election Results",
+            description = "View official certified vote counts and percentages",
+            onClick = onViewResults,
             modifier = Modifier,
             iconTint = InfoContent,
             iconBackground = InfoContainer

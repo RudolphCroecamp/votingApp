@@ -81,6 +81,7 @@ import com.example.frontend.ui.screens.Vote.VoteReceiptScreen
 import com.example.frontend.ui.screens.Vote.VoteReviewScreen
 import com.example.frontend.ui.screens.Vote.VoteVerifyReceiptScreen
 import com.example.frontend.ui.screens.Vote.RequestVoteScreen
+import com.example.frontend.ui.screens.Results.ResultsScreen
 import com.example.frontend.ui.screens.Vote.reviewErrorMessage
 import com.example.frontend.ui.screens.Welcome.WelcomeScreen
 import com.example.frontend.ui.screens.home.ElectionViewModel
@@ -498,6 +499,7 @@ fun AppNavGraph(
                 onHelp = { openInfo(InfoTopic.Help) },
                 onSettings = { navController.navigate(Screen.Settings) },
                 onVerifyVote = { navController.navigate(Screen.VerifyReceipt) },
+                onViewResults = { navController.navigate(Screen.Results) },
                 onLogout = { logout() }
             )
         }
@@ -609,6 +611,14 @@ fun AppNavGraph(
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) },
                 chainStatus = chainStatus
+            )
+        }
+
+        composable<Screen.Results> {
+            ResultsScreen(
+                onBackClick = { navController.popBackStack() },
+                selectedTab = currentTab,
+                onTabSelected = { openTab(it) }
             )
         }
 

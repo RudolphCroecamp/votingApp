@@ -3,6 +3,18 @@ package com.example.frontend.data
 import androidx.annotation.DrawableRes
 import com.example.frontend.R
 
+/**
+ * Represents a political party participating in an election ballot.
+ *
+ * @property id Unique identifier for the party.
+ * @property name Official full name of the political party.
+ * @property slogan Party campaign slogan or tagline.
+ * @property logo Drawable resource ID for the party logo badge.
+ * @property leaderName Full name of the party leader or presidential candidate.
+ * @property leaderPhoto Optional drawable resource ID for the party leader's portrait.
+ * @property manifestoPoints Key policy points or manifesto highlights for the party.
+ * @property description Detailed description or background of the party.
+ */
 data class Party(
     val id: String,
     val name: String,
@@ -15,9 +27,11 @@ data class Party(
     val description: String = ""
 )
 
-// Sample data until the backend serves parties.
-// TODO: Verify leader names and manifesto points before the demo.
-// ANC, DA and EFF points come from the Deliverable 3 manifesto mockup.
+/**
+ * Built-in sample parties list representing major and participating political parties
+ * on the national, regional, and provincial ballots. Used across ballot selection,
+ * manifestos, and party detail screens when the backend repository is offline or as demo data.
+ */
 val SampleParties = listOf(
     Party(
         id = "anc",
@@ -79,14 +93,14 @@ val SampleParties = listOf(
             "Deliver basic services and working infrastructure",
             "Protect, respect and work with traditional and Khoi-San leadership",
             "End corruption and make every rand count",
-            "Protect, support and empower women, youth and persons with disabilities",
+            "Protect, support and empower women, youth and persons with disabilities"
         )
     ),
     Party(
         id = "actionsa",
         name = "ActionSA",
         slogan = "Greater Together",
-        logo = R.drawable.party_logo_placeholder,
+        logo = R.drawable.party_actionsa,
         leaderName = "Herman Mashaba",
         leaderPhoto = R.drawable.party_actionsa_leader,
         manifestoPoints = listOf(
@@ -116,8 +130,8 @@ val SampleParties = listOf(
     ),
     Party(
         id = "acdp",
-        name = " African Christian Demoratic Party",
-        slogan = "Principled,Capable Leaders Who Care",
+        name = "African Christian Democratic Party",
+        slogan = "Principled, Capable Leaders Who Care",
         logo = R.drawable.party_acdp,
         leaderName = "Kenneth Meshoe",
         leaderPhoto = R.drawable.party_acdp_leader,
@@ -142,7 +156,7 @@ val SampleParties = listOf(
             "Creating jobs and supporting local economic growth",
             "Improving transport and mobility",
             "Strengthening community safety",
-            "Rebuilding accountable, professional local government",
+            "Rebuilding accountable, professional local government"
         )
-    ),
+    )
 )

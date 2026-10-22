@@ -65,6 +65,10 @@ sealed interface RequestVoteUiState {
     data class Error(val message: String) : RequestVoteUiState
 }
 
+/**
+ * ViewModel for requesting election voting access.
+ * Fetches upcoming elections from the backend and submits voter access requests.
+ */
 class RequestVoteViewModel(
     private val electionRepository: ElectionRepository = AppContainer.electionRepository,
     private val voteRepository: VoteRepository = AppContainer.voteRepository
@@ -122,6 +126,11 @@ class RequestVoteViewModel(
     }
 }
 
+/**
+ * Request to Vote screen component.
+ * Allows voters to select an upcoming election and submit access requests to the backend
+ * (integrated with admin election voter management).
+ */
 @Composable
 fun RequestVoteScreen(
     onBackClick: () -> Unit,

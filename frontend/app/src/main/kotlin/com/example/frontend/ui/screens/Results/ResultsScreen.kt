@@ -65,6 +65,9 @@ sealed interface ResultsUiState {
     data class Error(val message: String) : ResultsUiState
 }
 
+/**
+ * ViewModel responsible for fetching and managing certified election results.
+ */
 class ResultsViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow<ResultsUiState>(ResultsUiState.Loading)
@@ -101,6 +104,11 @@ class ResultsViewModel : ViewModel() {
     }
 }
 
+/**
+ * Results screen component
+ * Displays certified vote counts, percentage shares, progress bars per party,
+ * and handles published vs. unpublished election result states.
+ */
 @Composable
 fun ResultsScreen(
     onBackClick: () -> Unit,

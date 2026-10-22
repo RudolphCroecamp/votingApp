@@ -92,6 +92,11 @@ private val SupportedLanguages = listOf(
     "Sesotho"
 )
 
+/**
+ * Settings screen component.
+ * Organizes app preferences, account management, security settings (including Face ID verification),
+ * election access requests ("Request to Vote"), help & support, and logout actions into distinct structured sections.
+ */
 @Composable
 fun SettingsScreen(
     onBackClick: () -> Unit,
