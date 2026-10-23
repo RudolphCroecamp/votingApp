@@ -110,7 +110,7 @@ npm run dev
 
 The voting system admin dashboard should now be accessible in your browser.
 
-# Admin login credentials
+## Admin login credentials
     username = 0000000000001
     password = Admin123!ChangeMe
 
