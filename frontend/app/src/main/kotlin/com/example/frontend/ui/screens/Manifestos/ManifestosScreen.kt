@@ -40,7 +40,11 @@ import com.example.frontend.ui.theme.FrontendTheme
 import com.example.frontend.ui.theme.MutedText
 import com.example.frontend.ui.theme.Spacing
 
-/** Manifestos tab: every party on the ballot, tap one for its full manifesto (V-07). */
+/**
+ * Manifestos tab screen.
+ * Displays a list of all political parties participating in the election ballot.
+ * Users can tap on any party to inspect its detailed manifesto and leader profile.
+ */
 @Composable
 fun ManifestosScreen(
     onPartyClick: (Party) -> Unit,

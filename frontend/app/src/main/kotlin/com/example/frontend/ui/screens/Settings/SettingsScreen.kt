@@ -22,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.AssignmentTurnedIn
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.HowToVote
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Person
@@ -91,12 +92,18 @@ private val SupportedLanguages = listOf(
     "Sesotho"
 )
 
+/**
+ * Settings screen component.
+ * Organizes app preferences, account management, security settings (including Face ID verification),
+ * election access requests ("Request to Vote"), help & support, and logout actions into distinct structured sections.
+ */
 @Composable
 fun SettingsScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     onProfileClick: () -> Unit = {},
     onCheckRegistrationClick: () -> Unit = {},
+    onRequestVoteClick: () -> Unit = {},
     onVotingInformationClick: () -> Unit = {},
     onPrivacyClick: () -> Unit = {},
     onHelpClick: () -> Unit = {},
@@ -164,6 +171,14 @@ fun SettingsScreen(
                     onClick = onCheckRegistrationClick,
                     iconTint = SuccessContent,
                     iconBackground = SuccessContainer
+                )
+                SettingActionRow(
+                    icon = Icons.Default.HowToVote,
+                    title = "Request to Vote",
+                    description = "Request access to vote in upcoming elections",
+                    onClick = onRequestVoteClick,
+                    iconTint = InfoContent,
+                    iconBackground = InfoContainer
                 )
             }
 

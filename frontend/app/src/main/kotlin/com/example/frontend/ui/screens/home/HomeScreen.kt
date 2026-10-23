@@ -12,7 +12,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AssignmentTurnedIn
+import androidx.compose.material.icons.filled.HowToVote
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Poll
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.ReportProblem
 import androidx.compose.material.icons.filled.Search
@@ -45,6 +47,8 @@ import com.example.frontend.ui.components.currentAppLanguage
 import com.example.frontend.ui.theme.ErrorContainer
 import com.example.frontend.ui.theme.ErrorContent
 import com.example.frontend.ui.theme.FrontendTheme
+import com.example.frontend.ui.theme.InfoContainer
+import com.example.frontend.ui.theme.InfoContent
 import com.example.frontend.ui.theme.PageBackground
 import com.example.frontend.ui.theme.Spacing
 import com.example.frontend.ui.theme.SuccessContainer
@@ -69,12 +73,14 @@ fun HomeScreen(
     onVotingStation: () -> Unit = {},
     onVotingInformation: () -> Unit = {},
     onCheckRegistration: () -> Unit = {},
+    onRequestVote: () -> Unit = {},
     onReportProblem: () -> Unit = {},
     onPrivacy: () -> Unit = {},
     onHelp: () -> Unit = {},
     onSettings: () -> Unit = {},
     onVerifyVote: () -> Unit = {},
     onViewReceipt: () -> Unit = onVerifyVote,
+    onViewResults: () -> Unit = {},
     onRemindMe: () -> Unit = {},
     onLogout: () -> Unit = {},
     backgroundColor: Color = PageBackground
@@ -124,6 +130,14 @@ fun HomeScreen(
                                 onVerifyVote()
                             },
                             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Election Results") },
+                            onClick = {
+                                menuOpen = false
+                                onViewResults()
+                            },
+                            leadingIcon = { Icon(Icons.Default.Poll, contentDescription = null) }
                         )
                         HorizontalDivider()
                         DropdownMenuItem(
@@ -191,7 +205,9 @@ fun HomeScreen(
                 onVotingStation = onVotingStation,
                 onVotingInformation = onVotingInformation,
                 onCheckRegistration = onCheckRegistration,
-                onReportProblem = onReportProblem
+                onRequestVote = onRequestVote,
+                onReportProblem = onReportProblem,
+                onViewResults = onViewResults
             )
 
             PrivacyNote(
@@ -209,7 +225,9 @@ private fun HomeActions(
     onVotingStation: () -> Unit,
     onVotingInformation: () -> Unit,
     onCheckRegistration: () -> Unit,
+    onRequestVote: () -> Unit,
     onReportProblem: () -> Unit,
+    onViewResults: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -240,6 +258,24 @@ private fun HomeActions(
             modifier = Modifier,
             iconTint = SuccessContent,
             iconBackground = SuccessContainer
+        )
+        ActionRow(
+            icon = Icons.Default.HowToVote,
+            title = "Request to Vote",
+            description = "Request access to vote in upcoming elections",
+            onClick = onRequestVote,
+            modifier = Modifier,
+            iconTint = InfoContent,
+            iconBackground = InfoContainer
+        )
+        ActionRow(
+            icon = Icons.Default.Poll,
+            title = "Election Results",
+            description = "View official certified vote counts and percentages",
+            onClick = onViewResults,
+            modifier = Modifier,
+            iconTint = InfoContent,
+            iconBackground = InfoContainer
         )
         ActionRow(
             icon = Icons.Default.ReportProblem,

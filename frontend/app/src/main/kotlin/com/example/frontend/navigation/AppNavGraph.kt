@@ -80,6 +80,8 @@ import com.example.frontend.ui.screens.Vote.VotePartySelectionScreen
 import com.example.frontend.ui.screens.Vote.VoteReceiptScreen
 import com.example.frontend.ui.screens.Vote.VoteReviewScreen
 import com.example.frontend.ui.screens.Vote.VoteVerifyReceiptScreen
+import com.example.frontend.ui.screens.Vote.RequestVoteScreen
+import com.example.frontend.ui.screens.Results.ResultsScreen
 import com.example.frontend.ui.screens.Vote.reviewErrorMessage
 import com.example.frontend.ui.screens.Welcome.WelcomeScreen
 import com.example.frontend.ui.screens.home.ElectionViewModel
@@ -490,12 +492,14 @@ fun AppNavGraph(
                 onVotingStation = { navController.navigate(Screen.VotingStation) },
                 onVotingInformation = { openInfo(InfoTopic.Rights) },
                 onCheckRegistration = { navController.navigate(Screen.Profile) },
+                onRequestVote = { navController.navigate(Screen.RequestVote) },
                 onRemindMe = { navController.navigate(Screen.Settings) },
                 onReportProblem = { navController.navigate(Screen.ReportProblem) },
                 onPrivacy = { openInfo(InfoTopic.Privacy) },
                 onHelp = { openInfo(InfoTopic.Help) },
                 onSettings = { navController.navigate(Screen.Settings) },
                 onVerifyVote = { navController.navigate(Screen.VerifyReceipt) },
+                onViewResults = { navController.navigate(Screen.Results) },
                 onLogout = { logout() }
             )
         }
@@ -610,6 +614,14 @@ fun AppNavGraph(
             )
         }
 
+        composable<Screen.Results> {
+            ResultsScreen(
+                onBackClick = { navController.popBackStack() },
+                selectedTab = currentTab,
+                onTabSelected = { openTab(it) }
+            )
+        }
+
         composable<Screen.Manifestos> {
             val partiesState by partiesViewModel.state.collectAsStateWithLifecycle()
             when (val state = partiesState) {
@@ -691,6 +703,7 @@ fun AppNavGraph(
                 onBackClick = { navController.popBackStack() },
                 onProfileClick = { navController.navigate(Screen.Profile) },
                 onCheckRegistrationClick = { navController.navigate(Screen.Profile) },
+                onRequestVoteClick = { navController.navigate(Screen.RequestVote) },
                 onVotingInformationClick = { openInfo(InfoTopic.Rights) },
                 onPrivacyClick = { openInfo(InfoTopic.Privacy) },
                 onHelpClick = { openInfo(InfoTopic.Help) },
@@ -725,6 +738,14 @@ fun AppNavGraph(
                 onBackClick = { navController.popBackStack() },
                 selectedTab = currentTab,
                 onTabSelected = { openTab(it) }
+            )
+        }
+
+        composable<Screen.RequestVote> {
+            RequestVoteScreen(
+                onBackClick = { navController.popBackStack() },
+                selectedTab = currentTab,
+                onTabSelected = { tab -> openTab(tab) }
             )
         }
 
