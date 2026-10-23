@@ -33,7 +33,7 @@ android {
         buildConfigField(
             "String",
             "API_BASE_URL",
-            "\"${providers.gradleProperty("apiBaseUrl").getOrElse("http://10.0.2.2:5000/")}\""
+            "\"${providers.gradleProperty("apiBaseUrl").getOrElse("http://192.168.8.133:5000/")}\""
         )
         buildConfigField(
             "String",
